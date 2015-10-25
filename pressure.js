@@ -254,7 +254,7 @@
     if(typeof jQuery === 'undefined'){
       return document.querySelector(selector);
     } else {
-      return $(selector)[0];
+      return $(selector);
     }
   }
 
