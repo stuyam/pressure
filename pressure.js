@@ -52,7 +52,7 @@
 // });
 
 // Wrap the entire library in a self executing anonymous function so as to no conflict
-(function(){
+(function(window){
 
   //--------------------- Public API Section ---------------------//
   // This is the start of the Pressure Object, this is the only object that is accessible to the end user
@@ -69,40 +69,49 @@
 
     // This method will return a force value from the user and will automatically determine if the user has force or 3D touch
     // It also accepts an optional type, this type is passed in by the next 2 methods to be explicit about which change event type they want
-    change: function(element, closure, type){
-      Event.build(element, closure, function(){
+    change: function(selector, closure, type){
+      Event.build(selector, closure, function(){
+
+        // if type is set explicitly to 'force' and the user has 'force' support
         if(Support.type === 'force' && type === 'force'){
-          Event.changeForceTouch(element, closure);
-        } else if(Support.type === '3d' && type === '3d'){
-          Event.change3DTouch(element, closure);
-        } else if(Support.type === 'force'){
-          Event.changeForceTouch(element, closure);
-        } else if(Support.type === '3d'){
-          Event.change3DTouch(element, closure);
+          Event.changeForceTouch(selector, closure);
+        }
+        // if type is set explicitly to '3d' and the user has '3d' support
+        else if(Support.type === '3d' && type === '3d'){
+          Event.change3DTouch(selector, closure);
+        }
+        // if the user has 'force' touch support
+        else if(Support.type === 'force'){
+          Event.changeForceTouch(selector, closure);
+        }
+        // if the user has '3d' touch support
+        else if(Support.type === '3d'){
+          Event.change3DTouch(selector, closure);
         }
       }.bind(this))
     },
 
     // This method is meant to be called when targeting ONLY devices with force touch
-    changeForceTouch: function(element, closure){
-      this.change(element, closure, 'force');
+    changeForceTouch: function(selector, closure){
+      this.change(selector, closure, 'force');
     },
 
     // This method is meant to be called when targeting ONLY devices with 3D touch
-    change3DTouch: function(element, closure){
-      this.change(element, closure, '3d');
+    change3DTouch: function(selector, closure){
+      this.change(selector, closure, '3d');
     }
   }
 
   var Event = {
 
-    build: function(element, userClosure, closure){
+    // this method builds events and handles event support on ever public method called by user
+    build: function(selector, userClosure, closure){
       if(Support.forPressure){
         closure();
       } else if(Support.hasRun){
         getFailClosure(userClosure)();
       } else {
-        this.checkSupport({
+        Browser.checkSupport({
           success: function(){
             closure();
           },
@@ -111,15 +120,15 @@
       }
     },
 
-    changeForceTouch: function(element, closure){
-      queryElement(element).addEventListener('webkitmouseforcechanged', function(event){
+    changeForceTouch: function(selector, closure){
+      queryElement(selector).addEventListener('webkitmouseforcechanged', function(event){
         getSuccessClosure(closure)(event.webkitForce, event);
       }, false);
     },
 
     // This method is meant to be called when targeting ONLY devices with 3D touch
-    change3DTouch: function(element, closure){
-      var el = queryElement(element);
+    change3DTouch: function(selector, closure){
+      var el = queryElement(selector);
       el.addEventListener('touchstart', function(event){
         Touch3D.changeExecute = success;
         Touch3D.startCheckingForce(event);
@@ -238,8 +247,15 @@
     }
   }
 
-  var queryElement = function(element){
-      return document.querySelector(element);
+  // if the user has jQuery installed, use that, else query the document
+  var queryElement = function(selector){
+
+    // if jQuery is not installed
+    if(typeof jQuery === 'undefined'){
+      return document.querySelector(selector);
+    } else {
+      return $(selector)[0];
+    }
   }
 
   var callClosure = function(closure, status){
@@ -316,21 +332,21 @@
 
   // Assign the Pressure object to the global object so it can be called from inside the self executing anonymous function: http://markdalgleish.com/2011/03/self-executing-anonymous-functions/
   window.Pressure = Pressure;
-})()
+}(window))
 
 
 
-Pressure.supported({
-  success:function(){
+// Pressure.supported({
+//   success:function(){
     Pressure.change('#element', function(force, event){
       document.getElementById('element').style.width = Math.max((200 * force), 200) + 'px';
       document.getElementById('element').innerHTML = force;
     });
-    console.log('User and Browser both support force touch');
-  },
-  fail: function(error){
-    console.log(error);
-  }
-});
+//     console.log('User and Browser both support force touch');
+//   },
+//   fail: function(error){
+//     console.log(error);
+//   }
+// });
 
 // document.getElementById('element').addEventListener("webkitmouseforcechanged", forceChanged, false);
