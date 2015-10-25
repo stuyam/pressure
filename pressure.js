@@ -51,63 +51,165 @@
 //   setupForceClickBehavior(someElement);
 // });
 
+// Wrap the entire library in a self executing anonymous function so as to no conflict
+(function(){
 
-var Pressure = {
+  var Pressure = {
 
-  //--------------------- Public API Section ---------------------//
+    //--------------------- Public API Section ---------------------//
 
-  // This method is to determine if the browser and/or user have support for force touch of 3D touch
-  // When this method is run, it will immediatly return if the browser does not support the force/3D touch,
-  // however it will not return if the user has an supported trackpad or device until a click happens somewhere on the page
-  supported: function(input){
-    if(!this.support.browserSupported()){
-      input.failure(supported.failure('browser', 'browser does not support force touch'));
-    } else {
-      this.support.browserSuccess(input);
+    // This method is to determine if the browser and/or user have support for force touch of 3D touch
+    // When this method is run, it will immediatly return if the browser does not support the force/3D touch,
+    // however it will not return if the user has an supported trackpad or device until a click happens somewhere on the page
+    supported: function(closure){
+      this.checkSupport(closure);
+    },
+
+    // This method will return a force value from the user and will automatically determine if the user has force or 3D touch
+    change: function(element, closure){
+      if(Support.forPressure){
+        if(Support.type === 'force'){
+          console.log('force');
+          this.changeForceTouch(element, closure);
+        } else if(this.type === '3d'){
+          console.log('3d');
+          this.change3DTouch(element, closure);
+        }
+      }
+      // this.checkSupport({
+      //   success: function(){
+      //     if(Support.type === 'force'){
+      //       console.log('force');
+      //       this.changeForceTouch(element, closure);
+      //     } else if(this.type === '3d'){
+      //       console.log('3d');
+      //       this.change3DTouch(element, closure);
+      //     }
+      //   },
+      //   fail: failClosure(closure)
+      // });
+    },
+
+    // This method is meant to be called when targeting ONLY devices with force touch
+    changeForceTouch: function(element, success, failure){
+      queryElement(element).addEventListener('webkitmouseforcechanged', function(event){
+        success(event.webkitForce, event);
+      }, false);
+    },
+
+    // This method is meant to be called when targeting ONLY devices with 3D touch
+    change3DTouch: function(element, success, failure){
+      var el = queryElement(element);
+      el.addEventListener('touchstart', function(event){
+        Touch3D.changeExecute = success;
+        Touch3D.startCheckingForce(event);
+      }, false);
+      el.addEventListener('touchmove', function(event){
+        // this.touch3DchangeExecute = success;
+        Touch3D.startCheckingForce(event);
+      }, false);
+      el.addEventListener('touchend', function(event){
+        Touch3D.touchDown = false;
+      }, false);
+    },
+
+
+    // This method is an optinal method to pass a fail closure to and recieve errors on the failure
+    // fail: function(failClosure){
+    //   if(this.support.failure !== undefined){
+    //     failClosure(this.support.failureObject(this.support.failure));
+    //   }
+    // },
+
+    //--------------------- Start of "Private" classes / methods ---------------------//
+
+    checkSupport: function(closure){
+      if(Support.hasRun){
+        return Support.forPressure ? callClosure(closure, 'success') : callClosure(closure, 'fail');
+      }
+      if(this.browserSupported()){
+        this.testDeviceSupport(closure);
+      } else {
+        Support.browserFail();
+        callClosure(closure, 'fail');
+      }
+    },
+
+    browserSupported: function(){
+      return ('onwebkitmouseforcewillbegin' in document) || ('ontouchstart' in document);
+    },
+
+    testDeviceSupport: function(closure){
+      Support.forPressure = false;
+      this.returnSupportBind = this.returnSupport.bind(this, closure);
+      document.addEventListener('webkitmouseforcewillbegin', this.touchForceEnabled, false);
+      document.addEventListener('touchstart', this.touch3DEnabled, false);
+      document.addEventListener('mousedown', this.returnSupportBind, false);
+    },
+
+    removeDocumentListeners: function(){
+      document.removeEventListener('webkitmouseforcewillbegin', this.touchForceEnabled);
+      document.removeEventListener('touchstart', this.touch3DEnabled);
+      document.removeEventListener('mousedown', this.returnSupportBind);
+    },
+
+    returnSupport: function(closure){
+      this.removeDocumentListeners();
+      if(Support.forPressure){
+        callClosure(closure, 'success');
+      } else {
+        Support.deviceFail();
+        callClosure(closure, 'fail');
+      }
+    },
+
+    touchForceEnabled: function(){
+      Support.type = 'force';
+      Support.forPressure = true;
+    },
+
+    touch3DEnabled: function(event){
+      if(event.touches[0].force !== undefined){
+        Support.type = '3d';
+        Support.forPressure = true;
+      }
     }
-  },
+  }
 
-  // This method will return a force value from the user and will automatically determine if the user has force or 3D touch
-  change: function(element, changeFunction){
-    if(this.support.type === 'force'){
-      this.changeForceTouch(element, changeFunction);
-    } else if(this.support.type === '3d'){
-      this.change3DTouch(element, changeFunction);
+
+  // This class holds the states of the the Pressure support the user has
+  var Support = {
+
+    hasRun: false,
+
+    forPressure: false,
+
+    type: '',
+
+    failureType: '',
+
+    browserFail: function(){
+      this.didFail('browser');
+    },
+
+    deviceFail: function(){
+      this.didFail('device');
+    },
+
+    didFail: function(type){
+      this.hasRun = true;
+      this.forPressure = false;
+      this.failureType = type;
     }
-  },
+  }
 
-  // This method is meant to be called when targeting ONLY devices with force touch
-  changeForceTouch: function(element, changeFunction){
-    this.queryElement(element).addEventListener("webkitmouseforcechanged", function(event){
-      changeFunction(event.webkitForce, event);
-    }, false);
-  },
-
-  // This method is meant to be called when targeting ONLY devices with 3D touch
-  change3DTouch: function(element, changeFunction){
-    var el = this.queryElement(element);
-    el.addEventListener("touchstart", function(event){
-      this.touch3D.changeExacute = changeFunction;
-      this.touch3D.startCheckingForce(event);
-    }, false);
-    el.addEventListener("touchmove", function(event){
-      this.touch3D.changeExacute = changeFunction;
-      this.touch3D.startCheckingForce(event);
-    }, false);
-    el.addEventListener("touchend", function(event){
-      this.touch3D.touchDown = false;
-    }, false);
-  },
-
-
-
-  //--------------------- Start of "Private" classes / methods ---------------------//
-  touch3D: {
+  // 3D Touch class force handlers
+  var Touch3D = {
     startCheckingForce: function(event) {
       this.touchDown = true;
       this.touch = event.touches[0];
       if(this.touch){
-        this.fetchForce.bind(this);
+        this.fetchForce();
       }
     },
 
@@ -118,75 +220,94 @@ var Pressure = {
       } else {
         return 0;
       }
-    }
-  },
-
-  support: {
-    browserSupported: function(){
-      return ('onwebkitmouseforcewillbegin' in document) || ('touchstart' in document);
     },
-
-    browserSuccess: function(input){
-      this.input = input;
-      this.enabled = false;
-      document.addEventListener("webkitmouseforcewillbegin", this.touchForceEnabled.bind(this), false);
-      document.addEventListener("touchstart", this.touch3DEnabled.bind(this), false);
-      document.addEventListener("mousedown", this.returnSupport.bind(this));
-    },
-
-    removeDocumentListeners: function(){
-      document.removeEventListener("webkitmouseforcewillbegin", this.touchForceEnabled);
-      document.removeEventListener("touchstart", this.touch3DEnabled);
-      document.removeEventListener("mousedown", this.returnSupport);
-    },
-
-    returnSupport: function(){
-      this.removeDocumentListeners();
-      this.enabled ? this.input.success() : this.input.failure(this.failure('device', 'device does not support force touch'));
-    },
-
-    failure: function(type, message){
-      return {
-        'error' : {
-          'type'    : type,
-          'message' : message
-        }
-      }
-    },
-
-    touchForceEnabled: function(){
-      this.type = 'force';
-      this.setEnabledTrue();
-    },
-
-    touch3DEnabled: function(event){
-      if(event.touches[0].force !== undefined){
-        this.type = '3d';
-        this.setEnabledTrue();
-      }
-    },
-
-    setEnabledTrue: function(){
-      this.enabled = true;
-    }
-  },
-
-  queryElement: function(element){
-    return document.querySelector(element);
   }
 
-}
+  var queryElement = function(element){
+      return document.querySelector(element);
+  }
+
+  var callClosure = function(closure, status){
+    if(isObject(closure)){
+      runObjectClosure(closure, status, 'success');
+      runObjectClosure(closure, status, 'fail');
+    } else {
+      if(status === 'success'){
+        closure();
+      }
+    }
+  }
+
+  // http://stackoverflow.com/questions/135448/how-do-i-check-if-an-object-has-a-property-in-javascript
+  var hasOwnProperty = function(obj, prop) {
+    var proto = obj.__proto__ || obj.constructor.prototype;
+    return (prop in obj) &&
+        (!(prop in proto) || proto[prop] !== obj[prop]);
+  }
+
+  // run the closure based on the returned status
+  var runObjectClosure = function(closure, status, statusCheck){
+    if(hasOwnProperty(closure, statusCheck) && status === statusCheck){
+      if(status === 'fail'){
+        closure[statusCheck](failureObject(Pressure.failure));
+      } else {
+        closure[statusCheck]();
+      }
+    }
+  }
+
+  // Standardized error reporting
+  var failureObject = function(type){
+    switch (type) {
+      case 'browser':
+        var message = 'browser does not support force touch';
+        break;
+      case 'device':
+        var message = 'device does not support force touch';
+        break;
+    }
+    return {
+      'error' : {
+        'type'    : type,
+        'message' : message
+      }
+    }
+  }
+
+  var failClosure = function(closure){
+    var fail = function(){}
+    if(isObject(closure)){
+      if(hasOwnProperty(closure, 'fail')){
+        fail = closure.fail;
+      }
+    }
+    return fail;
+  }
+
+  // Helper to check if input it an object
+  var isObject = function(input){
+    return input !== null && typeof input === 'object'
+  }
+
+  // Assign the Pressure object to the global object so it can be called from inside the self executing anonymous function: http://markdalgleish.com/2011/03/self-executing-anonymous-functions/
+  window.Pressure = Pressure;
+})()
+
+
 
 Pressure.supported({
   success:function(){
     Pressure.change('#element', function(force, event){
+      console.log('TEST CHANGE');
       document.getElementById('element').style.width = Math.max((200 * force), 200) + 'px';
       document.getElementById('element').innerHTML = force;
       // console.log(force);
     });
-    // console.log('User and Browser both support force touch');
+    console.log('User and Browser both support force touch');
+    console.log('supported!!!!');
   },
-  failure:function(error){
+  fail: function(error){
+    console.log('now!');
     console.log(error);
   }
 });
