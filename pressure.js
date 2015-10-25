@@ -62,43 +62,60 @@
     // When this method is run, it will immediatly return if the browser does not support the force/3D touch,
     // however it will not return if the user has an supported trackpad or device until a click happens somewhere on the page
     supported: function(closure){
-      this.checkSupport(closure);
+      Browser.checkSupport(closure);
     },
 
     // This method will return a force value from the user and will automatically determine if the user has force or 3D touch
-    change: function(element, closure){
-      if(Support.forPressure){
-        if(Support.type === 'force'){
-          console.log('force');
-          this.changeForceTouch(element, closure);
-        } else if(this.type === '3d'){
-          console.log('3d');
-          this.change3DTouch(element, closure);
+    change: function(element, closure, type){
+      Event.build(element, closure, function(){
+        if(Support.type === 'force' && type === 'force'){
+          Event.changeForceTouch(element, closure);
+        } else if(Support.type === '3d' && type === '3d'){
+          Event.change3DTouch(element, closure);
+        } else if(Support.type === 'force'){
+          Event.changeForceTouch(element, closure);
+        } else if(Support.type === '3d'){
+          Event.change3DTouch(element, closure);
         }
-      }
-      // this.checkSupport({
-      //   success: function(){
-      //     if(Support.type === 'force'){
-      //       console.log('force');
-      //       this.changeForceTouch(element, closure);
-      //     } else if(this.type === '3d'){
-      //       console.log('3d');
-      //       this.change3DTouch(element, closure);
-      //     }
-      //   },
-      //   fail: failClosure(closure)
-      // });
+      }.bind(this))
     },
 
     // This method is meant to be called when targeting ONLY devices with force touch
-    changeForceTouch: function(element, success, failure){
+    changeForceTouch: function(element, closure){
+      this.change(element, closure, 'force');
+    },
+
+    // This method is meant to be called when targeting ONLY devices with 3D touch
+    change3DTouch: function(element, closure){
+      this.change(element, closure, '3d');
+    }
+  }
+
+  var Event = {
+
+    build: function(element, userClosure, closure){
+      if(Support.forPressure){
+        closure();
+      } else if(Support.hasRun){
+        getFailClosure(userClosure)();
+      } else {
+        this.checkSupport({
+          success: function(){
+            closure();
+          },
+          fail: getFailClosure(userClosure)
+        });
+      }
+    },
+
+    changeForceTouch: function(element, closure){
       queryElement(element).addEventListener('webkitmouseforcechanged', function(event){
-        success(event.webkitForce, event);
+        getSuccessClosure(closure)(event.webkitForce, event);
       }, false);
     },
 
     // This method is meant to be called when targeting ONLY devices with 3D touch
-    change3DTouch: function(element, success, failure){
+    change3DTouch: function(element, closure){
       var el = queryElement(element);
       el.addEventListener('touchstart', function(event){
         Touch3D.changeExecute = success;
@@ -122,6 +139,10 @@
     // },
 
     //--------------------- Start of "Private" classes / methods ---------------------//
+
+  }
+
+  var Browser = {
 
     checkSupport: function(closure){
       if(Support.hasRun){
@@ -153,16 +174,6 @@
       document.removeEventListener('mousedown', this.returnSupportBind);
     },
 
-    returnSupport: function(closure){
-      this.removeDocumentListeners();
-      if(Support.forPressure){
-        callClosure(closure, 'success');
-      } else {
-        Support.deviceFail();
-        callClosure(closure, 'fail');
-      }
-    },
-
     touchForceEnabled: function(){
       Support.type = 'force';
       Support.forPressure = true;
@@ -173,7 +184,17 @@
         Support.type = '3d';
         Support.forPressure = true;
       }
-    }
+    },
+
+    returnSupport: function(closure){
+      this.removeDocumentListeners();
+      if(Support.forPressure){
+        callClosure(closure, 'success');
+      } else {
+        Support.deviceFail();
+        callClosure(closure, 'fail');
+      }
+    },
   }
 
 
@@ -220,7 +241,7 @@
       } else {
         return 0;
       }
-    },
+    }
   }
 
   var queryElement = function(element){
@@ -274,7 +295,17 @@
     }
   }
 
-  var failClosure = function(closure){
+  var getSuccessClosure = function(closure){
+    if(isObject(closure)){
+      if(hasOwnProperty(closure, 'success')){
+        return closure.success;
+      }
+    } else {
+      return closure;
+    }
+  }
+
+  var getFailClosure = function(closure){
     var fail = function(){}
     if(isObject(closure)){
       if(hasOwnProperty(closure, 'fail')){
