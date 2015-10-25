@@ -54,9 +54,11 @@
 // Wrap the entire library in a self executing anonymous function so as to no conflict
 (function(){
 
+  //--------------------- Public API Section ---------------------//
+  // This is the start of the Pressure Object, this is the only object that is accessible to the end user
+  // Only the methods in this object can be called, making it the "public api"
   var Pressure = {
 
-    //--------------------- Public API Section ---------------------//
 
     // This method is to determine if the browser and/or user have support for force touch of 3D touch
     // When this method is run, it will immediatly return if the browser does not support the force/3D touch,
@@ -66,6 +68,7 @@
     },
 
     // This method will return a force value from the user and will automatically determine if the user has force or 3D touch
+    // It also accepts an optional type, this type is passed in by the next 2 methods to be explicit about which change event type they want
     change: function(element, closure, type){
       Event.build(element, closure, function(){
         if(Support.type === 'force' && type === 'force'){
@@ -129,18 +132,8 @@
         Touch3D.touchDown = false;
       }, false);
     },
-
-
-    // This method is an optinal method to pass a fail closure to and recieve errors on the failure
-    // fail: function(failClosure){
-    //   if(this.support.failure !== undefined){
-    //     failClosure(this.support.failureObject(this.support.failure));
-    //   }
-    // },
-
-    //--------------------- Start of "Private" classes / methods ---------------------//
-
   }
+
 
   var Browser = {
 
@@ -184,6 +177,7 @@
         Support.type = '3d';
         Support.forPressure = true;
       }
+      this.returnSupport();
     },
 
     returnSupport: function(closure){
@@ -194,7 +188,7 @@
         Support.deviceFail();
         callClosure(closure, 'fail');
       }
-    },
+    }
   }
 
 
@@ -270,7 +264,7 @@
   var runObjectClosure = function(closure, status, statusCheck){
     if(hasOwnProperty(closure, statusCheck) && status === statusCheck){
       if(status === 'fail'){
-        closure[statusCheck](failureObject(Pressure.failure));
+        closure[statusCheck](failureObject());
       } else {
         closure[statusCheck]();
       }
@@ -278,18 +272,18 @@
   }
 
   // Standardized error reporting
-  var failureObject = function(type){
-    switch (type) {
+  var failureObject = function(){
+    switch (Support.failureType) {
       case 'browser':
-        var message = 'browser does not support force touch';
+        var message = 'Browser does not support Force Touch or 3D Touch.';
         break;
       case 'device':
-        var message = 'device does not support force touch';
+        var message = 'Device does not support Force Touch or 3D Touch.';
         break;
     }
     return {
       'error' : {
-        'type'    : type,
+        'type'    : Support.failureType,
         'message' : message
       }
     }
@@ -329,16 +323,12 @@
 Pressure.supported({
   success:function(){
     Pressure.change('#element', function(force, event){
-      console.log('TEST CHANGE');
       document.getElementById('element').style.width = Math.max((200 * force), 200) + 'px';
       document.getElementById('element').innerHTML = force;
-      // console.log(force);
     });
     console.log('User and Browser both support force touch');
-    console.log('supported!!!!');
   },
   fail: function(error){
-    console.log('now!');
     console.log(error);
   }
 });
