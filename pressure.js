@@ -1,55 +1,5 @@
-// function prepareForForceClick(event)
-// {
-//   // Cancel the system's default behavior
-//   event.preventDefault()
-//   console.log('prepareForForceClick');
-//   // Perform any other operations in preparation for a force click
-// }
+// Created By Stuart Yamartino | MIT License | 2015
 
-// function enterForceClick(event)
-// {
-//   log('enterForceClick');
-//   // Perform operations in response to entering force click
-// }
-
-// function endForceClick(event)
-// {
-//   log('endForceClick');
-//   // Perform operations in response to exiting force click
-// }
-
-// function forceChanged(e)
-// {
-//   console.log(e);
-//   // log('forceChanged');
-//   // Perform operations in response to changes in force
-// }
-
-// function setupForceClickBehavior(someElement)
-// {
-//   // Attach event listeners in preparation for responding to force clicks
-//   someElement.addEventListener("webkitmouseforcewillbegin", prepareForForceClick, false);
-//   someElement.addEventListener("webkitmouseforcedown", enterForceClick, false);
-//   someElement.addEventListener("webkitmouseforceup", endForceClick, false);
-  // someElement.addEventListener("webkitmouseforcechanged", forceChanged, false);
-// }
-
-// function log(logMe){
-//   console.log(logMe);
-// }
-
-// function ready(fn) {
-//   if (document.readyState != 'loading'){
-//     fn();
-//   } else {
-//     document.addEventListener('DOMContentLoaded', fn);
-//   }
-// }
-
-// ready(function(){
-//   var someElement = document.getElementById('element');
-//   setupForceClickBehavior(someElement);
-// });
 
 // Wrap the entire library in a self executing anonymous function so as to no conflict
 (function(window){
@@ -120,26 +70,38 @@
       }
     },
 
+    // this handles the executing of the Force Touch change event
     changeForceTouch: function(selector, closure){
-      queryElement(selector).addEventListener('webkitmouseforcechanged', function(event){
-        getSuccessClosure(closure)(event.webkitForce, event);
-      }, false);
+      // loop over each item that is returned
+      forEach(queryElement(selector), function(index, element){
+        element.addEventListener('webkitmouseforcechanged', function(event){
+          getSuccessClosure(closure).call(element, event.webkitForce, event);
+        }, false);
+      });
     },
 
-    // This method is meant to be called when targeting ONLY devices with 3D touch
+    // this handles the executing of the 3D Touch change event
     change3DTouch: function(selector, closure){
-      var el = queryElement(selector);
-      el.addEventListener('touchstart', function(event){
-        Touch3D.changeExecute = success;
-        Touch3D.startCheckingForce(event);
-      }, false);
-      el.addEventListener('touchmove', function(event){
-        // this.touch3DchangeExecute = success;
-        Touch3D.startCheckingForce(event);
-      }, false);
-      el.addEventListener('touchend', function(event){
-        Touch3D.touchDown = false;
-      }, false);
+      // loop over each item that is returned
+      forEach(queryElement(selector), function(index, element){
+
+        // add event for touch start and set changeExecute
+        element.addEventListener('touchstart', function(event){
+          // Touch3D.changeExecute = success;
+          Touch3D.startCheckingForce(event, closure);
+        }, false);
+
+        // // add event for touch move and set changeExecute
+        // element.addEventListener('touchmove', function(event){
+        //   // Touch3D.changeExecute = success;
+        //   Touch3D.startCheckingForce(event, closure);
+        // }, false);
+
+        // add event touch end to stop the change from running
+        element.addEventListener('touchend', function(event){
+          Touch3D.touchDown = false;
+        }, false);
+      });
     },
   }
 
@@ -229,34 +191,36 @@
 
   // 3D Touch class force handlers
   var Touch3D = {
-    startCheckingForce: function(event) {
+
+    // initialize the checking of the force pressure
+    startCheckingForce: function(event, closure) {
       this.touchDown = true;
       this.touch = event.touches[0];
       if(this.touch){
-        this.fetchForce();
+        this.fetchForce(closure);
       }
     },
 
-    fetchForce: function() {
+    // if this.touchDown is still set to true, setTimeout to call itself ver and over again
+    fetchForce: function(event, closure) {
       if(this.touchDown !== false) {
-        setTimeout(this.fetchForce, 10);
-        return this.touch.force || 0;
-      } else {
-        return 0;
+        setTimeout(this.fetchForce, 10, closure, event);
+        closure(this.touch.force || 0, event);
       }
     }
   }
 
-  // if the user has jQuery installed, use that, else query the document
+  // return all elements that match the query selector
   var queryElement = function(selector){
-
-    // if jQuery is not installed
-    if(typeof jQuery === 'undefined'){
-      return document.querySelector(selector);
-    } else {
-      return $(selector);
-    }
+    return document.querySelectorAll(selector);
   }
+
+  // loops over each item quered and calls the closure
+  var forEach = function (array, callback, scope) {
+    for (var i = 0; i < array.length; i++) {
+      callback.call(scope, i, array[i]); // passes back stuff we need
+    }
+  };
 
   var callClosure = function(closure, status){
     if(isObject(closure)){
@@ -330,23 +294,7 @@
     return input !== null && typeof input === 'object'
   }
 
-  // Assign the Pressure object to the global object so it can be called from inside the self executing anonymous function: http://markdalgleish.com/2011/03/self-executing-anonymous-functions/
+  // Assign the Pressure object to the global object so it can be called from inside the self executing anonymous function
   window.Pressure = Pressure;
-}(window))
+}(window));
 
-
-
-// Pressure.supported({
-//   success:function(){
-    Pressure.change('#element', function(force, event){
-      document.getElementById('element').style.width = Math.max((200 * force), 200) + 'px';
-      document.getElementById('element').innerHTML = force;
-    });
-//     console.log('User and Browser both support force touch');
-//   },
-//   fail: function(error){
-//     console.log(error);
-//   }
-// });
-
-// document.getElementById('element').addEventListener("webkitmouseforcechanged", forceChanged, false);
