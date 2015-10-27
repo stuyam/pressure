@@ -1,25 +1,43 @@
 // Created By Stuart Yamartino | MIT License | 2015
 
 
-// Wrap the entire library in a self executing anonymous function so as to no conflict
+// wrap the entire library in a self executing anonymous function so as to no conflict
 (function(window){
 
   //--------------------- Public API Section ---------------------//
-  // This is the start of the Pressure Object, this is the only object that is accessible to the end user
-  // Only the methods in this object can be called, making it the "public api"
+  // this is the start of the Pressure Object, this is the only object that is accessible to the end user
+  // only the methods in this object can be called, making it the "public api"
   var Pressure = {
 
 
-    // This method is to determine if the browser and/or user have support for force touch of 3D touch
-    // When this method is run, it will immediatly return if the browser does not support the force/3D touch,
+    // this method is to determine if the browser and/or user have support for force touch of 3D touch
+    // when this method is run, it will immediatly return if the browser does not support the force/3D touch,
     // however it will not return if the user has an supported trackpad or device until a click happens somewhere on the page
     supported: function(closure){
       Browser.checkSupport(closure);
     },
 
-    // This method will return a force value from the user and will automatically determine if the user has Force or 3D Touch
-    // It also accepts an optional type, this type is passed in by the following 2 methods to be explicit about which change event type they want
-    change: function(selector, closure, type){
+    // targets any device with Force of 3D Touch
+    change: function(selector, closure){
+      Router.changePressure(selector, closure);
+    },
+
+    // targets ONLY devices with Force Touch
+    changeForceTouch: function(selector, closure){
+      Router.changePressure(selector, closure, 'force');
+    },
+
+    // targets ONLY devices with 3D touch
+    change3DTouch: function(selector, closure){
+      Router.changePressure(selector, closure, '3d');
+    }
+  }
+
+  var Router = {
+
+    // this method will return a force value from the user and will automatically determine if the user has Force or 3D Touch
+    // it also accepts an optional type, this type is passed in by the following 2 methods to be explicit about which change event type they want
+    changePressure : function(selector, closure, type){
       Event.build(selector, closure, function(){
         // Call ONLY the Force Touch method and only if the user supports it
         if(Support.type === 'force' && type === 'force'){
@@ -37,17 +55,7 @@
         else if(Support.type === '3d' && type !== force){
           Event.change3DTouch(selector, closure);
         }
-      }.bind(this))
-    },
-
-    // targets ONLY devices with Force Touch
-    changeForceTouch: function(selector, closure){
-      this.change(selector, closure, 'force');
-    },
-
-    // targets ONLY devices with 3D touch
-    change3DTouch: function(selector, closure){
-      this.change(selector, closure, '3d');
+      }.bind(this));
     }
   }
 
@@ -62,8 +70,10 @@
       }
       // if the user doesn't have pressure support, run failure closure if it exists
       else if(Support.hasRun){
-        getFailClosure(userClosure)();
-      } else {
+        getFailClosure(userClosure)(failureObject());
+      }
+      // the user has not been tested for support yet, test their support and build closure
+      else {
         Browser.checkSupport({
           success: function(){
             closure();
@@ -213,18 +223,6 @@
     }
   }
 
-  // return all elements that match the query selector
-  var queryElement = function(selector){
-    return document.querySelectorAll(selector);
-  }
-
-  // loops over each item quered and calls the closure
-  var forEach = function (array, callback, scope) {
-    for (var i = 0; i < array.length; i++) {
-      callback.call(scope, i, array[i]); // passes back stuff we need
-    }
-  };
-
   var callClosure = function(closure, status){
     if(isObject(closure)){
       runObjectClosure(closure, status, 'success');
@@ -236,13 +234,6 @@
     }
   }
 
-  // http://stackoverflow.com/questions/135448/how-do-i-check-if-an-object-has-a-property-in-javascript
-  var hasOwnProperty = function(obj, prop) {
-    var proto = obj.__proto__ || obj.constructor.prototype;
-    return (prop in obj) &&
-        (!(prop in proto) || proto[prop] !== obj[prop]);
-  }
-
   // run the closure based on the returned status
   var runObjectClosure = function(closure, status, statusCheck){
     if(hasOwnProperty(closure, statusCheck) && status === statusCheck){
@@ -250,24 +241,6 @@
         closure[statusCheck](failureObject());
       } else {
         closure[statusCheck]();
-      }
-    }
-  }
-
-  // Standardized error reporting
-  var failureObject = function(){
-    switch (Support.failureType) {
-      case 'browser':
-        var message = 'Browser does not support Force Touch or 3D Touch.';
-        break;
-      case 'device':
-        var message = 'Device does not support Force Touch or 3D Touch.';
-        break;
-    }
-    return {
-      'error' : {
-        'type'    : Support.failureType,
-        'message' : message
       }
     }
   }
@@ -290,6 +263,45 @@
       }
     }
     return fail;
+  }
+
+  // Standardized error reporting
+  var failureObject = function(){
+    switch (Support.failureType) {
+      case 'browser':
+        var message = 'Browser does not support Force Touch or 3D Touch.';
+        break;
+      case 'device':
+        var message = 'Device does not support Force Touch or 3D Touch.';
+        break;
+    }
+    return {
+      'error' : {
+        'type'    : Support.failureType,
+        'message' : message
+      }
+    }
+  }
+
+  //------------------- Helpers Section -------------------//
+
+  // return all elements that match the query selector
+  var queryElement = function(selector){
+    return document.querySelectorAll(selector);
+  }
+
+  // loops over each item quered and calls the closure
+  var forEach = function (array, callback, scope) {
+    for (var i = 0; i < array.length; i++) {
+      callback.call(scope, i, array[i]); // passes back stuff we need
+    }
+  }
+
+  // http://stackoverflow.com/questions/135448/how-do-i-check-if-an-object-has-a-property-in-javascript
+  var hasOwnProperty = function(obj, prop) {
+    var proto = obj.__proto__ || obj.constructor.prototype;
+    return (prop in obj) &&
+        (!(prop in proto) || proto[prop] !== obj[prop]);
   }
 
   // Helper to check if input it an object

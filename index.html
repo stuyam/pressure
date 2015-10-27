@@ -3,17 +3,25 @@
     <style>
       .element{
         width: 200px;
-        height: 50px;
+        padding: 20px;
         background: red;
-        margin-bottom: 40px;
+        margin-bottom: 10px;
+      }
+      h3{
+        margin-top: 0;
+        margin-bottom: 10px;
       }
     </style>
   </head>
   <body>
-    <div class="element" id="el1"></div>
-    <div class="element" id="el2"></div>
-    <div class="element" id="el3"></div>
-    <div class="element" id="el4"></div>
+    <h3>Change Pressure</h3>
+    <div class="element" id="el1">0</div>
+    <h3>Change Pressure (target ONLY Force Touch)</h3>
+    <div class="element" id="el2">0</div>
+    <h3>Change Pressure (target ONLY 3D Touch)</h3>
+    <div class="element" id="el3">0</div>
+    <h3>Change Pressure with fail block callback</h3>
+    <div class="element" id="el4">0</div>
 
     <script type="text/javascript" src="pressure.js"></script>
     <script type="text/javascript" src="app.js"></script>

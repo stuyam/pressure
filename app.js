@@ -15,7 +15,6 @@ Pressure.changeForceTouch('#el2', function(force, event){
 });
 
 // Get back a change value on ONLY elements that support 3D Touch (iPhone 6s & iPhone 6s Plus)
-// TODO: BUG: this is also calling Force Touch
 Pressure.change3DTouch('#el3', function(force, event){
   this.style.width = Math.max((200 * force), 200) + 'px';
   this.innerHTML = force;
@@ -32,7 +31,6 @@ Pressure.change('#el4', {
     this.innerHTML = force;
     console.log('el4');
   },
-  // TODO: BUG: this error is returning undefined and not the correct error
   fail: function(error){
     console.log(error);
   }
