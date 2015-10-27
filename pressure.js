@@ -17,36 +17,35 @@
       Browser.checkSupport(closure);
     },
 
-    // This method will return a force value from the user and will automatically determine if the user has force or 3D touch
-    // It also accepts an optional type, this type is passed in by the next 2 methods to be explicit about which change event type they want
+    // This method will return a force value from the user and will automatically determine if the user has Force or 3D Touch
+    // It also accepts an optional type, this type is passed in by the following 2 methods to be explicit about which change event type they want
     change: function(selector, closure, type){
       Event.build(selector, closure, function(){
-
-        // if type is set explicitly to 'force' and the user has 'force' support
+        // Call ONLY the Force Touch method and only if the user supports it
         if(Support.type === 'force' && type === 'force'){
           Event.changeForceTouch(selector, closure);
         }
-        // if type is set explicitly to '3d' and the user has '3d' support
+        // Call ONLY the 3D Touch method and only if the user supports it
         else if(Support.type === '3d' && type === '3d'){
           Event.change3DTouch(selector, closure);
         }
-        // if the user has 'force' touch support
-        else if(Support.type === 'force'){
+        // Call Force Touch if the user supports it
+        else if(Support.type === 'force' && type !== '3d'){
           Event.changeForceTouch(selector, closure);
         }
-        // if the user has '3d' touch support
-        else if(Support.type === '3d'){
+        // Call 3D Touch if the user supports it
+        else if(Support.type === '3d' && type !== force){
           Event.change3DTouch(selector, closure);
         }
       }.bind(this))
     },
 
-    // This method is meant to be called when targeting ONLY devices with force touch
+    // targets ONLY devices with Force Touch
     changeForceTouch: function(selector, closure){
       this.change(selector, closure, 'force');
     },
 
-    // This method is meant to be called when targeting ONLY devices with 3D touch
+    // targets ONLY devices with 3D touch
     change3DTouch: function(selector, closure){
       this.change(selector, closure, '3d');
     }
@@ -56,9 +55,13 @@
 
     // this method builds events and handles event support on ever public method called by user
     build: function(selector, userClosure, closure){
+
+      // if the user has pressure support
       if(Support.forPressure){
         closure();
-      } else if(Support.hasRun){
+      }
+      // if the user doesn't have pressure support, run failure closure if it exists
+      else if(Support.hasRun){
         getFailClosure(userClosure)();
       } else {
         Browser.checkSupport({
