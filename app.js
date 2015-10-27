@@ -3,23 +3,18 @@ Pressure.change('#el1', function(force, event){
   // "this" is the element(s) returned by the closure
   this.style.width = Math.max((200 * force), 200) + 'px';
   this.innerHTML = force;
-  console.log('el1');
 });
 
 // Get back a change value on ONLY elements that support Force Touch (New Mac's)
 Pressure.changeForceTouch('#el2', function(force, event){
   this.style.width = Math.max((200 * force), 200) + 'px';
   this.innerHTML = force;
-  console.log('el2');
-
 });
 
 // Get back a change value on ONLY elements that support 3D Touch (iPhone 6s & iPhone 6s Plus)
 Pressure.change3DTouch('#el3', function(force, event){
   this.style.width = Math.max((200 * force), 200) + 'px';
   this.innerHTML = force;
-  console.log('el3');
-
 });
 
 // Example of change method with a failure closure
@@ -29,7 +24,6 @@ Pressure.change('#el4', {
   success: function(force, event){
     this.style.width = Math.max((200 * force), 200) + 'px';
     this.innerHTML = force;
-    console.log('el4');
   },
   fail: function(error){
     console.log(error);

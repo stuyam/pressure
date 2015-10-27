@@ -1,8 +1,8 @@
 // Created By Stuart Yamartino | MIT License | 2015
 
 
-// wrap the entire library in a self executing anonymous function so as to no conflict
-(function(window){
+// wrap the entire library in a self executing anonymous function so as to not conflict
+(function(window, document){
 
   //--------------------- Public API Section ---------------------//
   // this is the start of the Pressure Object, this is the only object that is accessible to the end user
@@ -52,7 +52,7 @@
           Event.changeForceTouch(selector, closure);
         }
         // Call 3D Touch if the user supports it
-        else if(Support.type === '3d' && type !== force){
+        else if(Support.type === '3d' && type !== 'force'){
           Event.change3DTouch(selector, closure);
         }
       }.bind(this));
@@ -311,5 +311,5 @@
 
   // Assign the Pressure object to the global object so it can be called from inside the self executing anonymous function
   window.Pressure = Pressure;
-}(window));
+}(window, document));
 
