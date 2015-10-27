@@ -97,11 +97,12 @@
     change3DTouch: function(selector, closure){
       // loop over each item that is returned
       forEach(queryElement(selector), function(index, element){
-
+        // create new Touch3D object
+        var touch = new Touch3D();
         // add event for touch start and set changeExecute
         element.addEventListener('touchstart', function(event){
           // Touch3D.changeExecute = success;
-          Touch3D.startCheckingForce(event, closure);
+          touch.startCheckingForce(event, closure);
         }, false);
 
         // // add event for touch move and set changeExecute
@@ -112,7 +113,7 @@
 
         // add event touch end to stop the change from running
         element.addEventListener('touchend', function(event){
-          Touch3D.touchDown = false;
+          touch.up();
         }, false);
       });
     },
@@ -123,13 +124,13 @@
 
     checkSupport: function(closure){
       if(Support.hasRun){
-        return Support.forPressure ? callClosure(closure, 'success') : callClosure(closure, 'fail');
+        callClosure(closure);
       }
-      if(this.browserSupported()){
+      else if(this.browserSupported()){
         this.testDeviceSupport(closure);
       } else {
         Support.browserFail();
-        callClosure(closure, 'fail');
+        callClosure(closure);
       }
     },
 
@@ -152,14 +153,12 @@
     },
 
     touchForceEnabled: function(){
-      Support.type = 'force';
-      Support.forPressure = true;
+      Support.didSucceed('force');
     },
 
     touch3DEnabled: function(event){
       if(event.touches[0].force !== undefined){
-        Support.type = '3d';
-        Support.forPressure = true;
+        Support.didSucceed('3d');
       }
       this.returnSupport();
     },
@@ -175,6 +174,38 @@
     }
   }
 
+  // 3D Touch function constructor
+  function Touch3D(){
+    this.touchDown = false;
+  }
+
+  // the user is touching
+  Touch3D.prototype.down = function(){
+    this.touchDown = true;
+  }
+
+  // the user is NOT touching
+  Touch3D.prototype.up = function(){
+    this.touchDown = false;
+  }
+
+  // initialize the checking of the force pressure
+  Touch3D.prototype.setupCheckingForce = function(event, closure) {
+    this.down();
+    // set touch event
+    this.touch = event.touches[0];
+    if(this.touch){
+      this.fetchForce(event, closure);
+    }
+  }
+
+  // if this.touchDown is still set to true, setTimeout to call itself ver and over again
+  Touch3D.prototype.fetchForce = function(event, closure) {
+    if(this.touchDown) {
+      setTimeout(this.fetchForce, 10, event, closure);
+      closure(this.touch.force || 0, event);
+    }
+  }
 
   // This class holds the states of the the Pressure support the user has
   var Support = {
@@ -199,49 +230,31 @@
       this.hasRun = true;
       this.forPressure = false;
       this.failureType = type;
-    }
-  }
-
-  // 3D Touch class force handlers
-  var Touch3D = {
-
-    // initialize the checking of the force pressure
-    startCheckingForce: function(event, closure) {
-      this.touchDown = true;
-      this.touch = event.touches[0];
-      if(this.touch){
-        this.fetchForce(closure);
-      }
     },
 
-    // if this.touchDown is still set to true, setTimeout to call itself ver and over again
-    fetchForce: function(event, closure) {
-      if(this.touchDown !== false) {
-        setTimeout(this.fetchForce, 10, closure, event);
-        closure(this.touch.force || 0, event);
-      }
+    didSucceed: function(type){
+      this.hasRun = true;
+      this.forPressure = true;
+      this.type = type;
     }
   }
 
-  var callClosure = function(closure, status){
+  var callClosure = function(closure){
     if(isObject(closure)){
-      runObjectClosure(closure, status, 'success');
-      runObjectClosure(closure, status, 'fail');
+      runObjectClosure(closure);
     } else {
-      if(status === 'success'){
+      if(Support.forPressure){
         closure();
       }
     }
   }
 
-  // run the closure based on the returned status
-  var runObjectClosure = function(closure, status, statusCheck){
-    if(hasOwnProperty(closure, statusCheck) && status === statusCheck){
-      if(status === 'fail'){
-        closure[statusCheck](failureObject());
-      } else {
-        closure[statusCheck]();
-      }
+  // runs the proper closures for the user if the closure is an object
+  var runObjectClosure = function(closure){
+    if(Support.forPressure && hasOwnProperty(closure, 'success')){
+      closure.success();
+    } else if(!Support.forPressure && hasOwnProperty(closure, 'fail')){
+      closure.fail(failureObject());
     }
   }
 
@@ -300,8 +313,7 @@
   // http://stackoverflow.com/questions/135448/how-do-i-check-if-an-object-has-a-property-in-javascript
   var hasOwnProperty = function(obj, prop) {
     var proto = obj.__proto__ || obj.constructor.prototype;
-    return (prop in obj) &&
-        (!(prop in proto) || proto[prop] !== obj[prop]);
+    return (prop in obj) && (!(prop in proto) || proto[prop] !== obj[prop]);
   }
 
   // Helper to check if input it an object
@@ -312,4 +324,3 @@
   // Assign the Pressure object to the global object so it can be called from inside the self executing anonymous function
   window.Pressure = Pressure;
 }(window, document));
-
