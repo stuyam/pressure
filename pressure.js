@@ -2,7 +2,7 @@
 
 
 // wrap the entire library in a self executing anonymous function so as to not conflict
-(function(window, document){
+// (function(window, document){
 
   //--------------------- Public API Section ---------------------//
   // this is the start of the Pressure Object, this is the only object that is accessible to the end user
@@ -95,14 +95,17 @@
 
     // this handles the executing of the 3D Touch change event
     change3DTouch: function(selector, closure){
+      console.log('ete')
       // loop over each item that is returned
       forEach(queryElement(selector), function(index, element){
         // create new Touch3D object
+        console.log('call new touch element');
         var touch = new Touch3D();
         // add event for touch start and set changeExecute
         element.addEventListener('touchstart', function(event){
           // Touch3D.changeExecute = success;
-          touch.startCheckingForce(event, closure);
+          console.log(element);
+          touch.startCheckingForce(event, closure, element);
         }, false);
 
         // // add event for touch move and set changeExecute
@@ -141,15 +144,22 @@
     testDeviceSupport: function(closure){
       Support.forPressure = false;
       this.returnSupportBind = this.returnSupport.bind(this, closure);
+
+      // check for Force Touch
       document.addEventListener('webkitmouseforcewillbegin', this.touchForceEnabled, false);
-      document.addEventListener('touchstart', this.touch3DEnabled, false);
       document.addEventListener('mousedown', this.returnSupportBind, false);
+
+      // check for 3D Touch
+      document.addEventListener('touchstart', this.touch3DEnabled, false);
+      document.addEventListener('touchstart', this.returnSupportBind, false);
     },
 
     removeDocumentListeners: function(){
+      // remove all the event listeners after the initial test
       document.removeEventListener('webkitmouseforcewillbegin', this.touchForceEnabled);
-      document.removeEventListener('touchstart', this.touch3DEnabled);
       document.removeEventListener('mousedown', this.returnSupportBind);
+      document.removeEventListener('touchstart', this.touch3DEnabled);
+      document.removeEventListener('touchstart', this.returnSupportBind);
     },
 
     touchForceEnabled: function(){
@@ -157,10 +167,11 @@
     },
 
     touch3DEnabled: function(event){
+      console.log(event);
+
       if(event.touches[0].force !== undefined){
         Support.didSucceed('3d');
       }
-      this.returnSupport();
     },
 
     returnSupport: function(closure){
@@ -190,8 +201,10 @@
   }
 
   // initialize the checking of the force pressure
-  Touch3D.prototype.setupCheckingForce = function(event, closure) {
+  Touch3D.prototype.startCheckingForce = function(event, closure, element) {
+    this.element = element;
     this.down();
+    console.log(event);
     // set touch event
     this.touch = event.touches[0];
     if(this.touch){
@@ -202,8 +215,9 @@
   // if this.touchDown is still set to true, setTimeout to call itself ver and over again
   Touch3D.prototype.fetchForce = function(event, closure) {
     if(this.touchDown) {
-      setTimeout(this.fetchForce, 10, event, closure);
-      closure(this.touch.force || 0, event);
+      this.touch = event.touches[0];
+      setTimeout(this.fetchForce.bind(this), 10, event, closure);
+      closure.call(this.element, this.touch.force || 0, event);
     }
   }
 
@@ -323,4 +337,4 @@
 
   // Assign the Pressure object to the global object so it can be called from inside the self executing anonymous function
   window.Pressure = Pressure;
-}(window, document));
+// }(window, document));
