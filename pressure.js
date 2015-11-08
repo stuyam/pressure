@@ -5,35 +5,43 @@
 // only the methods in this object can be called, making it the "public api"
 var Pressure = {
 
+  // targets any device with Force of 3D Touch
+  set: function(selector, closure){
+    Router.set(selector, closure);
+  },
+
+  // targets ONLY devices with Force Touch
+  setForceTouch: function(selector, closure){
+    Router.set(selector, closure, 'force');
+  },
+
+  // targets ONLY devices with 3D touch
+  set3DTouch: function(selector, closure){
+    Router.set(selector, closure, '3d');
+  },
 
   // this method is to determine if the browser and/or user have support for force touch of 3D touch
   // when this method is run, it will immediatly return if the browser does not support the force/3D touch,
   // however it will not return if the user has an supported trackpad or device until a click happens somewhere on the page
-  supported: function(closure, optionalType){
+  support: function(closure){
     Browser.checkSupport(closure);
   },
 
-  // targets any device with Force of 3D Touch
-  change: function(selector, closure, optionalType){
-    Router.changePressure(selector, closure, optionalType);
+  supportForceTouch: function(closure){
+    Browser.checkSupport(closure, 'force');
   },
 
-  // // targets ONLY devices with Force Touch
-  // changeForceTouch: function(selector, closure, optionalType){
-  //   Router.changePressure(selector, closure, 'force');
-  // },
+  support3DTouch: function(closure){
+    Browser.checkSupport(closure, '3d');
+  },
 
-  // // targets ONLY devices with 3D touch
-  // change3DTouch: function(selector, closure, optionalType){
-  //   Router.changePressure(selector, closure, '3d');
-  // }
 }
 
 var Router = {
 
   // this method will return a force value from the user and will automatically determine if the user has Force or 3D Touch
   // it also accepts an optional type, this type is passed in by the following 2 methods to be explicit about which change event type they want
-  changePressure : function(selector, closure, type){
+  set : function(selector, closure, type){
     Event.build(selector, closure, function(){
       // Call ONLY the Force Touch method and only if the user supports it
       if(Support.type === 'force' && type === 'force'){
@@ -52,7 +60,18 @@ var Router = {
         Event.change3DTouch(selector, closure);
       }
     }.bind(this));
+  },
+
+  support : function(closure, type){
+    if(type === 'force'){
+
+    } else if(type === '3d'){
+
+    } else {
+      Browser.checkSupport(closure);
+    }
   }
+
 }
 
 var Event = {
@@ -131,30 +150,50 @@ var Event = {
 
 var Browser = {
 
-  checkSupport: function(closure){
-    if(Support.hasRun){
-      callClosure(closure);
-    }
-    else if(this.browserSupported()){
-      this.testDeviceSupport(closure);
-    } else {
+  checkSupport: function(closure, type){
+    if( (this.browserForceSupported() || this.browser3DSupported()) && !Support.hasRun){
+      this.testDeviceSupport(closure, type);
+    } else if(!Support.hasRun) {
+      // XXX: this doesn't actually check this information right
       Support.browserFail();
-      callClosure(closure);
+      // if force may be supported but 3D is NOT
+      if(this.browserForceSupported() && type === '3d'){
+        runClosure(closure, 'failInstant', failureObject(type + '-maybe'));
+      }
+      // if 3D may be supported but force is NOT
+      else if(this.browser3DSupported() && type === 'force'){
+        runClosure(closure, 'failInstant', failureObject(type + '-maybe'));
+      }
+      // there is no support for either 3D or Force touch
+      else{
+        runClosure(closure, 'failInstant', failureObject());
+      }
     }
   },
 
-  browserSupported: function(){
-    return ('onwebkitmouseforcewillbegin' in document) || ('ontouchstart' in document);
+  browserForceSupported: function(){
+    return 'onwebkitmouseforcewillbegin' in document;
   },
 
-  testDeviceSupport: function(closure){
-    Support.forPressure = false;
-    this.returnSupportBind = this.returnSupport.bind(this, closure);
+  browser3DSupported: function(){
+    return 'ontouchstart' in document;
+  },
 
+  testDeviceSupport: function(closure, type){
+    Support.forPressure = false;
+    this.returnSupportBind = this.returnSupport.bind(this, closure, type);
+
+    this.addMouseEvents();
+    this.addTouchEvents();
+  },
+
+  addTouchEvents: function(){
     // check for Force Touch
     document.addEventListener('webkitmouseforcewillbegin', this.touchForceEnabled, false);
     document.addEventListener('mousedown', this.returnSupportBind, false);
+  },
 
+  addMouseEvents: function(){
     // check for 3D Touch
     document.addEventListener('touchstart', this.touch3DEnabled, false);
     document.addEventListener('touchstart', this.returnSupportBind, false);
@@ -173,20 +212,29 @@ var Browser = {
   },
 
   touch3DEnabled: function(event){
-    console.log(event);
-
     if(event.touches[0].force !== undefined){
       Support.didSucceed('3d');
     }
   },
 
-  returnSupport: function(closure){
+  returnSupport: function(closure, type){
     this.removeDocumentListeners();
-    if(Support.forPressure){
-      callClosure(closure, 'success');
-    } else {
+    // device supports force touch but user is checking for 3d support
+    if(Support.type === 'force' && type === '3d'){
+      runClosure(closure, 'failLater', failureObject(type));
+    }
+    // device supports 3d touch but user is checking for force support
+    else if(Support.type === '3d' && type === 'force'){
+      runClosure(closure, 'failLater', failureObject(type));
+    }
+    // device has support
+    else if(Support.forPressure){
+      runClosure(closure, 'success');
+    }
+    // fail
+    else{
       Support.deviceFail();
-      callClosure(closure, 'fail');
+      runClosure(closure, 'failLater', failureObject());
     }
   }
 }
@@ -259,24 +307,27 @@ var Support = {
   }
 }
 
-var callClosure = function(closure){
-  if(isObject(closure)){
-    runObjectClosure(closure);
-  } else {
-    if(Support.forPressure){
-      closure();
-    }
-  }
-}
+// var runClosure = function(closure, method){
+//   if(closure.hasOwnProperty(method)){
+//     closure[method]();
+//   }
+//   // if(isObject(closure)){
+//   //   runObjectClosure(closure);
+//   // } else {
+//   //   if(Support.forPressure){
+//   //     closure();
+//   //   }
+//   // }
+// }
 
-// runs the proper closures for the user if the closure is an object
-var runObjectClosure = function(closure){
-  if(Support.forPressure && closure.hasOwnProperty('success')){
-    closure.success();
-  } else if(!Support.forPressure && closure.hasOwnProperty('fail')){
-    closure.fail(failureObject());
-  }
-}
+// // runs the proper closures for the user if the closure is an object
+// var runObjectClosure = function(closure){
+//   if(Support.forPressure && closure.hasOwnProperty('success')){
+//     closure.success();
+//   } else if(!Support.forPressure && closure.hasOwnProperty('fail')){
+//     closure.fail(failureObject());
+//   }
+// }
 
 var getSuccessClosure = function(closure){
   if(isObject(closure)){
@@ -299,24 +350,46 @@ var getFailClosure = function(closure){
 }
 
 // Standardized error reporting
-var failureObject = function(){
-  switch (Support.failureType) {
+var failureObject = function(errorType){
+  var type = errorType || Support.failureType;
+  switch (type) {
     case 'browser':
       var message = 'Browser does not support Force Touch or 3D Touch.';
       break;
     case 'device':
       var message = 'Device does not support Force Touch or 3D Touch.';
       break;
+    case '3d':
+      var message = 'Browser does support Force Touch but not 3D Touch.';
+      break;
+    case 'force':
+      var message = 'Browser does support 3D Touch but not Force Touch.';
+      break;
+    // XXX: these maybe's are exactly correct
+    case '3d-maybe':
+      var message = 'Browser may support Force Touch but not 3D Touch.';
+      break;
+    case 'force-maybe':
+      var message = 'Browser may support 3D Touch but not Force Touch.';
+      break;
   }
   return {
     'error' : {
-      'type'    : Support.failureType,
+      'type'    : type,
       'message' : message
     }
   }
 }
 
 //------------------- Helpers Section -------------------//
+
+// run the closure if the property exists in the object
+var runClosure = function(closure, method){
+  if(closure.hasOwnProperty(method)){
+    // call the closure method and apply nth arguments if they exist
+    closure[method].apply(this, Array.prototype.slice.call(arguments, 2));
+  }
+}
 
 // return all elements that match the query selector
 var queryElement = function(selector){

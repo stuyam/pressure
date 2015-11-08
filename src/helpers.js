@@ -1,5 +1,13 @@
 //------------------- Helpers Section -------------------//
 
+// run the closure if the property exists in the object
+var runClosure = function(closure, method){
+  if(closure.hasOwnProperty(method)){
+    // call the closure method and apply nth arguments if they exist
+    closure[method].apply(this, Array.prototype.slice.call(arguments, 2));
+  }
+}
+
 // return all elements that match the query selector
 var queryElement = function(selector){
   return document.querySelectorAll(selector);
