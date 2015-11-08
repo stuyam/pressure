@@ -86,6 +86,11 @@ var Event = {
       element.addEventListener('webkitmouseforcechanged', function(event){
         getSuccessClosure(closure).call(element, event.webkitForce, event);
       }, false);
+
+      // prevent the default force touch action for bound elements
+      element.addEventListener('webkitmouseforcewillbegin', function(event){
+        event.preventDefault();
+      });
     });
   },
 
