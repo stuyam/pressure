@@ -10,16 +10,16 @@ var callClosure = function(closure){
 
 // runs the proper closures for the user if the closure is an object
 var runObjectClosure = function(closure){
-  if(Support.forPressure && hasOwnProperty(closure, 'success')){
+  if(Support.forPressure && closure.hasOwnProperty('success')){
     closure.success();
-  } else if(!Support.forPressure && hasOwnProperty(closure, 'fail')){
+  } else if(!Support.forPressure && closure.hasOwnProperty('fail')){
     closure.fail(failureObject());
   }
 }
 
 var getSuccessClosure = function(closure){
   if(isObject(closure)){
-    if(hasOwnProperty(closure, 'success')){
+    if(closure.hasOwnProperty('success')){
       return closure.success;
     }
   } else {
@@ -30,7 +30,7 @@ var getSuccessClosure = function(closure){
 var getFailClosure = function(closure){
   var fail = function(){}
   if(isObject(closure)){
-    if(hasOwnProperty(closure, 'fail')){
+    if(closure.hasOwnProperty('fail')){
       fail = closure.fail;
     }
   }

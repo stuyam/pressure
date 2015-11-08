@@ -91,6 +91,16 @@ var Event = {
       element.addEventListener('webkitmouseforcewillbegin', function(event){
         event.preventDefault();
       });
+
+      if (closure.hasOwnProperty('forceEnd')){
+        // call the forceEnd when the mouse goes up of leaves the element
+        element.addEventListener('mouseup', function(){
+          closure.forceEnd.call(element);
+        });
+        element.addEventListener('mouseleave', function(){
+          closure.forceEnd.call(element);
+        });
+      }
     });
   },
 
@@ -261,16 +271,16 @@ var callClosure = function(closure){
 
 // runs the proper closures for the user if the closure is an object
 var runObjectClosure = function(closure){
-  if(Support.forPressure && hasOwnProperty(closure, 'success')){
+  if(Support.forPressure && closure.hasOwnProperty('success')){
     closure.success();
-  } else if(!Support.forPressure && hasOwnProperty(closure, 'fail')){
+  } else if(!Support.forPressure && closure.hasOwnProperty('fail')){
     closure.fail(failureObject());
   }
 }
 
 var getSuccessClosure = function(closure){
   if(isObject(closure)){
-    if(hasOwnProperty(closure, 'success')){
+    if(closure.hasOwnProperty('success')){
       return closure.success;
     }
   } else {
@@ -281,7 +291,7 @@ var getSuccessClosure = function(closure){
 var getFailClosure = function(closure){
   var fail = function(){}
   if(isObject(closure)){
-    if(hasOwnProperty(closure, 'fail')){
+    if(closure.hasOwnProperty('fail')){
       fail = closure.fail;
     }
   }
@@ -318,12 +328,6 @@ var forEach = function (array, callback, scope) {
   for (var i = 0; i < array.length; i++) {
     callback.call(scope, i, array[i]); // passes back stuff we need
   }
-}
-
-// http://stackoverflow.com/questions/135448/how-do-i-check-if-an-object-has-a-property-in-javascript
-var hasOwnProperty = function(obj, prop) {
-  var proto = obj.__proto__ || obj.constructor.prototype;
-  return (prop in obj) && (!(prop in proto) || proto[prop] !== obj[prop]);
 }
 
 // Helper to check if input it an object

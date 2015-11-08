@@ -34,6 +34,16 @@ var Event = {
       element.addEventListener('webkitmouseforcewillbegin', function(event){
         event.preventDefault();
       });
+
+      if (closure.hasOwnProperty('forceEnd')){
+        // call the forceEnd when the mouse goes up of leaves the element
+        element.addEventListener('mouseup', function(){
+          closure.forceEnd.call(element);
+        });
+        element.addEventListener('mouseleave', function(){
+          closure.forceEnd.call(element);
+        });
+      }
     });
   },
 
