@@ -34,7 +34,6 @@ var Event = {
 
   // this handles the executing of the 3D Touch change event
   change3DTouch: function(selector, closure){
-    console.log('ete')
     // loop over each item that is returned
     forEach(queryElement(selector), function(index, element){
       // create new Touch3D object

@@ -21,14 +21,13 @@ gulp.task('scripts', function() {
       './src/support.js',
       './src/manager.js',
       './src/helpers.js',
-      './src/global.js',
-
+      './src/global.js'
     ])
     .pipe(concat('pressure.js'))
     .pipe(iife({
       useStrict: false,
-      params: ["window", "document"],
-      args: ["window", "document"]
+      params: ['window', 'document'],
+      args: ['window', 'document']
     }))
     .pipe(insert.prepend(HEADER_COMMENT))
     // .pipe(stripDebug())
