@@ -4,8 +4,6 @@
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 //--------------------- Public API Section ---------------------//
@@ -14,6 +12,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var Pressure = {
 
   // targets any device with Force of 3D Touch
+
   set: function set(selector, closure) {
     Router.set(selector, closure);
   },
@@ -27,28 +26,13 @@ var Pressure = {
   set3DTouch: function set3DTouch(selector, closure) {
     Router.set(selector, closure, '3d');
   }
-
 };
-
-// this method is to determine if the browser and/or user have support for force touch of 3D touch
-// when this method is run, it will immediatly return if the browser does not support the force/3D touch,
-// however it will not return if the user has an supported trackpad or device until a click happens somewhere on the page
-// support: function(closure){
-//   Browser.checkSupport(closure);
-// },
-
-// supportForceTouch: function(closure){
-//   Browser.checkSupport(closure, 'force');
-// },
-
-// support3DTouch: function(closure){
-//   Browser.checkSupport(closure, '3d');
-// },
 
 var Router = {
 
   // this method will return a force value from the user and will automatically determine if the user has Force or 3D Touch
   // it also accepts an optional type, this type is passed in by the following 2 methods to be explicit about which change event type they want
+
   set: function set(selector, closure, type) {
 
     forEachElement(selector, function (index, element) {
@@ -56,7 +40,6 @@ var Router = {
       el.routeEvents();
     });
   }
-
 };
 
 var Element = (function () {
@@ -393,11 +376,6 @@ var forEachElement = function forEachElement(selector, callback, scope) {
   for (var i = 0; i < array.length; i++) {
     callback.call(scope, i, array[i]); // passes back stuff we need
   }
-};
-
-// Helper to check if input it an object
-var isObject = function isObject(input) {
-  return input !== null && (typeof input === 'undefined' ? 'undefined' : _typeof(input)) === 'object';
 };
 
 // Check if the device is mobile or desktop

@@ -20,8 +20,3 @@ var forEachElement = function (selector, callback, scope) {
     callback.call(scope, i, array[i]); // passes back stuff we need
   }
 }
-
-// Helper to check if input it an object
-var isObject = function(input){
-  return input !== null && typeof input === 'object'
-}
