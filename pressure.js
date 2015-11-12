@@ -280,8 +280,8 @@ var TouchForce = (function () {
 
       if (this.block.hasOwnProperty('change')) {
         this.el.addEventListener('webkitmouseforcechanged', function (event) {
-          if (Support.forPressure) {
-            runClosure(_this6.block, 'change', _this6.el, event.webkitForce, event);
+          if (Support.forPressure && event.webkitForce !== 0) {
+            runClosure(_this6.block, 'change', _this6.el, _this6.normalizeForce(event.webkitForce), event);
           }
         }, false);
       }
@@ -328,6 +328,14 @@ var TouchForce = (function () {
     key: 'setDown',
     value: function setDown() {
       this.state = 'down';
+    }
+
+    // make the force the standard 0 to 1 scale and not the 1 to 3 scale
+
+  }, {
+    key: 'normalizeForce',
+    value: function normalizeForce(force) {
+      return (force - 1) / 2;
     }
   }]);
 

@@ -32,8 +32,8 @@ class TouchForce{
   change(){
     if(this.block.hasOwnProperty('change')){
       this.el.addEventListener('webkitmouseforcechanged', (event) => {
-        if(Support.forPressure){
-          runClosure(this.block, 'change', this.el, event.webkitForce, event);
+        if(Support.forPressure && event.webkitForce !== 0){
+          runClosure(this.block, 'change', this.el, this.normalizeForce(event.webkitForce), event);
         }
       }, false);
     }
@@ -74,6 +74,11 @@ class TouchForce{
 
   setDown(){
     this.state = 'down';
+  }
+
+  // make the force the standard 0 to 1 scale and not the 1 to 3 scale
+  normalizeForce(force){
+    return (force - 1) / 2;
   }
 
 }
