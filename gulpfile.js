@@ -6,6 +6,7 @@ var insert = require('gulp-insert');
 var rename = require('gulp-rename');
 var stripDebug = require('gulp-strip-debug');
 var uglify = require('gulp-uglify');
+var babel = require('gulp-babel');
 
 var HEADER_COMMENT = '// Pressure v0.0.1 alpha | Created By Stuart Yamartino | MIT License | 2015 \n';
 var DESTINATION = '.';
@@ -15,15 +16,17 @@ gulp.task('scripts', function() {
   gulp.src([
       './src/pressure.js',
       './src/router.js',
-      './src/event.js',
-      './src/browser.js',
-      './src/touch3d.js',
+      './src/element.js',
+      './src/adapters/touch_3d.js',
+      './src/adapters/touch_force.js',
       './src/support.js',
-      './src/manager.js',
       './src/helpers.js',
-      './src/global.js'
+      './src/final.js'
     ])
     .pipe(concat('pressure.js'))
+    .pipe(babel({
+        presets: ['es2015']
+    }))
     .pipe(iife({
       useStrict: false,
       params: ['window', 'document'],
@@ -44,4 +47,6 @@ gulp.task('scripts', function() {
 
 gulp.task('watch', function() {
   gulp.watch('src/*', ['scripts']);
+  gulp.watch('src/adapters/*', ['scripts']);
+
 });

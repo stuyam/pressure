@@ -5,25 +5,14 @@ var Support = {
 
   forPressure: false,
 
-  type: '',
+  type: false,
 
-  failureType: '',
-
-  browserFail: function(){
-    this.didFail('browser');
-  },
-
-  deviceFail: function(){
-    this.didFail('device');
-  },
-
-  didFail: function(type){
+  didFail(){
     this.hasRun = true;
     this.forPressure = false;
-    this.failureType = type;
   },
 
-  didSucceed: function(type){
+  didSucceed(type){
     this.hasRun = true;
     this.forPressure = true;
     this.type = type;
