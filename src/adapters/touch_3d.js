@@ -36,7 +36,6 @@ class Touch3D{
           if(this.touch){
             this.fetchForce(event);
           }
-          // runClosure(this.block, 'change', this.el);
         }
       }, false);
     }
@@ -72,6 +71,9 @@ class Touch3D{
 
   // link up the touch point to the correct element, this is to support multitouch
   selectTouch(event){
+    if(event.touches.length === 1){
+      return event.touches[0];
+    }
     for(var i = 0; i < event.touches.length; i++){
       if(event.touches[i].target === this.el){
         console.log(event.touches[i].force);

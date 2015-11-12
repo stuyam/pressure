@@ -198,7 +198,6 @@ var Touch3D = (function () {
             if (_this3.touch) {
               _this3.fetchForce(event);
             }
-            // runClosure(this.block, 'change', this.el);
           }
         }, false);
       }
@@ -243,6 +242,9 @@ var Touch3D = (function () {
   }, {
     key: 'selectTouch',
     value: function selectTouch(event) {
+      if (event.touches.length === 1) {
+        return event.touches[0];
+      }
       for (var i = 0; i < event.touches.length; i++) {
         if (event.touches[i].target === this.el) {
           console.log(event.touches[i].force);

@@ -29,6 +29,7 @@ Pressure.set('#el1, #el2', {
   change: function(force, event){
     this.style.width = ((200 * force) + 200) + 'px';
     this.innerHTML = force;
+    // this.style.background = "rgb(0," + map(force, 0, 1, 0, 255) + "," + map(force, 0, 1, 0, 255) + ")";
   },
 
   end: function(){
@@ -41,6 +42,10 @@ Pressure.set('#el1, #el2', {
     console.log('UNSUPPORTED');
   }
 });
+
+function map(x, in_min, in_max, out_min, out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 // Pressure.set('#el1', {
 //   start: function(){
