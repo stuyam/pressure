@@ -189,7 +189,7 @@ var Touch3D = (function () {
           if (Support.forPressure) {
             _this3.setDown();
             // set touch event
-            _this3.touch = event.touches[0];
+            _this3.touch = _this3.selectTouch(event); //.touches[0];
             if (_this3.touch) {
               _this3.fetchForce(event);
             }
@@ -217,9 +217,9 @@ var Touch3D = (function () {
     key: 'fetchForce',
     value: function fetchForce(event) {
       if (this.touchDown) {
-        this.touch = event.touches[0];
+        this.touch = this.selectTouch(event);
         setTimeout(this.fetchForce.bind(this), 10, event);
-        runClosure(this.block, 'change', this.el, this.touch.force || 0, event);
+        runClosure(this.block, 'change', this.el, this.touch.force, event);
       }
     }
   }, {
@@ -231,6 +231,19 @@ var Touch3D = (function () {
     key: 'setUp',
     value: function setUp() {
       this.touchDown = false;
+    }
+
+    // link up the touch point to the correct element, this is to support multitouch
+
+  }, {
+    key: 'selectTouch',
+    value: function selectTouch(event) {
+      for (var i = 0; i < event.touches.length; i++) {
+        if (event.touches[i].target === this.el) {
+          console.log(event.touches[i].force);
+          return event.touches[i];
+        }
+      }
     }
   }]);
 

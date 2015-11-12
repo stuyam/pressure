@@ -21,13 +21,14 @@
 // Example of change method with a failure closure
 // This structure can be used in any methods of Pressure
 // The failure block will return with an "error" and message showing why the device doesn't support 3D Touch and Force Touch
-Pressure.set('#el1', {
+Pressure.set('#el1, #el2', {
   start: function(){
     console.log('started!');
   },
 
   change: function(force, event){
     this.style.width = ((200 * force) + 200) + 'px';
+    console.log(event);
     this.innerHTML = force;
   },
 
@@ -41,6 +42,27 @@ Pressure.set('#el1', {
     console.log('UNSUPPORTED');
   }
 });
+
+// Pressure.set('#el1', {
+//   start: function(){
+//     console.log('started!');
+//   },
+
+//   change: function(force, event){
+//     this.style.width = ((200 * force) + 200) + 'px';
+//     this.innerHTML = force;
+//   },
+
+//   end: function(){
+//     console.log('ended!');
+//     this.style.width = '200px';
+//     this.innerHTML = 0;
+//   },
+
+//   unsupported: function(){
+//     console.log('UNSUPPORTED');
+//   }
+// });
 
 // The "Supported" method is just a wrapper to determind if a browser / device supports 3D Touch or Force Touch
 // If the browser does not support them, then the "fail" will be called immediately
