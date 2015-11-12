@@ -7,22 +7,9 @@ var Support = {
 
   type: false,
 
-  // failureType: '',
-
-  // mobile: '',
-
-  // browserFail(){
-  //   this.didFail('browser');
-  // },
-
-  // deviceFail(){
-  //   this.didFail('device');
-  // },
-
   didFail(){
     this.hasRun = true;
     this.forPressure = false;
-    // this.failureType = type;
   },
 
   didSucceed(type){

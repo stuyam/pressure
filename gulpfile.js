@@ -16,14 +16,12 @@ gulp.task('scripts', function() {
   gulp.src([
       './src/pressure.js',
       './src/router.js',
-      './src/event.js',
       './src/element.js',
       './src/adapters/touch_3d.js',
       './src/adapters/touch_force.js',
       './src/support.js',
-      './src/manager.js',
       './src/helpers.js',
-      './src/global.js'
+      './src/final.js'
     ])
     .pipe(concat('pressure.js'))
     .pipe(babel({

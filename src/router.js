@@ -7,29 +7,7 @@ var Router = {
     forEachElement(selector, function(index, element){
       var el = new Element(element, closure, type);
       el.routeEvents();
-      // this.testDeviceSupport(closure, type, element);
     });
-
-
-
-    // Call ONLY the Force Touch method and only if the user supports it
-    // if(type === 'force'){
-    //   Browser.buildEvent(function(selector, closure, type){
-    //     Event.changeForceTouch(selector, closure);
-    //   });
-    // }
-    // // Call ONLY the 3D Touch method and only if the user supports it
-    // else if(Support.type === '3d' && type === '3d'){
-    //   Event.change3DTouch(selector, closure);
-    // }
-    // // Call Force Touch if the user supports it
-    // else if(Support.type === 'force' && type !== '3d'){
-    //   Event.changeForceTouch(selector, closure);
-    // }
-    // // Call 3D Touch if the user supports it
-    // else if(Support.type === '3d' && type !== 'force'){
-    //   Event.change3DTouch(selector, closure);
-    // }
   }
 
 }
