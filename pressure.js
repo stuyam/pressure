@@ -13,18 +13,18 @@ var Pressure = {
 
   // targets any device with Force of 3D Touch
 
-  set: function set(selector, closure) {
-    Router.set(selector, closure);
+  set: function set(selector, closure, css) {
+    Router.set(selector, closure, null, css);
   },
 
   // targets ONLY devices with Force Touch
-  setForceTouch: function setForceTouch(selector, closure) {
-    Router.set(selector, closure, 'force');
+  setForceTouch: function setForceTouch(selector, closure, css) {
+    Router.set(selector, closure, 'force', css);
   },
 
   // targets ONLY devices with 3D touch
-  set3DTouch: function set3DTouch(selector, closure) {
-    Router.set(selector, closure, '3d');
+  set3DTouch: function set3DTouch(selector, closure, css) {
+    Router.set(selector, closure, '3d', css);
   }
 };
 
@@ -34,8 +34,13 @@ var Router = {
   // it also accepts an optional type, this type is passed in by the following 2 methods to be explicit about which change event type they want
 
   set: function set(selector, closure, type) {
+    var css = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
 
     forEachElement(selector, function (index, element) {
+      if (css) {
+        element.webkitUserSelect = "none";
+        // element.cursor = "pointer";
+      }
       var el = new Element(element, closure, type);
       el.routeEvents();
     });

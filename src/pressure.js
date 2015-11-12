@@ -4,18 +4,18 @@
 var Pressure = {
 
   // targets any device with Force of 3D Touch
-  set(selector, closure){
-    Router.set(selector, closure);
+  set(selector, closure, css){
+    Router.set(selector, closure, null, css);
   },
 
   // targets ONLY devices with Force Touch
-  setForceTouch(selector, closure){
-    Router.set(selector, closure, 'force');
+  setForceTouch(selector, closure, css){
+    Router.set(selector, closure, 'force', css);
   },
 
   // targets ONLY devices with 3D touch
-  set3DTouch(selector, closure){
-    Router.set(selector, closure, '3d');
+  set3DTouch(selector, closure, css){
+    Router.set(selector, closure, '3d', css);
   }
 
 }

@@ -28,7 +28,6 @@ Pressure.set('#el1, #el2', {
 
   change: function(force, event){
     this.style.width = ((200 * force) + 200) + 'px';
-    console.log(event);
     this.innerHTML = force;
   },
 
