@@ -21,16 +21,16 @@ var Pressure = {
   // this method is to determine if the browser and/or user have support for force touch of 3D touch
   // when this method is run, it will immediatly return if the browser does not support the force/3D touch,
   // however it will not return if the user has an supported trackpad or device until a click happens somewhere on the page
-  support: function(closure){
-    Browser.checkSupport(closure);
-  },
+  // support: function(closure){
+  //   Browser.checkSupport(closure);
+  // },
 
-  supportForceTouch: function(closure){
-    Browser.checkSupport(closure, 'force');
-  },
+  // supportForceTouch: function(closure){
+  //   Browser.checkSupport(closure, 'force');
+  // },
 
-  support3DTouch: function(closure){
-    Browser.checkSupport(closure, '3d');
-  },
+  // support3DTouch: function(closure){
+  //   Browser.checkSupport(closure, '3d');
+  // },
 
 }

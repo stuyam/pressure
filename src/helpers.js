@@ -1,10 +1,10 @@
 //------------------- Helpers Section -------------------//
 
 // run the closure if the property exists in the object
-var runClosure = function(closure, method){
+var runClosure = function(closure, method, element){
   if(closure.hasOwnProperty(method)){
     // call the closure method and apply nth arguments if they exist
-    closure[method].apply(this, Array.prototype.slice.call(arguments, 2));
+    closure[method].apply(element || this, Array.prototype.slice.call(arguments, 3));
   }
 }
 
@@ -14,7 +14,8 @@ var queryElement = function(selector){
 }
 
 // loops over each item quered and calls the closure
-var forEach = function (array, callback, scope) {
+var forEachElement = function (selector, callback, scope) {
+  var array = queryElement(selector);
   for (var i = 0; i < array.length; i++) {
     callback.call(scope, i, array[i]); // passes back stuff we need
   }

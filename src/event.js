@@ -1,31 +1,31 @@
 var Event = {
 
-  // this method builds events and handles event support on ever public method called by user
-  build: function(selector, userClosure, closure){
+  // // this method builds events and handles event support on ever public method called by user
+  // build: function(selector, userClosure, closure){
 
-    // if the user has pressure support
-    if(Support.forPressure){
-      closure();
-    }
-    // if the user doesn't have pressure support, run failure closure if it exists
-    else if(Support.hasRun){
-      getFailClosure(userClosure)(failureObject());
-    }
-    // the user has not been tested for support yet, test their support and build closure
-    else {
-      Browser.checkSupport({
-        success: function(){
-          closure();
-        },
-        fail: getFailClosure(userClosure)
-      });
-    }
-  },
+  //   // if the user has pressure support
+  //   if(Support.forPressure){
+  //     closure();
+  //   }
+  //   // if the user doesn't have pressure support, run failure closure if it exists
+  //   else if(Support.hasRun){
+  //     getFailClosure(userClosure)(failureObject());
+  //   }
+  //   // the user has not been tested for support yet, test their support and build closure
+  //   else {
+  //     Browser.checkSupport({
+  //       success: function(){
+  //         closure();
+  //       },
+  //       fail: getFailClosure(userClosure)
+  //     });
+  //   }
+  // },
 
   // this handles the executing of the Force Touch change event
   changeForceTouch: function(selector, closure){
     // loop over each item that is returned
-    forEach(queryElement(selector), function(index, element){
+    forEachElement(selector, function(index, element){
       element.addEventListener('webkitmouseforcechanged', function(event){
         getSuccessClosure(closure).call(element, event.webkitForce, event);
       }, false);
@@ -50,7 +50,7 @@ var Event = {
   // this handles the executing of the 3D Touch change event
   change3DTouch: function(selector, closure){
     // loop over each item that is returned
-    forEach(queryElement(selector), function(index, element){
+    forEachElement(selector, function(index, element){
       // create new Touch3D object
       var touch = new Touch3D();
       // add event for touch start

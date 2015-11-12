@@ -5,25 +5,27 @@ var Support = {
 
   forPressure: false,
 
-  type: '',
+  type: false,
 
-  failureType: '',
+  // failureType: '',
 
-  browserFail: function(){
-    this.didFail('browser');
-  },
+  // mobile: '',
 
-  deviceFail: function(){
-    this.didFail('device');
-  },
+  // browserFail(){
+  //   this.didFail('browser');
+  // },
 
-  didFail: function(type){
+  // deviceFail(){
+  //   this.didFail('device');
+  // },
+
+  didFail(){
     this.hasRun = true;
     this.forPressure = false;
-    this.failureType = type;
+    // this.failureType = type;
   },
 
-  didSucceed: function(type){
+  didSucceed(type){
     this.hasRun = true;
     this.forPressure = true;
     this.type = type;
