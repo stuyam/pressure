@@ -125,11 +125,11 @@ var Element = (function () {
       var _this = this;
 
       if (Support.mobile) {
-        this.element.addEventListener('mousedown', function () {
+        this.element.addEventListener('touchstart', function () {
           return runClosure(_this.block, 'unsupported');
         }, false);
       } else {
-        this.element.addEventListener('touchstart', function () {
+        this.element.addEventListener('mousedown', function () {
           return runClosure(_this.block, 'unsupported');
         }, false);
       }

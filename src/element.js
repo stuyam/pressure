@@ -55,9 +55,9 @@ class Element{
 
   failEvents(){
     if(Support.mobile){
-      this.element.addEventListener('mousedown', () => runClosure(this.block, 'unsupported'), false);
-    } else {
       this.element.addEventListener('touchstart', () => runClosure(this.block, 'unsupported'), false);
+    } else {
+      this.element.addEventListener('mousedown', () => runClosure(this.block, 'unsupported'), false);
     }
   }
 

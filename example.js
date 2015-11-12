@@ -21,7 +21,7 @@
 // Example of change method with a failure closure
 // This structure can be used in any methods of Pressure
 // The failure block will return with an "error" and message showing why the device doesn't support 3D Touch and Force Touch
-Pressure.set3DTouch('#el1', {
+Pressure.setForceTouch('#el1', {
   start: function(){
     console.log('started!');
   },
