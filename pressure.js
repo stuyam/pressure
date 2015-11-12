@@ -14,36 +14,17 @@ var Pressure = {
   // targets any device with Force of 3D Touch
 
   set: function set(selector, closure, css) {
-    Router.set(selector, closure, null, css);
+    loopPressureElements(selector, closure, null, css);
   },
 
   // targets ONLY devices with Force Touch
   setForceTouch: function setForceTouch(selector, closure, css) {
-    Router.set(selector, closure, 'force', css);
+    loopPressureElements(selector, closure, 'force', css);
   },
 
   // targets ONLY devices with 3D touch
   set3DTouch: function set3DTouch(selector, closure, css) {
-    Router.set(selector, closure, '3d', css);
-  }
-};
-
-var Router = {
-
-  // this method will return a force value from the user and will automatically determine if the user has Force or 3D Touch
-  // it also accepts an optional type, this type is passed in by the following 2 methods to be explicit about which change event type they want
-
-  set: function set(selector, closure, type) {
-    var css = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
-
-    forEachElement(selector, function (index, element) {
-      if (css) {
-        element.style.webkitUserSelect = "none";
-        // element.style.cursor = "pointer";
-      }
-      var el = new Element(element, closure, type);
-      el.routeEvents();
-    });
+    loopPressureElements(selector, closure, '3d', css);
   }
 };
 
@@ -59,54 +40,41 @@ var Element = (function () {
   _createClass(Element, [{
     key: 'routeEvents',
     value: function routeEvents() {
-      // if on desktop and requesting Force Touch
-      if (Support.mobile === false && this.type === 'force') {
-        this.addMouseEvents();
+      // if on desktop and requesting Force Touch or not requesting 3D Touch
+      if (Support.mobile === false && (this.type === 'force' || this.type !== '3d')) {
+        this.touchForceAdapter();
       }
-      // if on mobile and requesting 3D Touch
-      else if (Support.mobile === true && this.type === '3d') {
-          this.addTouchEvents();
+      // if on mobile and requesting 3D Touch or not requestion Force Touch
+      else if (Support.mobile === true && (this.type === '3d' || this.type !== 'force')) {
+          this.touch3DAdapter();
         }
-        // if on desktop and NOT requesting 3D Touch
-        else if (Support.mobile === false && this.type !== '3d') {
-            this.addMouseEvents();
+        // if it is requesting a type and your browser is of other type
+        else {
+            this.failEvents();
           }
-          // if on mobile and NOT requesting Force Touch
-          else if (Support.mobile === true && this.type !== 'force') {
-              this.addTouchEvents();
-            }
-            // else make sure the fail events are setup
-            else {
-                this.failEvents();
-              }
     }
   }, {
-    key: 'addMouseEvents',
-    value: function addMouseEvents() {
-      // check for Force Touch
-      this.element.addEventListener('webkitmouseforcewillbegin', this.touchForceEnabled, false);
-      this.always();
-      var touchForce = new TouchForce(this);
-      touchForce.bindEvents();
+    key: 'touchForceAdapter',
+    value: function touchForceAdapter() {
+      var adapter = new Adapter(new TouchForceAdapter(this));
+      adapter.handle();
     }
   }, {
-    key: 'addTouchEvents',
-    value: function addTouchEvents() {
-      // check for 3D Touch
-      this.element.addEventListener('touchstart', this.touch3DEnabled, false);
-      this.always();
-      var touch3D = new Touch3D(this);
-      touch3D.bindEvents();
-    }
-  }, {
-    key: 'always',
-    value: function always() {
-      if (Support.mobile) {
-        this.element.addEventListener('touchstart', this.dispatch.bind(this), false);
-      } else {
-        this.element.addEventListener('mousedown', this.dispatch.bind(this), false);
+    key: 'touch3DAdapter',
+    value: (function (_touch3DAdapter) {
+      function touch3DAdapter() {
+        return _touch3DAdapter.apply(this, arguments);
       }
-    }
+
+      touch3DAdapter.toString = function () {
+        return _touch3DAdapter.toString();
+      };
+
+      return touch3DAdapter;
+    })(function () {
+      var adapter = new Adapter(new touch3DAdapter(this));
+      adapter.handle();
+    })
   }, {
     key: 'failEvents',
     value: function failEvents() {
@@ -122,38 +90,43 @@ var Element = (function () {
         }, false);
       }
     }
-  }, {
-    key: 'touchForceEnabled',
-    value: function touchForceEnabled(event) {
-      event.preventDefault();
-      Support.didSucceed('force');
-    }
-  }, {
-    key: 'touch3DEnabled',
-    value: function touch3DEnabled(event) {
-      if (event.touches[0].force !== undefined) {
-        Support.didSucceed('3d');
-      }
-    }
-  }, {
-    key: 'dispatch',
-    value: function dispatch() {
-      if (!Support.forPressure) {
-        Support.didFail();
-        runClosure(this.block, 'unsupported', this.element);
-      } else {
-        this.element.removeEventListener('webkitmouseforcewillbegin', this.touchForceEnabled);
-        this.element.removeEventListener('touchstart', this.touch3DEnabled);
-      }
-    }
   }]);
 
   return Element;
 })();
 
-var Touch3D = (function () {
-  function Touch3D(element) {
-    _classCallCheck(this, Touch3D);
+var Adapter = (function () {
+  function Adapter(adapter) {
+    _classCallCheck(this, Adapter);
+
+    this.adapter = adapter;
+  }
+
+  _createClass(Adapter, [{
+    key: 'handle',
+    value: function handle() {
+      this.adapter.support();
+
+      if (this.adapter.block.hasOwnProperty('start')) {
+        this.adapter.start();
+      }
+
+      if (this.adapter.block.hasOwnProperty('change')) {
+        this.adapter.change();
+      }
+
+      if (this.adapter.block.hasOwnProperty('end')) {
+        this.adapter.end();
+      }
+    }
+  }]);
+
+  return Adapter;
+})();
+
+var Touch3DAdapter = (function () {
+  function Touch3DAdapter(element) {
+    _classCallCheck(this, Touch3DAdapter);
 
     this.element = element;
     this.el = element.element;
@@ -161,65 +134,67 @@ var Touch3D = (function () {
     this.touchDown = false;
   }
 
-  _createClass(Touch3D, [{
-    key: 'bindEvents',
-    value: function bindEvents() {
-      this.start();
-
-      this.change();
-
-      this.end();
+  _createClass(Touch3DAdapter, [{
+    key: 'support',
+    value: function support() {
+      this.addListener('touchstart', this._dispatch.bind(this));
+      this.el.addEventListener('touchstart', this._dispatch.bind(this), false);
+    }
+  }, {
+    key: '_dispatch',
+    value: function _dispatch(event) {
+      if (event.touches[0].force !== undefined) {
+        Support.didSucceed('3d');
+        this.el.removeEventListener('touchstart', this._dispatch.bind(this));
+      } else {
+        Support.didFail();
+        runClosure(this.block, 'unsupported', this.el);
+      }
     }
   }, {
     key: 'start',
     value: function start() {
       var _this2 = this;
 
-      if (this.block.hasOwnProperty('start')) {
-        // call 'start' when the touch goes down
-        this.el.addEventListener('touchstart', function () {
-          if (Support.forPressure) {
-            runClosure(_this2.block, 'start', _this2.el);
-          }
-        }, false);
-      }
+      // call 'start' when the touch goes down
+      this.el.addEventListener('touchstart', function () {
+        if (Support.forPressure) {
+          runClosure(_this2.block, 'start', _this2.el);
+        }
+      }, false);
     }
   }, {
     key: 'change',
     value: function change() {
       var _this3 = this;
 
-      if (this.block.hasOwnProperty('change')) {
-        this.el.addEventListener('touchstart', function (event) {
-          if (Support.forPressure) {
-            _this3.setDown();
-            // set touch event
-            _this3.touch = _this3.selectTouch(event); //.touches[0];
-            if (_this3.touch) {
-              _this3.fetchForce(event);
-            }
+      this.el.addEventListener('touchstart', function (event) {
+        if (Support.forPressure) {
+          _this3.setDown();
+          // set touch event
+          _this3.touch = _this3.selectTouch(event);
+          if (_this3.touch) {
+            _this3.fetchForce(event);
           }
-        }, false);
-      }
+        }
+      }, false);
     }
   }, {
     key: 'end',
     value: function end() {
       var _this4 = this;
 
-      if (this.block.hasOwnProperty('end')) {
-        // call 'end' when the touch goes up
-        this.el.addEventListener('touchend', function () {
-          if (Support.forPressure) {
-            _this4.setUp();
-            runClosure(_this4.block, 'end', _this4.el);
-          }
-        }, false);
-      }
+      // call 'end' when the touch goes up
+      this.el.addEventListener('touchend', function () {
+        if (Support.forPressure) {
+          _this4.setUp();
+          runClosure(_this4.block, 'end', _this4.el);
+        }
+      }, false);
     }
   }, {
-    key: 'fetchForce',
-    value: function fetchForce(event) {
+    key: '_fetchForce',
+    value: function _fetchForce(event) {
       if (this.touchDown) {
         this.touch = this.selectTouch(event);
         setTimeout(this.fetchForce.bind(this), 10, event);
@@ -227,21 +202,21 @@ var Touch3D = (function () {
       }
     }
   }, {
-    key: 'setDown',
-    value: function setDown() {
+    key: '_setDown',
+    value: function _setDown() {
       this.touchDown = true;
     }
   }, {
-    key: 'setUp',
-    value: function setUp() {
+    key: '_setUp',
+    value: function _setUp() {
       this.touchDown = false;
     }
 
     // link up the touch point to the correct element, this is to support multitouch
 
   }, {
-    key: 'selectTouch',
-    value: function selectTouch(event) {
+    key: '_selectTouch',
+    value: function _selectTouch(event) {
       if (event.touches.length === 1) {
         return event.touches[0];
       }
@@ -254,84 +229,95 @@ var Touch3D = (function () {
     }
   }]);
 
-  return Touch3D;
+  return Touch3DAdapter;
 })();
 
-var TouchForce = (function () {
-  function TouchForce(element) {
-    _classCallCheck(this, TouchForce);
+var TouchForceAdapter = (function () {
+  function TouchForceAdapter(element) {
+    _classCallCheck(this, TouchForceAdapter);
 
     this.element = element;
     this.el = element.element;
     this.block = element.block;
     this.state = 'up';
+    this._preventDefaultForceTouch();
   }
 
-  _createClass(TouchForce, [{
-    key: 'bindEvents',
-    value: function bindEvents() {
-      this.start();
+  // Support check methods
 
-      this.change();
-
-      this.end();
-
-      this.preventDefaultForceTouch();
+  _createClass(TouchForceAdapter, [{
+    key: 'support',
+    value: function support() {
+      this.el.addEventListener('webkitmouseforcewillbegin', this._touchForceEnabled, false);
+      this.el.addEventListener('mousedown', this._dispatch.bind(this), false);
     }
+  }, {
+    key: '_touchForceEnabled',
+    value: function _touchForceEnabled(event) {
+      event.preventDefault();
+      Support.didSucceed('force');
+    }
+  }, {
+    key: '_dispatch',
+    value: function _dispatch() {
+      if (!Support.forPressure) {
+        Support.didFail();
+        runClosure(this.block, 'unsupported', this.el);
+      } else {
+        this.el.removeEventListener('webkitmouseforcewillbegin', this._touchForceEnabled);
+      }
+    }
+
+    // Start
+
   }, {
     key: 'start',
     value: function start() {
       var _this5 = this;
 
-      if (this.block.hasOwnProperty('start')) {
-        // call 'start' when the mouse goes down
-        this.el.addEventListener('mousedown', function () {
-          if (Support.forPressure) {
-            _this5.setDown();
-            runClosure(_this5.block, 'start', _this5.el);
-          }
-        }, false);
-      }
+      // call 'start' when the mouse goes down
+      this.el.addEventListener('mousedown', function () {
+        if (Support.forPressure) {
+          _this5._setDown();
+          runClosure(_this5.block, 'start', _this5.el);
+        }
+      }, false);
     }
   }, {
     key: 'change',
     value: function change() {
       var _this6 = this;
 
-      if (this.block.hasOwnProperty('change')) {
-        this.el.addEventListener('webkitmouseforcechanged', function (event) {
-          if (Support.forPressure && event.webkitForce !== 0) {
-            runClosure(_this6.block, 'change', _this6.el, _this6.normalizeForce(event.webkitForce), event);
-          }
-        }, false);
-      }
+      this.el.addEventListener('webkitmouseforcechanged', function (event) {
+        if (Support.forPressure && event.webkitForce !== 0) {
+          runClosure(_this6.block, 'change', _this6.el, _this6._normalizeForce(event.webkitForce), event);
+        }
+      }, false);
     }
   }, {
     key: 'end',
     value: function end() {
       var _this7 = this;
 
-      if (this.block.hasOwnProperty('end')) {
-        // call 'end' when the mouse goes up or leaves the element
-        this.el.addEventListener('mouseup', function () {
-          if (Support.forPressure) {
-            _this7.setUp();
+      // call 'end' when the mouse goes up or leaves the element
+      this.el.addEventListener('mouseup', function () {
+        if (Support.forPressure) {
+          _this7._setUp();
+          runClosure(_this7.block, 'end', _this7.el);
+        }
+      }, false);
+      this.el.addEventListener('mouseleave', function () {
+        if (Support.forPressure) {
+          if (_this7.state === 'down') {
             runClosure(_this7.block, 'end', _this7.el);
           }
-        }, false);
-        this.el.addEventListener('mouseleave', function () {
-          if (Support.forPressure) {
-            if (_this7.state === 'down') {
-              runClosure(_this7.block, 'end', _this7.el);
-            }
-            _this7.setUp();
-          }
-        }, false);
-      }
+          _this7._setUp();
+        }
+      }, false);
     }
   }, {
-    key: 'preventDefaultForceTouch',
-    value: function preventDefaultForceTouch() {
+    key: '_preventDefaultForceTouch',
+    value: function _preventDefaultForceTouch() {
       // prevent the default force touch action for bound elements
       this.el.addEventListener('webkitmouseforcewillbegin', function (event) {
         if (Support.forPressure) {
@@ -340,26 +326,26 @@ var TouchForce = (function () {
       }, false);
     }
   }, {
-    key: 'setUp',
-    value: function setUp() {
+    key: '_setUp',
+    value: function _setUp() {
       this.state = 'up';
     }
   }, {
-    key: 'setDown',
-    value: function setDown() {
+    key: '_setDown',
+    value: function _setDown() {
       this.state = 'down';
     }
 
     // make the force the standard 0 to 1 scale and not the 1 to 3 scale
 
   }, {
-    key: 'normalizeForce',
-    value: function normalizeForce(force) {
+    key: '_normalizeForce',
+    value: function _normalizeForce(force) {
       return (force - 1) / 2;
     }
   }]);
 
-  return TouchForce;
+  return TouchForceAdapter;
 })();
 
 // This class holds the states of the the Pressure support the user has
@@ -385,6 +371,21 @@ var Support = {
 
 //------------------- Helpers Section -------------------//
 
+var loopPressureElements = function loopPressureElements(selector, closure, type) {
+  var css = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
+
+  var elements = queryElement(selector);
+  for (var i = 0; i < elements.length; i++) {
+    // override css if they don't want it set
+    if (css) {
+      elements[i].style.webkitUserSelect = "none";
+      // elements[i].style.cursor = "pointer";
+    }
+    var el = new Element(elements[i], closure, type);
+    el.routeEvents();
+  }
+};
+
 // run the closure if the property exists in the object
 var runClosure = function runClosure(closure, method, element) {
   if (closure.hasOwnProperty(method)) {
@@ -396,14 +397,6 @@ var runClosure = function runClosure(closure, method, element) {
 // return all elements that match the query selector
 var queryElement = function queryElement(selector) {
   return document.querySelectorAll(selector);
-};
-
-// loops over each item quered and calls the closure
-var forEachElement = function forEachElement(selector, callback, scope) {
-  var array = queryElement(selector);
-  for (var i = 0; i < array.length; i++) {
-    callback.call(scope, i, array[i]); // passes back stuff we need
-  }
 };
 
 // Check if the device is mobile or desktop
