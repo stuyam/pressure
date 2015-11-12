@@ -5,8 +5,8 @@ var Router = {
   set(selector, closure, type, css = true){
     forEachElement(selector, function(index, element){
       if(css){
-        element.webkitUserSelect = "none";
-        // element.cursor = "pointer";
+        element.style.webkitUserSelect = "none";
+        // element.style.cursor = "pointer";
       }
       var el = new Element(element, closure, type);
       el.routeEvents();
