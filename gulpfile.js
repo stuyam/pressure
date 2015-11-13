@@ -15,13 +15,13 @@ var DESTINATION = '.';
 gulp.task('scripts', function() {
   gulp.src([
       './src/pressure.js',
-      './src/router.js',
       './src/element.js',
-      './src/adapters/touch_3d.js',
-      './src/adapters/touch_force.js',
+      './src/adapter.js',
+      './src/adapters/base_adapter.js',
+      './src/adapters/touch_3d_adapter.js',
+      './src/adapters/touch_force_adapter.js',
       './src/support.js',
       './src/helpers.js',
-      './src/final.js'
     ])
     .pipe(concat('pressure.js'))
     .pipe(babel({

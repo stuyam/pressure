@@ -2,7 +2,7 @@
   "name": "pressure",
   "version": "0.0.1",
   "description": "Pressure is a JavaScript library for handling both Force Touch and 3D Touch through a single API",
-  "main": "pressure.js",
+  "main": "index.js",
   "dependencies": {},
   "devDependencies": {
     "babel-preset-es2015": "^6.1.2",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Yamartino/Pressure.git"
+    "url": "git+https://github.com/yamartino/pressure.git"
   },
   "keywords": [
     "forcetouch",
@@ -35,7 +35,7 @@
   "author": "Stuart Yamartino",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Yamartino/Pressure/issues"
+    "url": "https://github.com/yamartino/pressure/issues"
   },
-  "homepage": "https://github.com/Yamartino/Pressure#readme"
+  "homepage": "https://github.com/yamartino/pressure#readme"
 }
