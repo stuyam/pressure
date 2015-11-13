@@ -389,7 +389,7 @@ var Support = {
 var loopPressureElements = function loopPressureElements(selector, closure, type) {
   var css = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
 
-  var elements = queryElement(selector);
+  var elements = document.querySelectorAll(selector);
   for (var i = 0; i < elements.length; i++) {
     // override css if they don't want it set
     if (css) {
@@ -407,11 +407,6 @@ var runClosure = function runClosure(closure, method, element) {
     // call the closure method and apply nth arguments if they exist
     closure[method].apply(element || this, Array.prototype.slice.call(arguments, 3));
   }
-};
-
-// return all elements that match the query selector
-var queryElement = function queryElement(selector) {
-  return document.querySelectorAll(selector);
 };
 
 // Check if the device is mobile or desktop
