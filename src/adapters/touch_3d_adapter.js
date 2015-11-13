@@ -1,21 +1,17 @@
-class Touch3DAdapter{
+class Touch3DAdapter extends BaseAdapter{
 
   constructor(element){
-    this.element = element;
-    this.el = element.element;
-    this.block = element.block;
-    this.touchDown = false;
+    super(element);
   }
 
   support(){
-    this.addListener('touchstart', this._dispatch.bind(this));
-    this.el.addEventListener('touchstart', this._dispatch.bind(this), false);
+    this.add('touchstart', this._dispatch.bind(this));
   }
 
   _dispatch(event){
     if(event.touches[0].force !== undefined){
       Support.didSucceed('3d');
-      this.el.removeEventListener('touchstart', this._dispatch.bind(this));
+      this.remove('touchstart', this._dispatch.bind(this));
     } else {
       Support.didFail();
       runClosure(this.block, 'unsupported', this.el);
@@ -24,50 +20,42 @@ class Touch3DAdapter{
 
   start(){
     // call 'start' when the touch goes down
-    this.el.addEventListener('touchstart', () => {
+    this.add('touchstart', () => {
       if(Support.forPressure){
         runClosure(this.block, 'start', this.el);
       }
-    }, false);
+    });
   }
 
   change(){
-    this.el.addEventListener('touchstart', (event) =>{
+    this.add('touchstart', (event) =>{
       if(Support.forPressure){
-        this.setDown();
+        this._setDown();
         // set touch event
-        this.touch = this.selectTouch(event);
+        this.touch = this._selectTouch(event);
         if(this.touch){
-          this.fetchForce(event);
+          this._fetchForce(event);
         }
       }
-    }, false);
+    });
   }
 
   end(){
     // call 'end' when the touch goes up
-    this.el.addEventListener('touchend', () => {
+    this.add('touchend', () => {
       if(Support.forPressure){
-        this.setUp();
+        this._setUp();
         runClosure(this.block, 'end', this.el);
       }
-    }, false);
+    });
   }
 
   _fetchForce(event){
-    if(this.touchDown) {
-      this.touch = this.selectTouch(event);
-      setTimeout(this.fetchForce.bind(this), 10, event);
+    if(this.down) {
+      this.touch = this._selectTouch(event);
+      setTimeout(this._fetchForce.bind(this), 10, event);
       runClosure(this.block, 'change', this.el, this.touch.force, event);
     }
-  }
-
-  _setDown(){
-    this.touchDown = true;
-  }
-
-  _setUp(){
-    this.touchDown = false;
   }
 
   // link up the touch point to the correct element, this is to support multitouch

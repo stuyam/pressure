@@ -27,7 +27,7 @@ class Element{
   }
 
   touch3DAdapter(){
-    var adapter = new Adapter(new touch3DAdapter(this));
+    var adapter = new Adapter(new Touch3DAdapter(this));
     adapter.handle();
   }
 
