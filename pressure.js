@@ -76,11 +76,11 @@ var Element = (function () {
 
       if (Support.mobile) {
         this.element.addEventListener('touchstart', function () {
-          return runClosure(_this.block, 'unsupported');
+          return runClosure(_this.block, 'unsupported', _this.element);
         }, false);
       } else {
         this.element.addEventListener('mousedown', function () {
-          return runClosure(_this.block, 'unsupported');
+          return runClosure(_this.block, 'unsupported', _this.element);
         }, false);
       }
     }

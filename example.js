@@ -23,35 +23,36 @@
 // The failure block will return with an "error" and message showing why the device doesn't support 3D Touch and Force Touch
 var block = {
   start: function(){
-    console.log('started!');
   },
 
   change: function(force, event){
     this.style.width = ((200 * force) + 200) + 'px';
     this.innerHTML = force;
-    // this.style.background = "rgb(0," + map(force, 0, 1, 0, 255) + "," + map(force, 0, 1, 0, 255) + ")";
+    this.style.backgroundColor = "rgb(" + parseInt(map(force, 0, 1, 255, 0)) + ",0," + parseInt(map(force, 0, 1, 0, 255)) +")";
+    this.style.color = force > 0.4 ? 'white' : 'black';
   },
 
   end: function(){
-    console.log('ended!');
     this.style.width = '200px';
     this.innerHTML = 0;
+    this.style.backgroundColor = 'red';
+    this.style.color = 'black';
   },
 
   unsupported: function(){
-    console.log('UNSUPPORTED');
+    console.log(this);
+    this.innerHTML = 'Your device / browser does not support this :(';
   }
 }
 
 Pressure.set('#el1', block);
 Pressure.setForceTouch('#el2', block);
 Pressure.set3DTouch('#el3', block);
-Pressure.set('#el4', block);
-
 
 function map(x, in_min, in_max, out_min, out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+
 
 // Pressure.set('#el1', {
 //   start: function(){
