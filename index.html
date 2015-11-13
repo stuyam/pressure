@@ -1,6 +1,8 @@
 <!doctype>
 <html>
   <head>
+    <script src="https://use.typekit.net/uqo0cpv.js"></script>
+    <script>try{Typekit.load({ async: true });}catch(e){}</script>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/poet.css">
     <link rel="stylesheet" type="text/css" href="css/prism.css">
@@ -11,79 +13,35 @@
   <body>
     <div class="container">
       <span class="mighty-2 text-center-block">Pressure.js</span>
-      <p class="text-fluid text-indent font-serif" style="margin-bottom: 0;">Pressure is a JavaScript library that makes dealing with Apple's Force Touch and 3D Touch simple. Force Touch for new Macs and 3D Touch for the new iPhone 6s and 6s Plus, all bundled under one roof with a simple API that makes working with them painless.</p>
-      <p class="text-fluid text-indent font-serif">Pressure gives you a handle on browsers that do and don't support Force or 3D touch so you can plan for the users experince if they don't support it.
-      <a class="text-center-block" style="margin-top: 8px;" href="https://github.com/Yamartino/Pressure">Download on <b>GitHub</b></a>
+      <p class="text-fluid text-indent" style="margin-bottom: 0;">Pressure is a JavaScript library that makes dealing with Apple's Force Touch and 3D Touch simple. Force Touch for new Macs and 3D Touch for the new iPhone 6s and 6s Plus, all bundled under one roof with a simple API that makes working with them painless.</p>
+      <p class="text-fluid text-indent">Pressure gives you a handle on browsers that do and don't support Force or 3D touch so you can plan for the users experince if they don't support it.</p>
+      <a class="text-center-block" class="download" href="https://github.com/yamartino/pressure">Download on <b>GitHub</b></a>
       <div class="social-buttons">
         <a class="github-button" href="https://github.com/yamartino/pressure" data-count-href="/yamartino/pressure/stargazers" data-count-api="/repos/yamartino/pressure#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star yamartino/pressure on GitHub">Star</a>
         <a class="twitter-share-button" href="https://twitter.com/intent/tweet?text=#PressureJS makes working with #ForceTouch and #3DTouch painless and great to use on the web http://yamartino.github.io/Pressure">Tweet</a>
       </div>
+      <h3>Examples</h3>
       <div class="h4 doc-title">1. Pressure Change</div>
       <p>The best part about Pressure is that is uses a single API that works on both Force Touch and 3D Touch. (note: Apple currently only has support for desktop and mobile safari, but luckily with pressure you can test for that)</p>
       <div class="doc-section">
         <div class="doc-top">
-          <h3>Change Pressure</h3>
+          <h4>Change Pressure</h4>
           <div class="element" id="el1">0</div>
-          <h3>Change Pressure (target ONLY Force Touch)</h3>
+          <h4>Change Pressure (target ONLY Force Touch)</h4>
           <div class="element" id="el2">0</div>
-          <h3>Change Pressure (target ONLY 3D Touch)</h3>
+          <h4>Change Pressure (target ONLY 3D Touch)</h4>
           <div class="element" id="el3">0</div>
-          <h3>Change Pressure with fail block callback</h3>
-          <div class="element" id="el4">0</div>
         </div>
-        <div class="doc-bottom">
-          <pre class="language-javascript"><code>// Get back a change value on all elements matching the selector
-Pressure.change('#el1', function(force, event){
-  // "this" is the element(s) returned by the closure
-  this.style.width = Math.max((200 * force), 200) + 'px';
-  this.innerHTML = force;
-});
-
-// Get back a change value on ONLY elements that support Force Touch (New Mac's)
-Pressure.changeForceTouch('#el2', function(force, event){
-  this.style.width = Math.max((200 * force), 200) + 'px';
-  this.innerHTML = force;
-});
-
-// Get back a change value on ONLY elements that support 3D Touch (iPhone 6s & iPhone 6s Plus)
-Pressure.change3DTouch('#el3', function(force, event){
-  this.style.width = Math.max((200 * force), 200) + 'px';
-  this.innerHTML = force;
-});
-
-// Example of change method with a failure closure
-// This structure can be used in any methods of Pressure
-// The failure block will return with an "error" and message showing why the device doesn't support 3D Touch and Force Touch
-Pressure.change('#el4', {
-  success: function(force, event){
-    this.style.width = Math.max((200 * force), 200) + 'px';
-    this.innerHTML = force;
-  },
-  fail: function(error){
-    console.log(error);
-  }
-});
-
-// The "Supported" method is just a wrapper to determind if a browser / device supports 3D Touch or Force Touch
-// If the browser does not support them, then the "fail" will be called immediately
-// If the browser is supported but the device is not, a click somewhere on the page has to happen to determine success or failure
-Pressure.supported({
-  success:function(){
-    console.log('User and Browser both support force touch');
-  },
-  fail: function(error){
-    console.log(error);
-  }
-});
-</code></pre>
-        </div>
+<!--         <div class="doc-bottom">
+          <pre class="language-javascript"><code></code></pre>
+        </div> -->
       </div>
 
 
       <footer class="text-center-block">Pressure is created and maintained by Stuart Yamartino | <a class="text-smart-underline" href="https://twitter.com/StuYam">Twitter</a> | <a class="text-smart-underline" href="https://github.com/Yamartino">GitHub</a></footer>
     </div>
 
-    <script type="text/javascript" src="js/pressure.js"></script>
+    <script type="text/javascript" src="js/pressure.min.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
     <!-- GitHub. -->
     <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>

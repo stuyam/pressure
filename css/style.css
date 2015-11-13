@@ -2,6 +2,10 @@
   box-sizing: border-box;
 }
 
+html, body{
+  font-family: "myriad-pro", sans-serif;
+}
+
 .container{
   display: block;
   width: 100%;
@@ -9,6 +13,10 @@
   position: relative;
   margin: auto;
   padding: 0 20px;
+}
+
+.download{
+  margin-top: 5px;
 }
 
 .doc-section{
@@ -29,6 +37,7 @@
 pre{
   background: #f7f7f9 !important;
   margin-bottom: 0 !important;
+  border: 0 !important;
 }
 
 hr{
