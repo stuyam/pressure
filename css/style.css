@@ -6,6 +6,13 @@ html, body{
   font-family: "myriad-pro", sans-serif;
 }
 
+header{
+  background: #00C8FF;
+  color: white;
+  padding: 20px;
+  margin-bottom: 40px;
+}
+
 .container{
   display: block;
   width: 100%;
@@ -15,8 +22,9 @@ html, body{
   padding: 0 20px;
 }
 
-.download{
+a.download{
   margin-top: 5px;
+  color: #FFC800 !important;
 }
 
 .doc-section{
@@ -69,10 +77,23 @@ footer{
 .element{
   width: 200px;
   padding: 20px;
-  background: red;
+  background: #FFC800;
   margin-bottom: 10px;
+  border-radius: 30px;
 }
 h3{
   margin-top: 0;
   margin-bottom: 10px;
+}
+
+#peanuts{
+  width: 100% !important;
+  -moz-filter: blur(20px);
+  -webkit-filter: blur(20px);
+  filter: blur(20px);
+  -khtml-user-select: none;
+  -o-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
