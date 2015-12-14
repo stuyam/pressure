@@ -199,10 +199,8 @@ var Touch3DAdapter = (function (_BaseAdapter) {
   }, {
     key: '_dispatch',
     value: function _dispatch(event) {
-      console.log(navigator.userAgent);
-      console.log(event.touches[0].force * 99999999999999999999999999999999);
-      console.log(event.touches);
       if (event.touches[0].force !== undefined) {
+        // can't check full support from this info
         Support.didSucceed('3d');
         this.remove('touchstart', this._dispatch.bind(this));
       } else {
