@@ -30,7 +30,7 @@ gulp.task('scripts', function() {
   .pipe(iife({
     useStrict: false,
     params: ['window', 'document'],
-    args: ['window', 'document']
+    args: ['typeof window !== "undefined" ? window : false', 'typeof document !== "undefined" ? document : false']
   }))
   .pipe(insert.prepend(HEADER_COMMENT))
   // .pipe(stripDebug())

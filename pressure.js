@@ -4,6 +4,8 @@
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
@@ -188,7 +190,12 @@ var Touch3DAdapter = (function (_BaseAdapter) {
   function Touch3DAdapter(element) {
     _classCallCheck(this, Touch3DAdapter);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Touch3DAdapter).call(this, element));
+    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(Touch3DAdapter).call(this, element));
+
+    _this2._startDeepPressSetEnabled = false;
+    _this2._endDeepPressSetEnabled = false;
+    _this2._inDeepPress = false;
+    return _this2;
   }
 
   _createClass(Touch3DAdapter, [{
@@ -250,6 +257,40 @@ var Touch3DAdapter = (function (_BaseAdapter) {
       });
     }
   }, {
+    key: 'startDeepPress',
+    value: function startDeepPress() {
+      this._startDeepPressSetEnabled = true;
+      // the logic for this runs in the '_callStartDeepPress' method
+    }
+  }, {
+    key: 'endDeepPress',
+    value: function endDeepPress() {
+      this._endDeepPressSetEnabled = true;
+      // the logic for this runs in the '_callEndDeepPress' method
+    }
+  }, {
+    key: '_callStartDeepPress',
+    value: function _callStartDeepPress() {
+      if (this._startDeepPressSetEnabled === true) {
+        if (this._inDeepPress === false) {
+          runClosure(this.block, 'startDeepPress', this.el);
+        } else {
+          this._inDeepPress = true;
+        }
+      }
+    }
+  }, {
+    key: '_callEndDeepPress',
+    value: function _callEndDeepPress() {
+      if (this._endDeepPressSetEnabled === true) {
+        if (this._inDeepPress === true) {
+          runClosure(this.block, 'endDeepPress', this.el);
+        } else {
+          this._inDeepPress = false;
+        }
+      }
+    }
+  }, {
     key: '_fetchForce',
     value: function _fetchForce(event) {
       if (this.down) {
@@ -269,7 +310,8 @@ var Touch3DAdapter = (function (_BaseAdapter) {
       }
       for (var i = 0; i < event.touches.length; i++) {
         if (event.touches[i].target === this.el) {
-          console.log(event.touches[i].force);
+          // console.log(event.touches[i].force);
+          event.touches[i] >= 0.5 ? this._callStartDeepPress() : this._callEndDeepPress();
           return event.touches[i];
         }
       }
@@ -462,6 +504,18 @@ var runClosure = function runClosure(closure, method, element) {
 // Check if the device is mobile or desktop
 Support.mobile = 'ontouchstart' in document;
 
-// Assign the Pressure object to the global object so it can be called from inside the self executing anonymous function
-window.Pressure = Pressure;
-}(window, document));
+// Assign the Pressure object to the global object (or module for npm) so it can be called from inside the self executing anonymous function
+if (window === false || document === false) {
+  if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === "object" && _typeof(module.exports) === "object") {
+    // For CommonJS and CommonJS-like environments where a proper `window`
+    // is present, execute Pressure.
+    // For environments that do not have a `window` with a `document`
+    // (such as Node.js) Pressure does not work
+    module.exports = Pressure;
+  } else {
+    window.Pressure = Pressure;
+  }
+} else {
+  throw new Error("Pressure requires a window with a document");
+}
+}(typeof window !== "undefined" ? window : false, typeof document !== "undefined" ? document : false));

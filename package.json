@@ -2,7 +2,7 @@
   "name": "pressure",
   "version": "0.0.1",
   "description": "Pressure is a JavaScript library for handling both Force Touch and 3D Touch through a single API",
-  "main": "index.js",
+  "main": "pressure.min.js",
   "dependencies": {},
   "devDependencies": {
     "babel-preset-es2015": "^6.1.2",
