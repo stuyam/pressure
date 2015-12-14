@@ -39,6 +39,14 @@ var block = {
     this.style.color = 'black';
   },
 
+  startDeepPress: function(){
+    console.log('start deep PRESS!');
+  },
+
+  endDeepPress: function(){
+    console.log('END deep PRESS!');
+  },
+
   unsupported: function(){
     console.log(this);
     this.innerHTML = 'Your device / browser does not support this :(';

@@ -19,6 +19,14 @@ class Adapter{
       this.adapter.end();
     }
 
+    if(this.adapter.block.hasOwnProperty('startDeepPress')){
+      this.adapter.startDeepPress();
+    }
+
+    if(this.adapter.block.hasOwnProperty('endDeepPress')){
+      this.adapter.endDeepPress();
+    }
+
   }
 
 }

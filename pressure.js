@@ -112,6 +112,14 @@ var Adapter = (function () {
       if (this.adapter.block.hasOwnProperty('end')) {
         this.adapter.end();
       }
+
+      if (this.adapter.block.hasOwnProperty('startDeepPress')) {
+        this.adapter.startDeepPress();
+      }
+
+      if (this.adapter.block.hasOwnProperty('endDeepPress')) {
+        this.adapter.endDeepPress();
+      }
     }
   }]);
 
@@ -180,6 +188,9 @@ var Touch3DAdapter = (function (_BaseAdapter) {
   }, {
     key: '_dispatch',
     value: function _dispatch(event) {
+      console.log(navigator.userAgent);
+      console.log(event.touches[0].force * 99999999999999999999999999999999);
+      console.log(event.touches);
       if (event.touches[0].force !== undefined) {
         Support.didSucceed('3d');
         this.remove('touchstart', this._dispatch.bind(this));
@@ -337,6 +348,36 @@ var TouchForceAdapter = (function (_BaseAdapter2) {
             runClosure(_this9.block, 'end', _this9.el);
           }
           _this9._setUp();
+        }
+      });
+    }
+  }, {
+    key: 'startDeepPress',
+    value: function startDeepPress() {
+      var _this10 = this;
+
+      this.add('webkitmouseforcedown', function () {
+        if (Support.forPressure) {
+          runClosure(_this10.block, 'startDeepPress', _this10.el);
+        }
+      });
+    }
+  }, {
+    key: 'endDeepPress',
+    value: function endDeepPress() {
+      var _this11 = this;
+
+      this.add('webkitmouseforceup', function () {
+        if (Support.forPressure) {
+          runClosure(_this11.block, 'endDeepPress', _this11.el);
+        }
+      });
+      this.add('mouseleave', function () {
+        if (Support.forPressure) {
+          if (_this11.down === true) {
+            runClosure(_this11.block, 'endDeepPress', _this11.el);
+          }
+          _this11._setUp();
         }
       });
     }

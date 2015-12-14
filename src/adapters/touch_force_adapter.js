@@ -61,6 +61,30 @@ class TouchForceAdapter extends BaseAdapter{
     });
   }
 
+  startDeepPress(){
+    this.add('webkitmouseforcedown', () => {
+      if(Support.forPressure){
+        runClosure(this.block, 'startDeepPress', this.el);
+      }
+    });
+  }
+
+  endDeepPress(){
+    this.add('webkitmouseforceup', () => {
+      if(Support.forPressure){
+        runClosure(this.block, 'endDeepPress', this.el);
+      }
+    });
+    this.add('mouseleave', () => {
+      if(Support.forPressure){
+        if(this.down === true){
+          runClosure(this.block, 'endDeepPress', this.el);
+        }
+        this._setUp();
+      }
+    });
+  }
+
   _preventDefaultForceTouch(){
     // prevent the default force touch action for bound elements
     this.add('webkitmouseforcewillbegin', (event) => {

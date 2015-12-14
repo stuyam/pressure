@@ -9,6 +9,9 @@ class Touch3DAdapter extends BaseAdapter{
   }
 
   _dispatch(event){
+    console.log(navigator.userAgent);
+    console.log(event.touches[0].force * 99999999999999999999999999999999);
+    console.log(event.touches);
     if(event.touches[0].force !== undefined){
       Support.didSucceed('3d');
       this.remove('touchstart', this._dispatch.bind(this));
