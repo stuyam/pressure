@@ -16,6 +16,17 @@ var Pressure = {
   // targets ONLY devices with 3D touch
   set3DTouch(selector, closure, css){
     loopPressureElements(selector, closure, '3d', css);
+  },
+
+  // the interpolate method allows for interpolating a value between two values based on two input values
+  // example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
+  interpolate(x, in_min, in_max, out_min, out_max){
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  },
+
+  // map is an alias for the above 'interpolate' method
+  map(){
+    this.interpolate.apply(this, arguments);
   }
 
 }

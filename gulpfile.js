@@ -21,7 +21,6 @@ gulp.task('scripts', function() {
     './src/adapters/touch_3d_adapter.js',
     './src/adapters/touch_force_adapter.js',
     './src/support.js',
-    './src/public_helpers.js',
     './src/helpers.js',
   ])
   .pipe(concat('pressure.js'))

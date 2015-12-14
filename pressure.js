@@ -1,4 +1,4 @@
-// Pressure v0.0.1 alpha | Created By Stuart Yamartino | MIT License | 2015 
+// Pressure v0.0.2 alpha | Created By Stuart Yamartino | MIT License | 2015 
 ;(function(window, document) {
 'use strict';
 
@@ -29,6 +29,17 @@ var Pressure = {
   // targets ONLY devices with 3D touch
   set3DTouch: function set3DTouch(selector, closure, css) {
     loopPressureElements(selector, closure, '3d', css);
+  },
+
+  // the interpolate method allows for interpolating a value between two values based on two input values
+  // example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
+  interpolate: function interpolate(x, in_min, in_max, out_min, out_max) {
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  },
+
+  // map is an alias for the above 'interpolate' method
+  map: function map() {
+    this.interpolate.apply(this, arguments);
   }
 };
 
