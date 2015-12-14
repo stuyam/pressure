@@ -2,6 +2,9 @@ class Touch3DAdapter extends BaseAdapter{
 
   constructor(element){
     super(element);
+    this._startDeepPressSetEnabled = false;
+    this._endDeepPressSetEnabled = false;
+    this._inDeepPress = false;
   }
 
   support(){
@@ -51,6 +54,36 @@ class Touch3DAdapter extends BaseAdapter{
     });
   }
 
+  startDeepPress(){
+    this._startDeepPressSetEnabled = true;
+    // the logic for this runs in the '_callStartDeepPress' method
+  }
+
+  endDeepPress(){
+    this._endDeepPressSetEnabled = true;
+    // the logic for this runs in the '_callEndDeepPress' method
+  }
+
+  _callStartDeepPress(){
+    if(this._startDeepPressSetEnabled === true){
+      if(this._inDeepPress === false){
+        runClosure(this.block, 'startDeepPress', this.el);
+      } else {
+        this._inDeepPress = true;
+      }
+    }
+  }
+
+  _callEndDeepPress(){
+    if(this._endDeepPressSetEnabled === true){
+      if(this._inDeepPress === true){
+        runClosure(this.block, 'endDeepPress', this.el);
+      } else {
+        this._inDeepPress = false;
+      }
+    }
+  }
+
   _fetchForce(event){
     if(this.down) {
       this.touch = this._selectTouch(event);
@@ -66,7 +99,8 @@ class Touch3DAdapter extends BaseAdapter{
     }
     for(var i = 0; i < event.touches.length; i++){
       if(event.touches[i].target === this.el){
-        console.log(event.touches[i].force);
+        // console.log(event.touches[i].force);
+        event.touches[i] >= 0.5 ? this._callStartDeepPress() : this._callEndDeepPress();
         return event.touches[i];
       }
     }
