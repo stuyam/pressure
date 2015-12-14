@@ -25,7 +25,7 @@ var runClosure = function(closure, method, element){
 Support.mobile = 'ontouchstart' in document;
 
 // Assign the Pressure object to the global object (or module for npm) so it can be called from inside the self executing anonymous function
-if(window === false || document === false){
+if(window !== false){
   if ( typeof module === "object" && typeof module.exports === "object" ) {
   // For CommonJS and CommonJS-like environments where a proper `window`
   // is present, execute Pressure.

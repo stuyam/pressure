@@ -14,6 +14,7 @@ var DESTINATION = '.';
 // JS concat, strip debugging and minify
 gulp.task('scripts', function() {
   gulp.src([
+    './src/setup.js',
     './src/pressure.js',
     './src/element.js',
     './src/adapter.js',
@@ -29,8 +30,8 @@ gulp.task('scripts', function() {
   }))
   .pipe(iife({
     useStrict: false,
-    params: ['window', 'document'],
-    args: ['typeof window !== "undefined" ? window : false', 'typeof document !== "undefined" ? document : false']
+    params: ['window'],
+    args: ['typeof window !== "undefined" ? window : false']
   }))
   .pipe(insert.prepend(HEADER_COMMENT))
   // .pipe(stripDebug())

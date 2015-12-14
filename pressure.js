@@ -1,5 +1,5 @@
 // Pressure v0.0.2 alpha | Created By Stuart Yamartino | MIT License | 2015 
-;(function(window, document) {
+;(function(window) {
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -11,6 +11,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// set global document to the library
+var document = window !== false ? window.document : false;
 
 //--------------------- Public API Section ---------------------//
 // this is the start of the Pressure Object, this is the only object that is accessible to the end user
@@ -505,7 +508,7 @@ var runClosure = function runClosure(closure, method, element) {
 Support.mobile = 'ontouchstart' in document;
 
 // Assign the Pressure object to the global object (or module for npm) so it can be called from inside the self executing anonymous function
-if (window === false || document === false) {
+if (window !== false) {
   if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === "object" && _typeof(module.exports) === "object") {
     // For CommonJS and CommonJS-like environments where a proper `window`
     // is present, execute Pressure.
@@ -518,4 +521,4 @@ if (window === false || document === false) {
 } else {
   throw new Error("Pressure requires a window with a document");
 }
-}(typeof window !== "undefined" ? window : false, typeof document !== "undefined" ? document : false));
+}(typeof window !== "undefined" ? window : false));
