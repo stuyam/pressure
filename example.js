@@ -28,7 +28,7 @@ var block = {
   change: function(force, event){
     this.style.width = ((200 * force) + 200) + 'px';
     this.innerHTML = force;
-    this.style.backgroundColor = "rgb(" + parseInt(map(force, 0, 1, 255, 0)) + ",0," + parseInt(map(force, 0, 1, 0, 255)) +")";
+    this.style.backgroundColor = "rgb(" + parseInt(Pressure.map(force, 0, 1, 255, 0)) + ",0," + parseInt(Pressure.map(force, 0, 1, 0, 255)) +")";
     this.style.color = force > 0.4 ? 'white' : 'black';
   },
 
@@ -56,10 +56,6 @@ var block = {
 Pressure.set('#el1', block);
 Pressure.setForceTouch('#el2', block);
 Pressure.set3DTouch('#el3', block);
-
-function map(x, in_min, in_max, out_min, out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
 
 
 // Pressure.set('#el1', {

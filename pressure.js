@@ -39,7 +39,7 @@ var Pressure = {
 
   // map is an alias for the above 'interpolate' method
   map: function map() {
-    this.interpolate.apply(this, arguments);
+    return this.interpolate.apply(this, arguments);
   }
 };
 
