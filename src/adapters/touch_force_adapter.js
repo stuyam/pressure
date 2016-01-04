@@ -17,7 +17,7 @@ class TouchForceAdapter extends BaseAdapter{
   }
 
   _dispatch(){
-    if(!Support.forPressure){
+    if(Support.forPressure === false){
       Support.didFail();
       runClosure(this.block, 'unsupported', this.el);
     } else {
@@ -55,6 +55,7 @@ class TouchForceAdapter extends BaseAdapter{
       if(Support.forPressure){
         if(this.down === true){
           runClosure(this.block, 'end', this.el);
+          runClosure(this.block, 'endDeepPress', this.el);
         }
         this._setUp();
       }
@@ -64,6 +65,7 @@ class TouchForceAdapter extends BaseAdapter{
   startDeepPress(){
     this.add('webkitmouseforcedown', () => {
       if(Support.forPressure){
+        this._setDeepDown();
         runClosure(this.block, 'startDeepPress', this.el);
       }
     });
@@ -72,15 +74,8 @@ class TouchForceAdapter extends BaseAdapter{
   endDeepPress(){
     this.add('webkitmouseforceup', () => {
       if(Support.forPressure){
+        this._setDeepUp();
         runClosure(this.block, 'endDeepPress', this.el);
-      }
-    });
-    this.add('mouseleave', () => {
-      if(Support.forPressure){
-        if(this.down === true){
-          runClosure(this.block, 'endDeepPress', this.el);
-        }
-        this._setUp();
       }
     });
   }

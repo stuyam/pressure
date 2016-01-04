@@ -1,4 +1,4 @@
-// Pressure v0.0.2 alpha | Created By Stuart Yamartino | MIT License | 2015 
+// Pressure v0.0.2 | Created By Stuart Yamartino | MIT License | 2015-2016 
 ;(function(window) {
 'use strict';
 
@@ -117,25 +117,11 @@ var Adapter = (function () {
     value: function handle() {
       this.adapter.support();
 
-      if (this.adapter.block.hasOwnProperty('start')) {
-        this.adapter.start();
-      }
-
-      if (this.adapter.block.hasOwnProperty('change')) {
-        this.adapter.change();
-      }
-
-      if (this.adapter.block.hasOwnProperty('end')) {
-        this.adapter.end();
-      }
-
-      if (this.adapter.block.hasOwnProperty('startDeepPress')) {
-        this.adapter.startDeepPress();
-      }
-
-      if (this.adapter.block.hasOwnProperty('endDeepPress')) {
-        this.adapter.endDeepPress();
-      }
+      this.adapter.start();
+      this.adapter.change();
+      this.adapter.end();
+      this.adapter.startDeepPress();
+      this.adapter.endDeepPress();
     }
   }]);
 
@@ -150,6 +136,7 @@ var BaseAdapter = (function () {
     this.el = element.element;
     this.block = element.block;
     this.down = false;
+    this.deepDown = false;
   }
 
   _createClass(BaseAdapter, [{
@@ -182,6 +169,16 @@ var BaseAdapter = (function () {
     value: function _setUp() {
       this.down = false;
     }
+  }, {
+    key: '_setDeepDown',
+    value: function _setDeepDown() {
+      this.deepDown = true;
+    }
+  }, {
+    key: '_setDeepUp',
+    value: function _setDeepUp() {
+      this.deepDown = false;
+    }
   }]);
 
   return BaseAdapter;
@@ -195,26 +192,43 @@ var Touch3DAdapter = (function (_BaseAdapter) {
 
     var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(Touch3DAdapter).call(this, element));
 
-    _this2._startDeepPressSetEnabled = false;
-    _this2._endDeepPressSetEnabled = false;
-    _this2._inDeepPress = false;
+    _this2.startDeepPressSetEnabled = false;
+    _this2.endDeepPressSetEnabled = false;
     return _this2;
   }
 
   _createClass(Touch3DAdapter, [{
     key: 'support',
     value: function support() {
-      this.add('touchstart', this._dispatch.bind(this));
+      this.supportMethod = this._middleMan.bind(this);
+      this.add('touchstart', this.supportMethod);
+    }
+  }, {
+    key: '_middleMan',
+    value: function _middleMan(event) {
+      this._setDown();
+      this._dispatch(0, event);
     }
   }, {
     key: '_dispatch',
-    value: function _dispatch(event) {
-      if (event.touches[0].force !== undefined) {
-        // can't check full support from this info
-        Support.didSucceed('3d');
-        this.remove('touchstart', this._dispatch.bind(this));
+    value: function _dispatch(iter, event) {
+      // this checks up to 10 times on a touch to see if the touch can read a force value or not to get "support"
+      if (Support.hasRun === false) {
+        if (event.touches[0].force > 0) {
+          Support.didSucceed('3d');
+          this.remove('touchstart', this.supportMethod);
+          runClosure(this.block, 'start', this.el);
+          this._changeLogic(event);
+        } else if (iter <= 10 && this.down === true) {
+          iter += 1;
+          setTimeout(this._dispatch.bind(this), 10, iter, event);
+        } else if (this.down === true) {
+          Support.didFail();
+          runClosure(this.block, 'unsupported', this.el);
+        }
+      } else if (Support.forPressure) {
+        this.remove('touchstart', this.supportMethod);
       } else {
-        Support.didFail();
         runClosure(this.block, 'unsupported', this.el);
       }
     }
@@ -226,6 +240,7 @@ var Touch3DAdapter = (function (_BaseAdapter) {
       // call 'start' when the touch goes down
       this.add('touchstart', function () {
         if (Support.forPressure) {
+          _this3._setDown();
           runClosure(_this3.block, 'start', _this3.el);
         }
       });
@@ -233,65 +248,64 @@ var Touch3DAdapter = (function (_BaseAdapter) {
   }, {
     key: 'change',
     value: function change() {
-      var _this4 = this;
-
-      this.add('touchstart', function (event) {
-        if (Support.forPressure) {
-          _this4._setDown();
-          // set touch event
-          _this4.touch = _this4._selectTouch(event);
-          if (_this4.touch) {
-            _this4._fetchForce(event);
-          }
+      this.add('touchstart', this._changeLogic.bind(this));
+    }
+  }, {
+    key: '_changeLogic',
+    value: function _changeLogic(event) {
+      if (Support.forPressure) {
+        this._setDown();
+        // set touch event
+        this.touch = this._selectTouch(event);
+        if (this.touch) {
+          this._fetchForce(event);
         }
-      });
+      }
     }
   }, {
     key: 'end',
     value: function end() {
-      var _this5 = this;
+      var _this4 = this;
 
       // call 'end' when the touch goes up
       this.add('touchend', function () {
         if (Support.forPressure) {
-          _this5._setUp();
-          runClosure(_this5.block, 'end', _this5.el);
+          _this4._setUp();
+          runClosure(_this4.block, 'end', _this4.el);
+          if (_this4.deepDown === true) {
+            runClosure(_this4.block, 'endDeepPress', _this4.el);
+            _this4._setDeepUp();
+          }
         }
       });
     }
   }, {
     key: 'startDeepPress',
     value: function startDeepPress() {
-      this._startDeepPressSetEnabled = true;
+      this.startDeepPressSetEnabled = true;
       // the logic for this runs in the '_callStartDeepPress' method
     }
   }, {
     key: 'endDeepPress',
     value: function endDeepPress() {
-      this._endDeepPressSetEnabled = true;
+      this.endDeepPressSetEnabled = true;
       // the logic for this runs in the '_callEndDeepPress' method
     }
   }, {
     key: '_callStartDeepPress',
     value: function _callStartDeepPress() {
-      if (this._startDeepPressSetEnabled === true) {
-        if (this._inDeepPress === false) {
-          runClosure(this.block, 'startDeepPress', this.el);
-        } else {
-          this._inDeepPress = true;
-        }
+      if (this.startDeepPressSetEnabled === true && this.deepDown === false) {
+        runClosure(this.block, 'startDeepPress', this.el);
       }
+      this._setDeepDown();
     }
   }, {
     key: '_callEndDeepPress',
     value: function _callEndDeepPress() {
-      if (this._endDeepPressSetEnabled === true) {
-        if (this._inDeepPress === true) {
-          runClosure(this.block, 'endDeepPress', this.el);
-        } else {
-          this._inDeepPress = false;
-        }
+      if (this.endDeepPressSetEnabled === true && this.deepDown === true) {
+        runClosure(this.block, 'endDeepPress', this.el);
       }
+      this._setDeepUp();
     }
   }, {
     key: '_fetchForce',
@@ -309,12 +323,13 @@ var Touch3DAdapter = (function (_BaseAdapter) {
     key: '_selectTouch',
     value: function _selectTouch(event) {
       if (event.touches.length === 1) {
+        event.touches[0].force >= 0.5 ? this._callStartDeepPress() : this._callEndDeepPress();
         return event.touches[0];
       }
       for (var i = 0; i < event.touches.length; i++) {
         if (event.touches[i].target === this.el) {
           // console.log(event.touches[i].force);
-          event.touches[i] >= 0.5 ? this._callStartDeepPress() : this._callEndDeepPress();
+          event.touches[i].force >= 0.5 ? this._callStartDeepPress() : this._callEndDeepPress();
           return event.touches[i];
         }
       }
@@ -330,10 +345,10 @@ var TouchForceAdapter = (function (_BaseAdapter2) {
   function TouchForceAdapter(element) {
     _classCallCheck(this, TouchForceAdapter);
 
-    var _this6 = _possibleConstructorReturn(this, Object.getPrototypeOf(TouchForceAdapter).call(this, element));
+    var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(TouchForceAdapter).call(this, element));
 
-    _this6._preventDefaultForceTouch();
-    return _this6;
+    _this5._preventDefaultForceTouch();
+    return _this5;
   }
 
   // Support check methods
@@ -353,7 +368,7 @@ var TouchForceAdapter = (function (_BaseAdapter2) {
   }, {
     key: '_dispatch',
     value: function _dispatch() {
-      if (!Support.forPressure) {
+      if (Support.forPressure === false) {
         Support.didFail();
         runClosure(this.block, 'unsupported', this.el);
       } else {
@@ -363,75 +378,70 @@ var TouchForceAdapter = (function (_BaseAdapter2) {
   }, {
     key: 'start',
     value: function start() {
-      var _this7 = this;
+      var _this6 = this;
 
       // call 'start' when the mouse goes down
       this.add('mousedown', function () {
         if (Support.forPressure) {
-          _this7._setDown();
-          runClosure(_this7.block, 'start', _this7.el);
+          _this6._setDown();
+          runClosure(_this6.block, 'start', _this6.el);
         }
       });
     }
   }, {
     key: 'change',
     value: function change() {
-      var _this8 = this;
+      var _this7 = this;
 
       this.add('webkitmouseforcechanged', function (event) {
         if (Support.forPressure && event.webkitForce !== 0) {
-          runClosure(_this8.block, 'change', _this8.el, _this8._normalizeForce(event.webkitForce), event);
+          runClosure(_this7.block, 'change', _this7.el, _this7._normalizeForce(event.webkitForce), event);
         }
       });
     }
   }, {
     key: 'end',
     value: function end() {
-      var _this9 = this;
+      var _this8 = this;
 
       // call 'end' when the mouse goes up or leaves the element
       this.add('mouseup', function () {
         if (Support.forPressure) {
-          _this9._setUp();
-          runClosure(_this9.block, 'end', _this9.el);
+          _this8._setUp();
+          runClosure(_this8.block, 'end', _this8.el);
         }
       });
       this.add('mouseleave', function () {
         if (Support.forPressure) {
-          if (_this9.down === true) {
-            runClosure(_this9.block, 'end', _this9.el);
+          if (_this8.down === true) {
+            runClosure(_this8.block, 'end', _this8.el);
+            runClosure(_this8.block, 'endDeepPress', _this8.el);
           }
-          _this9._setUp();
+          _this8._setUp();
         }
       });
     }
   }, {
     key: 'startDeepPress',
     value: function startDeepPress() {
-      var _this10 = this;
+      var _this9 = this;
 
       this.add('webkitmouseforcedown', function () {
         if (Support.forPressure) {
-          runClosure(_this10.block, 'startDeepPress', _this10.el);
+          _this9._setDeepDown();
+          runClosure(_this9.block, 'startDeepPress', _this9.el);
         }
       });
     }
   }, {
     key: 'endDeepPress',
     value: function endDeepPress() {
-      var _this11 = this;
+      var _this10 = this;
 
       this.add('webkitmouseforceup', function () {
         if (Support.forPressure) {
-          runClosure(_this11.block, 'endDeepPress', _this11.el);
-        }
-      });
-      this.add('mouseleave', function () {
-        if (Support.forPressure) {
-          if (_this11.down === true) {
-            runClosure(_this11.block, 'endDeepPress', _this11.el);
-          }
-          _this11._setUp();
+          _this10._setDeepUp();
+          runClosure(_this10.block, 'endDeepPress', _this10.el);
         }
       });
     }
@@ -484,16 +494,36 @@ var Support = {
 var loopPressureElements = function loopPressureElements(selector, closure, type) {
   var css = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
 
-  var elements = document.querySelectorAll(selector);
-  for (var i = 0; i < elements.length; i++) {
-    // override css if they don't want it set
-    if (css) {
-      elements[i].style.webkitUserSelect = "none";
-      // elements[i].style.cursor = "pointer";
+  // if a string is passed in as an element
+  if (typeof selector === 'string' || selector instanceof String) {
+    var elements = document.querySelectorAll(selector);
+    for (var i = 0; i < elements.length; i++) {
+      runPressureElement(elements[i], closure, type, css);
     }
-    var el = new Element(elements[i], closure, type);
-    el.routeEvents();
+    // if an element object is passed in
+  } else if (isElement(selector)) {
+      runPressureElement(selector, closure, type, css);
+      // if a node list is passed in ex. jQuery $() object
+    } else {
+        for (var i = 0; i < selector.length; i++) {
+          runPressureElement(selector[i], closure, type, css);
+        }
+      }
+};
+
+var runPressureElement = function runPressureElement(element, closure, type, css) {
+  if (css) {
+    element.style.webkitUserSelect = "none";
+    // elements[i].style.cursor = "pointer";
   }
+  var el = new Element(element, closure, type);
+  el.routeEvents();
+};
+
+//Returns true if it is a DOM element
+var isElement = function isElement(o) {
+  return (typeof HTMLElement === 'undefined' ? 'undefined' : _typeof(HTMLElement)) === "object" ? o instanceof HTMLElement : //DOM2
+  o && (typeof o === 'undefined' ? 'undefined' : _typeof(o)) === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string";
 };
 
 // run the closure if the property exists in the object

@@ -5,6 +5,7 @@ class BaseAdapter{
     this.el = element.element;
     this.block = element.block;
     this.down = false;
+    this.deepDown = false;
   }
 
   add(event, set){
@@ -30,6 +31,14 @@ class BaseAdapter{
 
   _setUp(){
     this.down = false;
+  }
+
+  _setDeepDown(){
+    this.deepDown = true;
+  }
+
+  _setDeepUp(){
+    this.deepDown = false;
   }
 
 }
