@@ -3,8 +3,8 @@ Pressure is a JavaScript library that makes dealing with Apple's Force Touch and
 
 Head over to the [documentation](http://yamartino.github.com/pressure) website for installation instructions and how to use pressure.js
 
-## Basic Setup
-download pressure.min.js or pressure.js files with github or install with npm or bower
+## Install
+download pressure.min.js or pressure.js files from GitHub or install with npm or bower
 #### npm
 ```
 npm install pressure --save
@@ -13,8 +13,28 @@ npm install pressure --save
 ```
 bower install pressure --save
 ```
+<hr>
+## Setup
+Use pressure in the global space:
+```javascript
+Pressure.set('#id-name', {
+  change: function(force){
+    this.innerHTML = forcel
+  }
+});
+```
+OR use it with browserify or CommonJS like setups:
+```javascript
+var Pressure = require('pressure');
 
-## Basic Usage
+Pressure.set('#id-name', {
+  change: function(force){
+    this.innerHTML = forcel
+  }
+});
+```
+<hr>
+## Usage
 ```javascript
 Pressure.set('#element', {
   start: function(){
