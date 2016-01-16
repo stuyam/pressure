@@ -44,6 +44,24 @@ Pressure.set('#peanuts', {
   }
 });
 
+Pressure.set('#text-sizer', {
+  change: function(force){
+    this.style.fontSize = Pressure.map(force, 0, 1, 16, 24);
+  },
+  end: function(){
+    this.style.fontSize = 16;
+  }
+});
+
+Pressure.set('#spinning-cube', {
+  change: function(force){
+    this.style.webkitTransform = 'rotateZ(' + Pressure.map(force, 0, 1, 0, 360) + 'deg)';
+  },
+  end: function(){
+    this.style.webkitTransform = 'rotateZ(0deg)';
+  }
+});
+
 // docs
 Pressure.set('#output-element', {
   change: function(force, event){

@@ -103,3 +103,9 @@ h3{
   -webkit-user-select: none;
   user-select: none;
 }
+
+#spinning-cube{
+  width: 200px;
+  height: 200px;
+  -webkit-transform: rotateY(0deg);
+}
