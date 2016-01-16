@@ -23,8 +23,14 @@ header{
 }
 
 a.download{
-  margin-top: 5px;
-  color: #FFC800 !important;
+  border-radius: 5px;
+  padding: 10px;
+  background: #FFC800;
+  color: black !important;
+  width: 100%;
+  max-width: 300px;
+  margin: 5px auto 0 auto;
+  font-weight: 100;
 }
 
 .doc-section{
@@ -44,7 +50,7 @@ a.download{
 
 pre{
   background: #f7f7f9 !important;
-  margin-bottom: 0 !important;
+  margin: 0 !important;
   border: 0 !important;
 }
 

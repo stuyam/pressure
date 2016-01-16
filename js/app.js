@@ -43,3 +43,22 @@ Pressure.set('#peanuts', {
     this.innerHTML = 'Your device / browser does not support this :(';
   }
 });
+
+// docs
+Pressure.set('#output-element', {
+  change: function(force, event){
+    this.innerHTML = force;
+  }
+});
+
+Pressure.set3DTouch('#element-3d', {
+  change: function(force, event){
+    this.innerHTML = force + 'on an iphone';
+  }
+});
+
+Pressure.setForceTouch('#element-force', {
+  change: function(force, event){
+    this.innerHTML = force + 'on a Mac';
+  }
+});

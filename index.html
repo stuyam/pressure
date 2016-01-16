@@ -16,7 +16,7 @@
         <span class="mighty-2 text-center-block">Pressure.js</span>
         <p class="text-fluid text-indent" style="margin-bottom: 0;">Pressure is a JavaScript library that makes dealing with Apple's Force Touch and 3D Touch simple. Force Touch for new Macs and 3D Touch for the new iPhone 6s and 6s Plus, all bundled under one roof with a simple API that makes working with them painless.</p>
         <p class="text-fluid text-indent">Pressure gives you a handle on browsers that do and don't support Force or 3D touch so you can plan for the users experince if they don't support it.</p>
-        <a class="text-center-block download" href="https://github.com/yamartino/pressure"><b>Download on GitHub</b></a>
+        <a class="text-center-block download" href="https://github.com/yamartino/pressure">Download on <b>GitHub</b></a>
         <div class="social-buttons">
           <a class="github-button" href="https://github.com/yamartino/pressure" data-count-href="/yamartino/pressure/stargazers" data-count-api="/repos/yamartino/pressure#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star yamartino/pressure on GitHub">Star</a>
           <a class="twitter-share-button" href="https://twitter.com/intent/tweet?text=#PressureJS makes working with #ForceTouch and #3DTouch painless and great to use on the web http://yamartino.github.io/Pressure">Tweet</a>
@@ -24,57 +24,215 @@
       </div>
     </header>
     <div class="container">
-      <h3>Current Support</h3>
-      <ul>
-        <li>iPhone 6s (safari)</li>
-        <li>iPhone 6s Plus (safari)</li>
-        <li>13" MacBook Pro 2015 (safari)</li>
-        <li>15" MacBook Pro 2015 (safari)</li>
-        <li>Magic Trackpad 2 (safari)</li>
-        <li>(future devices and browser that support force will be added when they come out)</li>
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#examples" aria-controls="examples" role="tab" data-toggle="tab">Examples</a></li>
+        <li role="presentation"><a href="#documentation" aria-controls="documentation" role="tab" data-toggle="tab">Documentation</a></li>
       </ul>
-      <h3>Examples</h3>
-      <div class="h4 doc-title">1. Pressure Change</div>
-      <p>The best part about Pressure is that is uses a single API that works on both Force Touch and 3D Touch. (note: Apple currently only has support for desktop and mobile safari, but luckily with pressure you can test for that)</p>
-      <div class="doc-section">
-        <div class="doc-top">
-          <h4>Targets All</h4>
-          <div class="element" id="el1">0</div>
-          <h4>Targets ONLY Force Touch</h4>
-          <div class="element" id="el2">0</div>
-          <h4>Targets ONLY 3D Touch</h4>
-          <div class="element" id="el3">0</div>
-        </div>
-<!--         <div class="doc-bottom">
-          <pre class="language-javascript"><code></code></pre>
-        </div> -->
-      </div>
+      <br />
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="examples">
+          <h3>Current Support</h3>
+          <ul>
+            <li>iPhone 6s (safari)</li>
+            <li>iPhone 6s Plus (safari)</li>
+            <li>13" MacBook Pro 2015 (safari)</li>
+            <li>15" MacBook Pro 2015 (safari)</li>
+            <li>Magic Trackpad 2 (safari)</li>
+            <li>(future devices and browser that support force will be added when they come out)</li>
+          </ul>
+          <h3>Examples</h3>
+          <div class="h4 doc-title">1. Pressure Change</div>
+          <p>The best part about Pressure is that is uses a single API that works on both Force Touch and 3D Touch. (note: Apple currently only has support for desktop and mobile safari, but luckily with pressure you can test for that)</p>
+          <div class="doc-section">
+            <div class="doc-top">
+              <h4>Targets All</h4>
+              <div class="element" id="el1">0</div>
+              <h4>Targets ONLY Force Touch</h4>
+              <div class="element" id="el2">0</div>
+              <h4>Targets ONLY 3D Touch</h4>
+              <div class="element" id="el3">0</div>
+            </div>
+    <!--         <div class="doc-bottom">
+              <pre class="language-javascript"><code></code></pre>
+            </div> -->
+          </div>
 
-      <div class="h4 doc-title">2. Unblur Photo</div>
-      <p>The best part about Pressure is that is uses a single API that works on both Force Touch and 3D Touch. (note: Apple currently only has support for desktop and mobile safari, but luckily with pressure you can test for that)</p>
-      <div class="doc-section">
-        <div class="doc-top">
-          <img src="http://www.clintonlibrary.gov/assets/storage/museum/images/temporary/GR_11A-rgb.jpg" id="peanuts"/>
-        </div>
-<!--         <div class="doc-bottom">
-          <pre class="language-javascript"><code></code></pre>
-        </div> -->
-      </div>
+          <div class="h4 doc-title">2. Unblur Photo</div>
+          <p>The best part about Pressure is that is uses a single API that works on both Force Touch and 3D Touch. (note: Apple currently only has support for desktop and mobile safari, but luckily with pressure you can test for that)</p>
+          <div class="doc-section">
+            <div class="doc-top">
+              <img src="http://www.clintonlibrary.gov/assets/storage/museum/images/temporary/GR_11A-rgb.jpg" id="peanuts"/>
+            </div>
+    <!--         <div class="doc-bottom">
+              <pre class="language-javascript"><code></code></pre>
+            </div> -->
+          </div>
 
-      <div class="h4 doc-title">3. Rotation Speed</div>
-      <p>The best part about Pressure is that is uses a single API that works on both Force Touch and 3D Touch. (note: Apple currently only has support for desktop and mobile safari, but luckily with pressure you can test for that)</p>
-      <div class="doc-section">
-        <div class="doc-top">
-          <div class="center"></div>
+          <div class="h4 doc-title">3. Rotation Speed</div>
+          <p>The best part about Pressure is that is uses a single API that works on both Force Touch and 3D Touch. (note: Apple currently only has support for desktop and mobile safari, but luckily with pressure you can test for that)</p>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div class="center"></div>
+            </div>
+    <!--         <div class="doc-bottom">
+              <pre class="language-javascript"><code></code></pre>
+            </div> -->
+          </div>
         </div>
-<!--         <div class="doc-bottom">
-          <pre class="language-javascript"><code></code></pre>
-        </div> -->
+
+        <!-- DOCUMENTATION ----------------------------------------------------------------------- -->
+        <div role="tabpanel" class="tab-pane" id="documentation">
+          <div class="h4 doc-title">1. Installation</div>
+          <p>Pressure is really simple install, you can head over to the github and download the repo itself, or use npm or bower.</p>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div class="center">bower</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>bower install pressure --save</code></pre>
+            </div>
+          </div>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div class="center">npm</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>npm install pressure --save</code></pre>
+            </div>
+          </div>
+
+          <div class="h4 doc-title">2. Setup</div>
+          <p>You can use pressure with browserify, debowerify, or anything that uses CommonJS to include packages. Pressure can be used normally if no module object exists.</p>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// Regular
+Pressure.set('#test', {
+  change: function(force, event){
+    console.log(force);
+  }
+});</code></pre>
+            </div>
+          </div>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// Browserify, Debowerify, CommonJS
+var Pressure = require('pressure');
+
+Pressure.set('#test', {
+  change: function(force, event){
+    console.log(force);
+  }
+});</code></pre>
+            </div>
+          </div>
+
+          <div class="h4 doc-title">3. Usage</div>
+          <p>Pressure is really easy to use, it has a really simple method signature. The first argument is the element(s) you are targeting, in the next argument is an object with optional callback functions.</p>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div id="output-element" style="width: 100%;padding: 10px;">Click Me</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// target all links
+Pressure.set('a', {});
+
+// pass in jQuery elements
+var elements = $('.dogs');
+Pressure.set(elements, {});
+
+// pass in element list or single element
+var elements2 = document.querySelectorAll('.cats');
+Pressure.set(elements2, {});
+var elements3 = document.getElementById('cat');
+Pressure.set(elements3, {});
+
+// element with the 'stuart' ID being selected and calling the 'change' callback
+Pressure.set('#stuart', {
+  change: function(force, event){
+    // the force value is passed back as well as the full event
+    this.innerHTML = force;
+  }
+});</code></pre>
+            </div>
+          </div>
+
+          <div class="alert alert-success" role="alert"><b>Pro Tip:</b> "force" is a value passed back by the "change" function and is a value from 0 to 1. On Mac it is converted from a 1 to 3 scale to a 0 to 1 scale so it can be used in a consistent manner.</div>
+
+          <p>This example uses all of the methods available to you in the callback object.</p>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#element', {
+  start: function(){
+    // this is called on force start
+  },
+  end: function(){
+    // this is called on force end
+  },
+  startDeepPress: function(){
+    // this is called on "force click" / "deep press", aka once the force is greater than 0.5
+  },
+  endDeepPress: function(){
+    // this is called when the "force click" / "deep press" end
+  },
+  change: function(force, event){
+    // this is called every time there is a change in pressure
+  },
+  unsupported: function(){
+    // this is called once there is a touch on the element and the device or browser does not support Force or 3D touch
+  }
+});</code></pre>
+            </div>
+          </div>
+
+          <div class="h4 doc-title">4. Device Targeting</div>
+          <p>With Pressure, the standard Pressure.set() targets all devices, but you can target just 3D or Force touch seperaratly using Pressure.set3DTouch() and Pressure.setForceTouch().</p>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div id="element-3d" style="width: 100%;padding: 10px;">Click Me On an iPhone 6s</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set3DTouch('#element-3d', {
+  change: function(force, event){
+    this.innerHTML = force + 'on an iphone';
+  }
+});</code></pre>
+            </div>
+          </div>
+
+          <div class="doc-section">
+            <div class="doc-top">
+              <div id="element-force" style="width: 100%;padding: 10px;">Click Me On a Mac with Force Touch</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.setForceTouch('#element-force', {
+  change: function(force, event){
+    this.innerHTML = force + 'on a Mac';
+  }
+});</code></pre>
+            </div>
+          </div>
+
+
+
+
+
+
+
+
+
+          </div>
+
+        </div>
       </div>
 
 
       <footer class="text-center-block">Pressure is created and maintained by Stuart Yamartino | <a class="text-smart-underline" href="https://twitter.com/StuYam">Twitter</a> | <a class="text-smart-underline" href="https://github.com/Yamartino">GitHub</a></footer>
     </div>
+
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
     <script type="text/javascript" src="js/pressure.min.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
