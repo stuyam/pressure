@@ -92,7 +92,7 @@
         <!-- DOCUMENTATION ----------------------------------------------------------------------- -->
         <div role="tabpanel" class="tab-pane" id="documentation">
           <div class="h4 doc-title">1. Installation</div>
-          <p>Pressure is really simple install, you can head over to the github and download the repo itself, or use npm or bower.</p>
+          <p>Pressure is really simple to install, you can use npm or bower, or head over to the github and download the repo itself. All you need is the <code>pressure.min.js</code> or the <code>pressure.js</code> file.</p>
           <div class="doc-section">
             <div class="doc-top">
               <div class="center">bower</div>
@@ -136,7 +136,7 @@ Pressure.set('#test', {
           </div>
 
           <div class="h4 doc-title">3. Usage</div>
-          <p>Pressure is really easy to use, it has a really simple method signature. The first argument is the element(s) you are targeting, in the next argument is an object with optional callback functions.</p>
+          <p>Pressure has a really simple method signature. The first argument is the element(s) you are targeting and the second argument is an object with optional callback functions.</p>
           <div class="doc-section">
             <div class="doc-top">
               <div id="output-element" style="width: 100%;padding: 10px;">Click Me</div>
@@ -194,7 +194,7 @@ Pressure.set('#stuart', {
           </div>
 
           <div class="h4 doc-title">4. Device Targeting</div>
-          <p>With Pressure, the standard Pressure.set() targets all devices, but you can target just 3D or Force touch seperaratly using Pressure.set3DTouch() and Pressure.setForceTouch().</p>
+          <p>With Pressure, the standard <code>Pressure.set()</code> targets all devices, but you can target just 3D or Force touch seperaratly using <code>Pressure.set3DTouch()</code> and <code>Pressure.setForceTouch()</code>.</p>
           <div class="doc-section">
             <div class="doc-top">
               <div id="element-3d" style="width: 100%;padding: 10px;">Click Me On an iPhone 6s</div>
@@ -221,15 +221,14 @@ Pressure.set('#stuart', {
             </div>
           </div>
 
-          <div class="h4 doc-title">5. Helpers</div>
-          <p>You can use Pressure.map() or Pressure.interpolate() to interpolate between values given a starting value. Here is a good write up on how this works in the Processing framework: <a href="https://processing.org/reference/map_.html">Map Function</a></p>
+          <div class="h4 doc-title">5. Helper</div>
+          <p>You can use <code>Pressure.map()</code> to map between different range values given a starting value. It takes 5 params: <code>Pressure.map(inputValue, inputValueMin, inputValueMax, mapToMin, mapToMax);</code> Here is a good write up on how this works in the Processing framework: <a href="https://processing.org/reference/map_.html">Map Function</a></p>
           <div class="doc-section">
             <div class="doc-bottom">
               <pre class="language-javascript"><code>Pressure.set('#element', {
   change: function(force, event){
     // this takes the force, given that the force can range from 0 to 1, and maps that force value on a 100 to 200 range
     this.style.width = Pressure.map(force, 0, 1, 100, 200);
-    // Note: map and interpolate are interchangable methods, they do the same thing
   }
 });</code></pre>
             </div>
