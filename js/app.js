@@ -21,7 +21,7 @@ var block = {
   },
 
   unsupported: function(){
-    this.innerHTML = 'Your device / browser does not support this :(';
+    this.innerHTML = 'Sorry! Check the devices and browsers that Pressure works on above ^^^^';
   }
 }
 
