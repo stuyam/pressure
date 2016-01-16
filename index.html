@@ -221,9 +221,19 @@ Pressure.set('#stuart', {
             </div>
           </div>
 
-
-
-
+          <div class="h4 doc-title">5. Helpers</div>
+          <p>You can use Pressure.map() or Pressure.interpolate() to interpolate between values given a starting value. Here is a good write up on how this works in the Processing framework: <a href="https://processing.org/reference/map_.html">Map Function</a></p>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#element', {
+  change: function(force, event){
+    // this takes the force, given that the force can range from 0 to 1, and maps that force value on a 100 to 200 range
+    this.style.width = Pressure.map(force, 0, 1, 100, 200);
+    // Note: map and interpolate are interchangable methods, they do the same thing
+  }
+});</code></pre>
+            </div>
+          </div>
 
 
 
