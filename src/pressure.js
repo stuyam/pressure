@@ -18,15 +18,10 @@ var Pressure = {
     loopPressureElements(selector, closure, '3d', css);
   },
 
-  // the interpolate method allows for interpolating a value between two values based on two input values
+  // the map method allows for interpolating a value from one range of values to another
   // example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
-  interpolate(x, in_min, in_max, out_min, out_max){
+  map(x, in_min, in_max, out_min, out_max){
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-  },
-
-  // map is an alias for the above 'interpolate' method
-  map(){
-    return this.interpolate(...arguments);
   }
 
 }

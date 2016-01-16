@@ -1,4 +1,4 @@
-// Pressure v0.0.2 | Created By Stuart Yamartino | MIT License | 2015-2016 
+// Pressure v0.0.3 | Created By Stuart Yamartino | MIT License | 2015-2016 
 ;(function(window) {
 'use strict';
 
@@ -36,15 +36,10 @@ var Pressure = {
     loopPressureElements(selector, closure, '3d', css);
   },
 
-  // the interpolate method allows for interpolating a value between two values based on two input values
+  // the map method allows for interpolating a value from one range of values to another
   // example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
-  interpolate: function interpolate(x, in_min, in_max, out_min, out_max) {
+  map: function map(x, in_min, in_max, out_min, out_max) {
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-  },
-
-  // map is an alias for the above 'interpolate' method
-  map: function map() {
-    return this.interpolate.apply(this, arguments);
   }
 };
 
