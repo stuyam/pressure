@@ -13,7 +13,8 @@ npm install pressure --save
 ```
 bower install pressure --save
 ```
-<hr>
+
+
 ## Setup
 Use pressure in the global space:
 ```javascript
@@ -33,8 +34,10 @@ Pressure.set('#id-name', {
   }
 });
 ```
-<hr>
+
+
 ## Usage
+NOTE: the "this" keyword in each of the callback methods will be the element itself that has force applied to it
 ```javascript
 Pressure.set('#element', {
   start: function(){
