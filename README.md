@@ -54,6 +54,7 @@ Pressure.set('#element', {
   },
   change: function(force, event){
     // this is called every time there is a change in pressure
+    // force will always be a value from 0 to 1 on mobile and desktop
   },
   unsupported: function(){
     // this is called once there is a touch on the element and the device or browser does not support Force or 3D touch
