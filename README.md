@@ -4,12 +4,12 @@ Pressure is a JavaScript library that makes dealing with Apple's Force Touch and
 Head over to the [documentation](http://yamartino.github.com/pressure) website for installation instructions and how to use pressure.js
 
 ## Basic Setup
-download pressure.min.js or pressure.js files with github or
-install with npm
+download pressure.min.js or pressure.js files with github or install with npm or bower
+#### npm
 ```
 npm install pressure --save
 ```
-install with bower
+#### bower
 ```
 bower install pressure --save
 ```
