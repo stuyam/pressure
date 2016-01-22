@@ -98,6 +98,11 @@ h3{
   margin-bottom: 10px;
 }
 
+.wrap-peanuts{
+  width: 100% !important;
+  overflow: hidden;
+}
+
 #peanuts{
   width: 100% !important;
   -moz-filter: blur(20px);

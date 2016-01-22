@@ -63,10 +63,13 @@
           </div>
 
           <div class="h4 doc-title">2. Unblur Photo</div>
-          <p>The harder you press on the photo the less blurry it will become.</p>
+          <p>The harder you press on the button the less blurry the image will become.</p>
           <div class="doc-section">
             <div class="doc-top">
-              <img src="http://www.clintonlibrary.gov/assets/storage/museum/images/temporary/GR_11A-rgb.jpg" id="peanuts"/>
+              <button id="peanuts-btn" class="btn btn-primary btn-lg">Press Me!</button>
+              <div class="wrap-peanuts">
+                <img src="http://www.clintonlibrary.gov/assets/storage/museum/images/temporary/GR_11A-rgb.jpg" id="peanuts"/>
+              </div>
             </div>
     <!--         <div class="doc-bottom">
               <pre class="language-javascript"><code></code></pre>
@@ -89,7 +92,16 @@
               <img id="spinning-cube" src="pickle.jpg"/>
             </div>
           </div>
+
+          <div class="h4 doc-title">5. "Deep" or Force Press</div>
+          <p>Press hard on the button, a "Deep" or Force press will occur and launch a bootstrap popover.
+          <div class="doc-section">
+            <div class="doc-top">
+              <button id="popover" type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Deep Press Popover!" data-content='This popover was triggered because you pressed over 50% pressure on iOS or OSX. On OSX this is called a "force touch"''>Press hard to toggle popover</button>
+            </div>
+          </div>
         </div>
+
 
         <!-- DOCUMENTATION ----------------------------------------------------------------------- -->
         <div role="tabpanel" class="tab-pane" id="documentation">

@@ -2,6 +2,10 @@ function map(x, in_min, in_max, out_min, out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+$(function () {
+  $('[data-toggle="popover"]').popover({trigger: 'manual'});
+});
+
 var block = {
   start: function(){
   },
@@ -30,17 +34,17 @@ Pressure.setForceTouch('#el2', block);
 Pressure.set3DTouch('#el3', block);
 
 
-Pressure.set('#peanuts', {
+Pressure.set('#peanuts-btn', {
   change: function(force, event){
-    this.style.webkitFilter = 'blur(' + map(force, 0, 0.7, 20, 0) + 'px)';
+    document.getElementById('peanuts').style.webkitFilter = 'blur(' + map(force, 0, 0.7, 20, 0) + 'px)';
   },
 
   end: function(){
-    this.style.webkitFilter = 'blur(20px)';
+    document.getElementById('peanuts').style.webkitFilter = 'blur(20px)';
   },
 
   unsupported: function(){
-    this.innerHTML = 'Your device / browser does not support this :(';
+    document.getElementById('peanuts').innerHTML = 'Your device / browser does not support this :(';
   }
 });
 
@@ -59,6 +63,15 @@ Pressure.set('#spinning-cube', {
   },
   end: function(){
     this.style.webkitTransform = 'rotateZ(0deg)';
+  }
+});
+
+Pressure.set('#popover', {
+  startDeepPress: function(force){
+    $(this).popover('show');
+  },
+  endDeepPress: function(){
+    $(this).popover('hide');
   }
 });
 
