@@ -57,12 +57,12 @@ Pressure.set('#text-sizer', {
   }
 });
 
-Pressure.set('#spinning-cube', {
+Pressure.set('#cube-btn', {
   change: function(force){
-    this.style.webkitTransform = 'rotateZ(' + Pressure.map(force, 0, 1, 0, 360) + 'deg)';
+    document.getElementById('spinning-cube').style.webkitTransform = 'rotateZ(' + Pressure.map(force, 0, 1, 0, 360) + 'deg)';
   },
   end: function(){
-    this.style.webkitTransform = 'rotateZ(0deg)';
+    document.getElementById('spinning-cube').style.webkitTransform = 'rotateZ(0deg)';
   }
 });
 
