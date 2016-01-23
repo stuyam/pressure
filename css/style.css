@@ -35,15 +35,23 @@ header{
   color: black !important;
   width: 100%;
   max-width: 300px;
-  margin: 5px auto 0 auto;
+  margin: 5px auto 10px auto;
   font-weight: 400;
   border: 0;
+  cursor: pointer;
 }
 
 .doc-section{
   border: 5px solid #f7f7f9;
   border-radius: 5px;
   margin-bottom: 40px;
+}
+
+.twitter-share-button{
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .doc-top{
@@ -58,6 +66,7 @@ header{
 #pressure-test{
   background: #FF0040;
   color: white !important;
+  font-weight: bold;
 }
 
 pre{
@@ -80,8 +89,8 @@ hr{
 }
 
 .social-buttons > iframe{
-  margin-left: 5px;
-  margin-right: 5px;
+/*  margin-left: 5px;
+  margin-right: 5px;*/
 }
 
 footer{
