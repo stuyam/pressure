@@ -108,15 +108,28 @@ h3{
   -moz-filter: blur(20px);
   -webkit-filter: blur(20px);
   filter: blur(20px);
-  -khtml-user-select: none;
-  -o-user-select: none;
-  -moz-user-select: none;
+  -webkit-touch-callout: none;
   -webkit-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-drag: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
+  user-drag: none;
+  cursor: default;
 }
 
 #spinning-cube{
   width: 200px;
   height: 200px;
   -webkit-transform: rotateY(0deg);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-drag: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  user-drag: none;
+  cursor: default;
 }
