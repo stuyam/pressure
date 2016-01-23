@@ -2,10 +2,6 @@
 //   window.location.href = "http://pressurejs.com";
 // }
 
-function map(x, in_min, in_max, out_min, out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
 $(function () {
   $('[data-toggle="popover"]').popover({trigger: 'manual'});
 });
@@ -17,7 +13,7 @@ var block = {
   change: function(force, event){
     this.style.width = ((200 * force) + 200) + 'px';
     this.innerHTML = force;
-    this.style.backgroundColor = "rgb(" + parseInt(map(force, 0, 1, 255, 0)) + ",200," + parseInt(map(force, 0, 1, 0, 255)) +")";
+    this.style.backgroundColor = "rgb(" + parseInt(Pressure.map(force, 0, 1, 255, 0)) + ",200," + parseInt(Pressure.map(force, 0, 1, 0, 255)) +")";
     this.style.color = force > 0.4 ? 'white' : 'black';
   },
 
@@ -49,7 +45,7 @@ Pressure.set('#pressure-test', {
 
 Pressure.set('#peanuts-btn', {
   change: function(force, event){
-    document.getElementById('peanuts').style.webkitFilter = 'blur(' + map(force, 0, 0.7, 20, 0) + 'px)';
+    document.getElementById('peanuts').style.webkitFilter = 'blur(' + Pressure.map(force, 0, 0.7, 20, 0) + 'px)';
   },
 
   end: function(){
@@ -63,7 +59,7 @@ Pressure.set('#peanuts-btn', {
 
 Pressure.set('#text-sizer', {
   change: function(force){
-    this.style.fontSize = Pressure.map(force, 0, 1, 16, 24);
+    this.style.fontSize = Pressure.map(force, 0, 1, 16, 30);
   },
   end: function(){
     this.style.fontSize = 16;
