@@ -37,6 +37,15 @@ Pressure.set('#el1', block);
 Pressure.setForceTouch('#el2', block);
 Pressure.set3DTouch('#el3', block);
 
+Pressure.set('#pressure-test', {
+  start: function(){
+    this.innerHTML = 'Your Browser Supports Pressure!';
+  },
+  unsupported: function(){
+    this.innerHTML = 'Your Browser/Device Does NOT Support Pressure!';
+  }
+});
+
 
 Pressure.set('#peanuts-btn', {
   change: function(force, event){

@@ -28,7 +28,7 @@ header{
   padding: 0 20px;
 }
 
-a.download{
+.download{
   border-radius: 5px;
   padding: 10px;
   background: #FFC800;
@@ -37,6 +37,7 @@ a.download{
   max-width: 300px;
   margin: 5px auto 0 auto;
   font-weight: 400;
+  border: 0;
 }
 
 .doc-section{
@@ -52,6 +53,11 @@ a.download{
 .doc-title{
   font-weight: 400 !important;
   margin-bottom: 0.6rem;
+}
+
+#pressure-test{
+  background: #FF0040;
+  color: white !important;
 }
 
 pre{
