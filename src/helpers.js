@@ -21,6 +21,7 @@ var loopPressureElements = function(selector, closure, type, css = true){
 var runPressureElement = function(element, closure, type, css){
   if(css){
     element.style.webkitUserSelect = "none";
+    element.style.webkitTouchCallout = "none";
     // elements[i].style.cursor = "pointer";
   }
   var el = new Element(element, closure, type);
