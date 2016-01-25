@@ -1,9 +1,11 @@
-class AdapterTouch3D extends Adapter{
+class Adapter3DTouch extends Adapter{
 
   constructor(element){
     super(element);
-    this.startDeepPressSetEnabled = false;
-    this.endDeepPressSetEnabled = false;
+    this.support();
+    this.start();
+    this.change();
+    this.end();
   }
 
   support(){
@@ -69,33 +71,20 @@ class AdapterTouch3D extends Adapter{
       if(Support.forPressure){
         this._setUp();
         runClosure(this.block, 'end', this.el);
-        if(this.deepDown === true){
-          runClosure(this.block, 'endDeepPress', this.el);
-          this._setDeepUp();
-        }
+        this.endDeepPress();
       }
     });
   }
 
   startDeepPress(){
-    this.startDeepPressSetEnabled = true;
-    // the logic for this runs in the '_callStartDeepPress' method
-  }
-
-  endDeepPress(){
-    this.endDeepPressSetEnabled = true;
-    // the logic for this runs in the '_callEndDeepPress' method
-  }
-
-  _callStartDeepPress(){
-    if(this.startDeepPressSetEnabled === true && this.deepDown === false){
+    if(this.deepDown === false){
       runClosure(this.block, 'startDeepPress', this.el);
     }
     this._setDeepDown();
   }
 
-  _callEndDeepPress(){
-    if(this.endDeepPressSetEnabled === true && this.deepDown === true){
+  endDeepPress(){
+    if(this.deepDown === true){
       runClosure(this.block, 'endDeepPress', this.el);
     }
     this._setDeepUp();
@@ -112,16 +101,21 @@ class AdapterTouch3D extends Adapter{
   // link up the touch point to the correct element, this is to support multitouch
   _selectTouch(event){
     if(event.touches.length === 1){
-      event.touches[0].force >= 0.5 ? this._callStartDeepPress() : this._callEndDeepPress();
-      return event.touches[0];
-    }
-    for(var i = 0; i < event.touches.length; i++){
-      if(event.touches[i].target === this.el){
-        // console.log(event.touches[i].force);
-        event.touches[i].force >= 0.5 ? this._callStartDeepPress() : this._callEndDeepPress();
-        return event.touches[i];
+      return this._returnTouch(event.touches[0].force);
+    } else {
+      for(var i = 0; i < event.touches.length; i++){
+        // if the target press is on this element
+        if(event.touches[i].target === this.el){
+          return this._runDeepPressAndReturnTouch(event.touches[i]);
+        }
       }
     }
+  }
+
+  // return the touch and run a start or end for deep press
+  _returnTouch(touch){
+    touch.force >= 0.5 ? this.startDeepPress() : this.endDeepPress();
+    return touch;
   }
 
 }

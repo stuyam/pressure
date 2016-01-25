@@ -1,7 +1,13 @@
-class AdapterTouchForce extends Adapter{
+class AdapterForceTouch extends Adapter{
 
   constructor(element){
     super(element);
+    this.support();
+    this.start();
+    this.change();
+    this.end();
+    this.startDeepPress();
+    this.endDeepPress();
     this._preventDefaultForceTouch();
   }
 

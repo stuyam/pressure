@@ -67,29 +67,16 @@ var Element = (function () {
     value: function routeEvents() {
       // if on desktop and requesting Force Touch or not requesting 3D Touch
       if (Support.mobile === false && (this.type === 'force' || this.type !== '3d')) {
-        this.bindAdapterEvents(new AdapterTouchForce(this));
+        new AdapterForceTouch(this);
       }
       // if on mobile and requesting 3D Touch or not requestion Force Touch
       else if (Support.mobile === true && (this.type === '3d' || this.type !== 'force')) {
-          this.bindAdapterEvents(new AdapterTouch3D(this));
+          new Adapter3DTouch(this);
         }
         // if it is requesting a type and your browser is of other type
         else {
             this.failEvents();
           }
-    }
-
-    // calls all of the public methods that need to setup the events on the element
-
-  }, {
-    key: 'bindAdapterEvents',
-    value: function bindAdapterEvents(adapter) {
-      adapter.support();
-      adapter.start();
-      adapter.change();
-      adapter.end();
-      adapter.startDeepPress();
-      adapter.endDeepPress();
     }
   }, {
     key: 'failEvents',
@@ -151,20 +138,22 @@ var Adapter = (function () {
   return Adapter;
 })();
 
-var AdapterTouch3D = (function (_Adapter) {
-  _inherits(AdapterTouch3D, _Adapter);
+var Adapter3DTouch = (function (_Adapter) {
+  _inherits(Adapter3DTouch, _Adapter);
 
-  function AdapterTouch3D(element) {
-    _classCallCheck(this, AdapterTouch3D);
+  function Adapter3DTouch(element) {
+    _classCallCheck(this, Adapter3DTouch);
 
-    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterTouch3D).call(this, element));
+    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(Adapter3DTouch).call(this, element));
 
-    _this2.startDeepPressSetEnabled = false;
-    _this2.endDeepPressSetEnabled = false;
+    _this2.support();
+    _this2.start();
+    _this2.change();
+    _this2.end();
     return _this2;
   }
 
-  _createClass(AdapterTouch3D, [{
+  _createClass(Adapter3DTouch, [{
     key: 'support',
     value: function support() {
       this.supportMethod = this._middleMan.bind(this);
@@ -239,37 +228,22 @@ var AdapterTouch3D = (function (_Adapter) {
         if (Support.forPressure) {
           _this4._setUp();
           runClosure(_this4.block, 'end', _this4.el);
-          if (_this4.deepDown === true) {
-            runClosure(_this4.block, 'endDeepPress', _this4.el);
-            _this4._setDeepUp();
-          }
+          _this4.endDeepPress();
         }
       });
     }
   }, {
     key: 'startDeepPress',
     value: function startDeepPress() {
-      this.startDeepPressSetEnabled = true;
-      // the logic for this runs in the '_callStartDeepPress' method
-    }
-  }, {
-    key: 'endDeepPress',
-    value: function endDeepPress() {
-      this.endDeepPressSetEnabled = true;
-      // the logic for this runs in the '_callEndDeepPress' method
-    }
-  }, {
-    key: '_callStartDeepPress',
-    value: function _callStartDeepPress() {
-      if (this.startDeepPressSetEnabled === true && this.deepDown === false) {
+      if (this.deepDown === false) {
         runClosure(this.block, 'startDeepPress', this.el);
       }
       this._setDeepDown();
     }
   }, {
-    key: '_callEndDeepPress',
-    value: function _callEndDeepPress() {
-      if (this.endDeepPressSetEnabled === true && this.deepDown === true) {
+    key: 'endDeepPress',
+    value: function endDeepPress() {
+      if (this.deepDown === true) {
         runClosure(this.block, 'endDeepPress', this.el);
       }
       this._setDeepUp();
@@ -290,37 +264,51 @@ var AdapterTouch3D = (function (_Adapter) {
     key: '_selectTouch',
     value: function _selectTouch(event) {
       if (event.touches.length === 1) {
-        event.touches[0].force >= 0.5 ? this._callStartDeepPress() : this._callEndDeepPress();
-        return event.touches[0];
-      }
-      for (var i = 0; i < event.touches.length; i++) {
-        if (event.touches[i].target === this.el) {
-          // console.log(event.touches[i].force);
-          event.touches[i].force >= 0.5 ? this._callStartDeepPress() : this._callEndDeepPress();
-          return event.touches[i];
+        return this._returnTouch(event.touches[0].force);
+      } else {
+        for (var i = 0; i < event.touches.length; i++) {
+          // if the target press is on this element
+          if (event.touches[i].target === this.el) {
+            return this._runDeepPressAndReturnTouch(event.touches[i]);
+          }
         }
       }
     }
+
+    // return the touch and run a start or end for deep press
+
+  }, {
+    key: '_returnTouch',
+    value: function _returnTouch(touch) {
+      touch.force >= 0.5 ? this.startDeepPress() : this.endDeepPress();
+      return touch;
+    }
   }]);
 
-  return AdapterTouch3D;
+  return Adapter3DTouch;
 })(Adapter);
 
-var AdapterTouchForce = (function (_Adapter2) {
-  _inherits(AdapterTouchForce, _Adapter2);
+var AdapterForceTouch = (function (_Adapter2) {
+  _inherits(AdapterForceTouch, _Adapter2);
 
-  function AdapterTouchForce(element) {
-    _classCallCheck(this, AdapterTouchForce);
+  function AdapterForceTouch(element) {
+    _classCallCheck(this, AdapterForceTouch);
 
-    var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterTouchForce).call(this, element));
+    var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterForceTouch).call(this, element));
 
+    _this5.support();
+    _this5.start();
+    _this5.change();
+    _this5.end();
+    _this5.startDeepPress();
+    _this5.endDeepPress();
     _this5._preventDefaultForceTouch();
     return _this5;
   }
 
   // Support check methods
 
-  _createClass(AdapterTouchForce, [{
+  _createClass(AdapterForceTouch, [{
     key: 'support',
     value: function support() {
       this.add('webkitmouseforcewillbegin', this._touchForceEnabled);
@@ -439,7 +427,7 @@ var AdapterTouchForce = (function (_Adapter2) {
     }
   }]);
 
-  return AdapterTouchForce;
+  return AdapterForceTouch;
 })(Adapter);
 
 // This class holds the states of the the Pressure support the user has

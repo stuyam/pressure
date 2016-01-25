@@ -18,8 +18,8 @@ gulp.task('scripts', function() {
     './src/pressure.js',
     './src/element.js',
     './src/adapter.js',
-    './src/adapter_touch_3d.js',
-    './src/adapter_touch_force.js',
+    './src/adapter_3d_touch.js',
+    './src/adapter_force_touch.js',
     './src/support.js',
     './src/helpers.js',
   ])
