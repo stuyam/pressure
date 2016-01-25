@@ -1,5 +1,5 @@
 //--------------------- Public API Section ---------------------//
-// this is the start of the Pressure Object, this is the only object that is accessible to the end user
+// this is the Pressure Object, this is the only object that is accessible to the end user
 // only the methods in this object can be called, making it the "public api"
 var Pressure = {
 

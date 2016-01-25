@@ -17,7 +17,7 @@ class AdapterTouch3D extends Adapter{
   }
 
   _dispatch(iter, event){
-    // this checks up to 10 times on a touch to see if the touch can read a force value or not to get "support"
+    // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
     if(Support.hasRun === false){
       if(event.touches[0].force > 0){
         Support.didSucceed('3d');

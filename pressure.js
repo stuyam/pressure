@@ -16,7 +16,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var document = window !== false ? window.document : false;
 
 //--------------------- Public API Section ---------------------//
-// this is the start of the Pressure Object, this is the only object that is accessible to the end user
+// this is the Pressure Object, this is the only object that is accessible to the end user
 // only the methods in this object can be called, making it the "public api"
 var Pressure = {
 
@@ -44,24 +44,35 @@ var Pressure = {
 };
 
 var Element = (function () {
-  function Element(element, block, type) {
+  function Element(element, block, type, css) {
     _classCallCheck(this, Element);
 
     this.element = element;
     this.block = block;
     this.type = type;
+    this.cssPrevention(css);
+    this.routeEvents();
   }
 
   _createClass(Element, [{
+    key: 'cssPrevention',
+    value: function cssPrevention(css) {
+      if (css) {
+        this.element.style.webkitUserSelect = "none";
+        this.element.style.webkitTouchCallout = "none";
+        // elements[i].style.cursor = "pointer";
+      }
+    }
+  }, {
     key: 'routeEvents',
     value: function routeEvents() {
       // if on desktop and requesting Force Touch or not requesting 3D Touch
       if (Support.mobile === false && (this.type === 'force' || this.type !== '3d')) {
-        this.bindAdapter(new TouchForceAdapter(this));
+        this.bindAdapter(new AdapterTouchForce(this));
       }
       // if on mobile and requesting 3D Touch or not requestion Force Touch
       else if (Support.mobile === true && (this.type === '3d' || this.type !== 'force')) {
-          this.bindAdapter(new Touch3DAdapter(this));
+          this.bindAdapter(new AdapterTouch3D(this));
         }
         // if it is requesting a type and your browser is of other type
         else {
@@ -179,7 +190,7 @@ var AdapterTouch3D = (function (_Adapter) {
   }, {
     key: '_dispatch',
     value: function _dispatch(iter, event) {
-      // this checks up to 10 times on a touch to see if the touch can read a force value or not to get "support"
+      // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
       if (Support.hasRun === false) {
         if (event.touches[0].force > 0) {
           Support.didSucceed('3d');
@@ -458,6 +469,7 @@ var Support = {
 
 //------------------- Helpers Section -------------------//
 
+// accepts jQuery object, node list, string selector, then called a setup for each element
 var loopPressureElements = function loopPressureElements(selector, closure, type) {
   var css = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
 
@@ -465,27 +477,17 @@ var loopPressureElements = function loopPressureElements(selector, closure, type
   if (typeof selector === 'string' || selector instanceof String) {
     var elements = document.querySelectorAll(selector);
     for (var i = 0; i < elements.length; i++) {
-      runPressureElement(elements[i], closure, type, css);
+      new Element(elements[i], closure, type, css);
     }
     // if an element object is passed in
   } else if (isElement(selector)) {
-      runPressureElement(selector, closure, type, css);
+      new Element(selector, closure, type, css);
       // if a node list is passed in ex. jQuery $() object
     } else {
         for (var i = 0; i < selector.length; i++) {
-          runPressureElement(selector[i], closure, type, css);
+          new Element(selector[i], closure, type, css);
         }
       }
-};
-
-var runPressureElement = function runPressureElement(element, closure, type, css) {
-  if (css) {
-    element.style.webkitUserSelect = "none";
-    element.style.webkitTouchCallout = "none";
-    // elements[i].style.cursor = "pointer";
-  }
-  var el = new Element(element, closure, type);
-  el.routeEvents();
 };
 
 //Returns true if it is a DOM element

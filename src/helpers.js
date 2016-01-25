@@ -1,31 +1,22 @@
 //------------------- Helpers Section -------------------//
 
+// accepts jQuery object, node list, string selector, then called a setup for each element
 var loopPressureElements = function(selector, closure, type, css = true){
   // if a string is passed in as an element
   if(typeof selector === 'string' || selector instanceof String){
     var elements = document.querySelectorAll(selector);
     for (var i = 0; i < elements.length; i++) {
-      runPressureElement(elements[i], closure, type, css);
+      new Element(elements[i], closure, type, css);
     }
   // if an element object is passed in
   } else if(isElement(selector)){
-    runPressureElement(selector, closure, type, css);
+    new Element(selector, closure, type, css);
   // if a node list is passed in ex. jQuery $() object
   } else {
     for (var i = 0; i < selector.length; i++) {
-      runPressureElement(selector[i], closure, type, css);
+      new Element(selector[i], closure, type, css);
     }
   }
-}
-
-var runPressureElement = function(element, closure, type, css){
-  if(css){
-    element.style.webkitUserSelect = "none";
-    element.style.webkitTouchCallout = "none";
-    // elements[i].style.cursor = "pointer";
-  }
-  var el = new Element(element, closure, type);
-  el.routeEvents();
 }
 
 //Returns true if it is a DOM element
