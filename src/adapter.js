@@ -16,15 +16,6 @@ class Adapter{
     this.el.removeEventListener(event, set);
   }
 
-  _dispatch(){
-    if(!Support.forPressure){
-      Support.didFail();
-      runClosure(this.block, 'unsupported', this.el);
-    } else {
-      this.remove('webkitmouseforcewillbegin', this._touchForceEnabled);
-    }
-  }
-
   _setDown(){
     this.down = true;
   }

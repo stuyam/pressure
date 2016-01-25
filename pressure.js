@@ -128,16 +128,6 @@ var Adapter = (function () {
       this.el.removeEventListener(event, set);
     }
   }, {
-    key: '_dispatch',
-    value: function _dispatch() {
-      if (!Support.forPressure) {
-        Support.didFail();
-        runClosure(this.block, 'unsupported', this.el);
-      } else {
-        this.remove('webkitmouseforcewillbegin', this._touchForceEnabled);
-      }
-    }
-  }, {
     key: '_setDown',
     value: function _setDown() {
       this.down = true;
