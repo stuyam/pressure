@@ -53,9 +53,8 @@ class AdapterTouchForce extends Adapter{
     });
     this.add('mouseleave', () => {
       if(Support.forPressure){
-        if(this.down === true){
+        if(this.down){
           runClosure(this.block, 'end', this.el);
-          runClosure(this.block, 'endDeepPress', this.el);
         }
         this._setUp();
       }
@@ -76,6 +75,14 @@ class AdapterTouchForce extends Adapter{
       if(Support.forPressure){
         this._setDeepUp();
         runClosure(this.block, 'endDeepPress', this.el);
+      }
+    });
+    this.add('mouseleave', () => {
+      if(Support.forPressure){
+        if(this.deepDown){
+          runClosure(this.block, 'endDeepPress', this.el);
+        }
+        this._setDeepUp();
       }
     });
   }

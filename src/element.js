@@ -12,18 +12,17 @@ class Element{
     if(css){
       this.element.style.webkitUserSelect = "none";
       this.element.style.webkitTouchCallout = "none";
-      // elements[i].style.cursor = "pointer";
     }
   }
 
   routeEvents(){
     // if on desktop and requesting Force Touch or not requesting 3D Touch
     if(Support.mobile === false && (this.type === 'force' || this.type !== '3d')){
-      this.bindAdapter(new AdapterTouchForce(this));
+      this.bindAdapterEvents(new AdapterTouchForce(this));
     }
     // if on mobile and requesting 3D Touch or not requestion Force Touch
     else if(Support.mobile === true && (this.type === '3d' || this.type !== 'force')){
-      this.bindAdapter(new AdapterTouch3D(this))
+      this.bindAdapterEvents(new AdapterTouch3D(this))
     }
     // if it is requesting a type and your browser is of other type
     else{
@@ -32,7 +31,7 @@ class Element{
   }
 
   // calls all of the public methods that need to setup the events on the element
-  bindAdapter(adapter){
+  bindAdapterEvents(adapter){
     adapter.support();
     adapter.start();
     adapter.change();

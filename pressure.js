@@ -60,7 +60,6 @@ var Element = (function () {
       if (css) {
         this.element.style.webkitUserSelect = "none";
         this.element.style.webkitTouchCallout = "none";
-        // elements[i].style.cursor = "pointer";
       }
     }
   }, {
@@ -68,11 +67,11 @@ var Element = (function () {
     value: function routeEvents() {
       // if on desktop and requesting Force Touch or not requesting 3D Touch
       if (Support.mobile === false && (this.type === 'force' || this.type !== '3d')) {
-        this.bindAdapter(new AdapterTouchForce(this));
+        this.bindAdapterEvents(new AdapterTouchForce(this));
       }
       // if on mobile and requesting 3D Touch or not requestion Force Touch
       else if (Support.mobile === true && (this.type === '3d' || this.type !== 'force')) {
-          this.bindAdapter(new AdapterTouch3D(this));
+          this.bindAdapterEvents(new AdapterTouch3D(this));
         }
         // if it is requesting a type and your browser is of other type
         else {
@@ -83,8 +82,8 @@ var Element = (function () {
     // calls all of the public methods that need to setup the events on the element
 
   }, {
-    key: 'bindAdapter',
-    value: function bindAdapter(adapter) {
+    key: 'bindAdapterEvents',
+    value: function bindAdapterEvents(adapter) {
       adapter.support();
       adapter.start();
       adapter.change();
@@ -381,9 +380,8 @@ var AdapterTouchForce = (function (_Adapter2) {
       });
       this.add('mouseleave', function () {
         if (Support.forPressure) {
-          if (_this8.down === true) {
+          if (_this8.down) {
             runClosure(_this8.block, 'end', _this8.el);
-            runClosure(_this8.block, 'endDeepPress', _this8.el);
           }
           _this8._setUp();
         }
@@ -410,6 +408,14 @@ var AdapterTouchForce = (function (_Adapter2) {
         if (Support.forPressure) {
           _this10._setDeepUp();
           runClosure(_this10.block, 'endDeepPress', _this10.el);
+        }
+      });
+      this.add('mouseleave', function () {
+        if (Support.forPressure) {
+          if (_this10.deepDown) {
+            runClosure(_this10.block, 'endDeepPress', _this10.el);
+          }
+          _this10._setDeepUp();
         }
       });
     }
