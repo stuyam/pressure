@@ -1,4 +1,4 @@
-class Touch3DAdapter extends BaseAdapter{
+class AdapterTouch3D extends Adapter{
 
   constructor(element){
     super(element);

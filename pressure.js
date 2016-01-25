@@ -1,4 +1,4 @@
-// Pressure v0.0.3 | Created By Stuart Yamartino | MIT License | 2015-2016 
+// Pressure v0.0.4 | Created By Stuart Yamartino | MIT License | 2016 
 ;(function(window) {
 'use strict';
 
@@ -57,43 +57,38 @@ var Element = (function () {
     value: function routeEvents() {
       // if on desktop and requesting Force Touch or not requesting 3D Touch
       if (Support.mobile === false && (this.type === 'force' || this.type !== '3d')) {
-        this.touchForceAdapter();
+        this.bindAdapter(new TouchForceAdapter(this));
       }
       // if on mobile and requesting 3D Touch or not requestion Force Touch
       else if (Support.mobile === true && (this.type === '3d' || this.type !== 'force')) {
-          this.touch3DAdapter();
+          this.bindAdapter(new Touch3DAdapter(this));
         }
         // if it is requesting a type and your browser is of other type
         else {
             this.failEvents();
           }
     }
+
+    // calls all of the public methods that need to setup the events on the element
+
   }, {
-    key: 'touchForceAdapter',
-    value: function touchForceAdapter() {
-      var adapter = new Adapter(new TouchForceAdapter(this));
-      adapter.handle();
-    }
-  }, {
-    key: 'touch3DAdapter',
-    value: function touch3DAdapter() {
-      var adapter = new Adapter(new Touch3DAdapter(this));
-      adapter.handle();
+    key: 'bindAdapter',
+    value: function bindAdapter(adapter) {
+      adapter.support();
+      adapter.start();
+      adapter.change();
+      adapter.end();
+      adapter.startDeepPress();
+      adapter.endDeepPress();
     }
   }, {
     key: 'failEvents',
     value: function failEvents() {
       var _this = this;
 
-      if (Support.mobile) {
-        this.element.addEventListener('touchstart', function () {
-          return runClosure(_this.block, 'unsupported', _this.element);
-        }, false);
-      } else {
-        this.element.addEventListener('mousedown', function () {
-          return runClosure(_this.block, 'unsupported', _this.element);
-        }, false);
-      }
+      this.element.addEventListener(Support.mobile ? 'touchstart' : 'mousedown', function () {
+        return runClosure(_this.block, 'unsupported', _this.element);
+      }, false);
     }
   }]);
 
@@ -101,31 +96,8 @@ var Element = (function () {
 })();
 
 var Adapter = (function () {
-  function Adapter(adapter) {
+  function Adapter(element) {
     _classCallCheck(this, Adapter);
-
-    this.adapter = adapter;
-  }
-
-  _createClass(Adapter, [{
-    key: 'handle',
-    value: function handle() {
-      this.adapter.support();
-
-      this.adapter.start();
-      this.adapter.change();
-      this.adapter.end();
-      this.adapter.startDeepPress();
-      this.adapter.endDeepPress();
-    }
-  }]);
-
-  return Adapter;
-})();
-
-var BaseAdapter = (function () {
-  function BaseAdapter(element) {
-    _classCallCheck(this, BaseAdapter);
 
     this.element = element;
     this.el = element.element;
@@ -134,7 +106,7 @@ var BaseAdapter = (function () {
     this.deepDown = false;
   }
 
-  _createClass(BaseAdapter, [{
+  _createClass(Adapter, [{
     key: 'add',
     value: function add(event, set) {
       this.el.addEventListener(event, set, false);
@@ -176,23 +148,23 @@ var BaseAdapter = (function () {
     }
   }]);
 
-  return BaseAdapter;
+  return Adapter;
 })();
 
-var Touch3DAdapter = (function (_BaseAdapter) {
-  _inherits(Touch3DAdapter, _BaseAdapter);
+var AdapterTouch3D = (function (_Adapter) {
+  _inherits(AdapterTouch3D, _Adapter);
 
-  function Touch3DAdapter(element) {
-    _classCallCheck(this, Touch3DAdapter);
+  function AdapterTouch3D(element) {
+    _classCallCheck(this, AdapterTouch3D);
 
-    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(Touch3DAdapter).call(this, element));
+    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterTouch3D).call(this, element));
 
     _this2.startDeepPressSetEnabled = false;
     _this2.endDeepPressSetEnabled = false;
     return _this2;
   }
 
-  _createClass(Touch3DAdapter, [{
+  _createClass(AdapterTouch3D, [{
     key: 'support',
     value: function support() {
       this.supportMethod = this._middleMan.bind(this);
@@ -331,16 +303,16 @@ var Touch3DAdapter = (function (_BaseAdapter) {
     }
   }]);
 
-  return Touch3DAdapter;
-})(BaseAdapter);
+  return AdapterTouch3D;
+})(Adapter);
 
-var TouchForceAdapter = (function (_BaseAdapter2) {
-  _inherits(TouchForceAdapter, _BaseAdapter2);
+var AdapterTouchForce = (function (_Adapter2) {
+  _inherits(AdapterTouchForce, _Adapter2);
 
-  function TouchForceAdapter(element) {
-    _classCallCheck(this, TouchForceAdapter);
+  function AdapterTouchForce(element) {
+    _classCallCheck(this, AdapterTouchForce);
 
-    var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(TouchForceAdapter).call(this, element));
+    var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterTouchForce).call(this, element));
 
     _this5._preventDefaultForceTouch();
     return _this5;
@@ -348,7 +320,7 @@ var TouchForceAdapter = (function (_BaseAdapter2) {
 
   // Support check methods
 
-  _createClass(TouchForceAdapter, [{
+  _createClass(AdapterTouchForce, [{
     key: 'support',
     value: function support() {
       this.add('webkitmouseforcewillbegin', this._touchForceEnabled);
@@ -460,8 +432,8 @@ var TouchForceAdapter = (function (_BaseAdapter2) {
     }
   }]);
 
-  return TouchForceAdapter;
-})(BaseAdapter);
+  return AdapterTouchForce;
+})(Adapter);
 
 // This class holds the states of the the Pressure support the user has
 

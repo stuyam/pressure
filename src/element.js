@@ -9,11 +9,11 @@ class Element{
   routeEvents(){
     // if on desktop and requesting Force Touch or not requesting 3D Touch
     if(Support.mobile === false && (this.type === 'force' || this.type !== '3d')){
-      this.touchForceAdapter();
+      this.bindAdapter(new TouchForceAdapter(this));
     }
     // if on mobile and requesting 3D Touch or not requestion Force Touch
     else if(Support.mobile === true && (this.type === '3d' || this.type !== 'force')){
-      this.touch3DAdapter();
+      this.bindAdapter(new Touch3DAdapter(this))
     }
     // if it is requesting a type and your browser is of other type
     else{
@@ -21,22 +21,18 @@ class Element{
     }
   }
 
-  touchForceAdapter(){
-    var adapter = new Adapter(new TouchForceAdapter(this));
-    adapter.handle();
-  }
-
-  touch3DAdapter(){
-    var adapter = new Adapter(new Touch3DAdapter(this));
-    adapter.handle();
+  // calls all of the public methods that need to setup the events on the element
+  bindAdapter(adapter){
+    adapter.support();
+    adapter.start();
+    adapter.change();
+    adapter.end();
+    adapter.startDeepPress();
+    adapter.endDeepPress();
   }
 
   failEvents(){
-    if(Support.mobile){
-      this.element.addEventListener('touchstart', () => runClosure(this.block, 'unsupported', this.element), false);
-    } else {
-      this.element.addEventListener('mousedown', () => runClosure(this.block, 'unsupported', this.element), false);
-    }
+    this.element.addEventListener(Support.mobile ? 'touchstart' : 'mousedown', () => runClosure(this.block, 'unsupported', this.element), false);
   }
 
 }

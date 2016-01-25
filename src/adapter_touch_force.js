@@ -1,4 +1,4 @@
-class TouchForceAdapter extends BaseAdapter{
+class AdapterTouchForce extends Adapter{
 
   constructor(element){
     super(element);
