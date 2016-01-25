@@ -106,7 +106,7 @@ class Adapter3DTouch extends Adapter{
       for(var i = 0; i < event.touches.length; i++){
         // if the target press is on this element
         if(event.touches[i].target === this.el){
-          return this._runDeepPressAndReturnTouch(event.touches[i]);
+          return this._returnTouch(event.touches[i]);
         }
       }
     }
