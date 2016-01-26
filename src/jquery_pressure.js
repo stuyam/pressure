@@ -1,11 +1,16 @@
 //--------------------- Public jQuery API Section ---------------------//
 
-$.fn.pressure = function(closure, options) {
-  loopPressureElements(this, closure, options);
-  return this;
-};
+if($ !== false){
 
-$.fn.pressureMap = function(x, in_min, in_max, out_min, out_max) {
-  return map(x, in_min, in_max, out_min, out_max);
-};
+  $.fn.pressure = function(closure, options) {
+    loopPressureElements(this, closure, options);
+    return this;
+  };
 
+  $.fn.pressureMap = function(x, in_min, in_max, out_min, out_max) {
+    return map(x, in_min, in_max, out_min, out_max);
+  };
+
+} else {
+  throw new Error( "Pressure jQuery requires jQuery is loaded before your jquery.pressure.min.js file" );
+}

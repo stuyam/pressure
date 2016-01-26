@@ -65,7 +65,7 @@ gulp.task('jquery-pressure', function() {
   .pipe(iife({
     useStrict: false,
     params: ['window', '$'],
-    args: ['typeof window !== "undefined" ? window : false', 'jQuery']
+    args: ['typeof window !== "undefined" ? window : false', 'typeof jQuery !== "undefined" ? jQuery : false']
   }))
   .pipe(insert.prepend(HEADER_COMMENT))
   // .pipe(stripDebug())
