@@ -28,15 +28,11 @@ var block = {
   change: function(force, event){
     this.style.width = ((200 * force) + 200) + 'px';
     this.innerHTML = force;
-    this.style.backgroundColor = "rgb(" + parseInt(Pressure.map(force, 0, 1, 255, 0)) + ",0," + parseInt(Pressure.map(force, 0, 1, 0, 255)) +")";
-    this.style.color = force > 0.4 ? 'white' : 'black';
   },
 
   end: function(){
     this.style.width = '200px';
     this.innerHTML = 0;
-    this.style.backgroundColor = 'red';
-    this.style.color = 'black';
   },
 
   startDeepPress: function(){
