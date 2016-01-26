@@ -24,7 +24,7 @@ gulp.task('pressure', function() {
     './src/helpers.js',
     './src/final.js',
   ])
-  .pipe(concat('pressure.js'))
+  .pipe(concat('dist/pressure.js'))
   .pipe(babel({
       presets: ['es2015']
   }))
@@ -58,7 +58,7 @@ gulp.task('jquery-pressure', function() {
     './src/helpers.js',
     './src/final.js',
   ])
-  .pipe(concat('jquery.pressure.js'))
+  .pipe(concat('dist/jquery.pressure.js'))
   .pipe(babel({
       presets: ['es2015']
   }))
