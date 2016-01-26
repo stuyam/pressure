@@ -1,7 +1,7 @@
 {
   "name": "pressure",
   "description": "Pressure is a JavaScript library for handling both Force Touch and 3D Touch through a single API",
-  "main": "pressure.js",
+  "main": "dist/pressure.min.js",
   "authors": [
     "Stuart Yamartino"
   ],
