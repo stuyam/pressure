@@ -1,15 +1,15 @@
 class Element{
 
-  constructor(element, block, type, css){
+  constructor(element, block, options){
     this.element = element;
     this.block = block;
-    this.type = type;
-    this.cssPrevention(css);
+    this.type = options.hasOwnProperty('only') ? options.only : null;
+    this.cssPrevention(options);
     this.routeEvents();
   }
 
-  cssPrevention(css){
-    if(css){
+  cssPrevention(options){
+    if(options.hasOwnProperty('css') && options.css === false){
       this.element.style.webkitUserSelect = "none";
       this.element.style.webkitTouchCallout = "none";
     }

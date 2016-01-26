@@ -22,42 +22,39 @@ var Pressure = {
 
   // targets any device with Force of 3D Touch
 
-  set: function set(selector, closure, css) {
-    loopPressureElements(selector, closure, null, css);
-  },
-
-  // targets ONLY devices with Force Touch
-  setForceTouch: function setForceTouch(selector, closure, css) {
-    loopPressureElements(selector, closure, 'force', css);
-  },
-
-  // targets ONLY devices with 3D touch
-  set3DTouch: function set3DTouch(selector, closure, css) {
-    loopPressureElements(selector, closure, '3d', css);
+  init: function init(selector, closure, options) {
+    loopPressureElements(selector, closure, options);
   },
 
   // the map method allows for interpolating a value from one range of values to another
   // example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
   map: function map(x, in_min, in_max, out_min, out_max) {
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    return _map(x, in_min, in_max, out_min, out_max);
   }
 };
 
+//---- Usage ----//
+// Pressure.init('.btn', {
+//   change: function(){
+
+//   }
+// }, {css: false, only: '3d'});
+
 var Element = (function () {
-  function Element(element, block, type, css) {
+  function Element(element, block, options) {
     _classCallCheck(this, Element);
 
     this.element = element;
     this.block = block;
-    this.type = type;
-    this.cssPrevention(css);
+    this.type = options.hasOwnProperty('only') ? options.only : null;
+    this.cssPrevention(options);
     this.routeEvents();
   }
 
   _createClass(Element, [{
     key: 'cssPrevention',
-    value: function cssPrevention(css) {
-      if (css) {
+    value: function cssPrevention(options) {
+      if (options.hasOwnProperty('css') && options.css === false) {
         this.element.style.webkitUserSelect = "none";
         this.element.style.webkitTouchCallout = "none";
       }
@@ -454,22 +451,22 @@ var Support = {
 //------------------- Helpers Section -------------------//
 
 // accepts jQuery object, node list, string selector, then called a setup for each element
-var loopPressureElements = function loopPressureElements(selector, closure, type) {
-  var css = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
+var loopPressureElements = function loopPressureElements(selector, closure) {
+  var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
   // if a string is passed in as an element
   if (typeof selector === 'string' || selector instanceof String) {
     var elements = document.querySelectorAll(selector);
     for (var i = 0; i < elements.length; i++) {
-      new Element(elements[i], closure, type, css);
+      new Element(elements[i], closure, options);
     }
     // if an element object is passed in
   } else if (isElement(selector)) {
-      new Element(selector, closure, type, css);
+      new Element(selector, closure, options);
       // if a node list is passed in ex. jQuery $() object
     } else {
         for (var i = 0; i < selector.length; i++) {
-          new Element(selector[i], closure, type, css);
+          new Element(selector[i], closure, options);
         }
       }
 };
@@ -486,6 +483,12 @@ var runClosure = function runClosure(closure, method, element) {
     // call the closure method and apply nth arguments if they exist
     closure[method].apply(element || this, Array.prototype.slice.call(arguments, 3));
   }
+};
+
+// the map method allows for interpolating a value from one range of values to another
+// example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
+var _map = function _map(x, in_min, in_max, out_min, out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 };
 
 // Check if the device is mobile or desktop

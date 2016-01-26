@@ -1,20 +1,20 @@
 //------------------- Helpers Section -------------------//
 
 // accepts jQuery object, node list, string selector, then called a setup for each element
-var loopPressureElements = function(selector, closure, type, css = true){
+var loopPressureElements = function(selector, closure, options = {}){
   // if a string is passed in as an element
   if(typeof selector === 'string' || selector instanceof String){
     var elements = document.querySelectorAll(selector);
     for (var i = 0; i < elements.length; i++) {
-      new Element(elements[i], closure, type, css);
+      new Element(elements[i], closure, options);
     }
   // if an element object is passed in
   } else if(isElement(selector)){
-    new Element(selector, closure, type, css);
+    new Element(selector, closure, options);
   // if a node list is passed in ex. jQuery $() object
   } else {
     for (var i = 0; i < selector.length; i++) {
-      new Element(selector[i], closure, type, css);
+      new Element(selector[i], closure, options);
     }
   }
 }
@@ -35,20 +35,8 @@ var runClosure = function(closure, method, element){
   }
 }
 
-// Check if the device is mobile or desktop
-Support.mobile = 'ontouchstart' in document;
-
-// Assign the Pressure object to the global object (or module for npm) so it can be called from inside the self executing anonymous function
-if(window !== false){
-  if ( typeof module === "object" && typeof module.exports === "object" ) {
-  // For CommonJS and CommonJS-like environments where a proper `window`
-  // is present, execute Pressure.
-  // For environments that do not have a `window` with a `document`
-  // (such as Node.js) Pressure does not work
-    module.exports = Pressure;
-  } else {
-    window.Pressure = Pressure;
-  }
-} else {
-  throw new Error( "Pressure requires a window with a document" );
+// the map method allows for interpolating a value from one range of values to another
+// example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
+var map = function(x, in_min, in_max, out_min, out_max){
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }

@@ -53,9 +53,9 @@ var block = {
   }
 }
 
-Pressure.set(document.querySelectorAll('#el1'), block);
-Pressure.setForceTouch($('#el2'), block);
-Pressure.set3DTouch('#el3', block);
+Pressure.init(document.querySelectorAll('#el1'), block);
+Pressure.init($('#el2'), block, {only: 'force'});
+Pressure.init('#el3', block, {only: '3d'});
 
 // Pressure.set('#el1', {
 //   start: function(){
