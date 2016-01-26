@@ -25,7 +25,7 @@ Use pressure in the global space:
 ```javascript
 Pressure.set('#id-name', {
   change: function(force){
-    this.innerHTML = forcel
+    this.innerHTML = force;
   }
 });
 ```
@@ -35,7 +35,7 @@ var Pressure = require('pressure');
 
 Pressure.set('#id-name', {
   change: function(force){
-    this.innerHTML = forcel
+    this.innerHTML = force;
   }
 });
 ```
