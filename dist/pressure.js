@@ -54,7 +54,7 @@ var Element = (function () {
   _createClass(Element, [{
     key: 'cssPrevention',
     value: function cssPrevention(options) {
-      if (options.hasOwnProperty('css') && options.css === false) {
+      if (!options.hasOwnProperty('css') || options.css !== false) {
         this.element.style.webkitUserSelect = "none";
         this.element.style.webkitTouchCallout = "none";
       }

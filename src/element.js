@@ -9,7 +9,7 @@ class Element{
   }
 
   cssPrevention(options){
-    if(options.hasOwnProperty('css') && options.css === false){
+    if(!options.hasOwnProperty('css') || options.css !== false){
       this.element.style.webkitUserSelect = "none";
       this.element.style.webkitTouchCallout = "none";
     }
