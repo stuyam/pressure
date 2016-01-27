@@ -162,10 +162,10 @@ var Adapter3DTouch = (function (_Adapter) {
           this.remove('touchstart', this.supportMethod);
           runClosure(this.block, 'start', this.el);
           this.changeLogic(event);
-        } else if (iter <= 10 && this.pressed === true) {
+        } else if (iter <= 10 && this.pressed) {
           iter += 1;
           setTimeout(this.supportCallback.bind(this), 10, iter, event);
-        } else if (this.pressed === true) {
+        } else if (this.pressed) {
           Support.didFail();
           runClosure(this.block, 'unsupported', this.el);
         }
@@ -421,11 +421,17 @@ var AdapterForceTouch = (function (_Adapter2) {
 
 var Support = {
 
+  // if the support has already been checked
   hasRun: false,
 
+  // if the device has support for pressure or not
   forPressure: false,
 
+  // the type of support the device has "force" or "3d"
   type: false,
+
+  // Check if the device is mobile or desktop
+  mobile: 'ontouchstart' in document,
 
   didFail: function didFail() {
     this.hasRun = true;
@@ -480,9 +486,6 @@ var runClosure = function runClosure(closure, method, element) {
 var _map = function _map(x, in_min, in_max, out_min, out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 };
-
-// Check if the device is mobile or desktop
-Support.mobile = 'ontouchstart' in document;
 
 // Assign the Pressure object to the global object (or module for npm) so it can be called from inside the self executing anonymous function
 if (window !== false) {

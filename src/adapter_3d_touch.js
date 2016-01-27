@@ -26,10 +26,10 @@ class Adapter3DTouch extends Adapter{
         this.remove('touchstart', this.supportMethod);
         runClosure(this.block, 'start', this.el);
         this.changeLogic(event);
-      } else if(iter <= 10 && this.pressed === true) {
+      } else if(iter <= 10 && this.pressed) {
         iter += 1;
         setTimeout(this.supportCallback.bind(this), 10, iter, event);
-      } else if(this.pressed === true){
+      } else if(this.pressed){
         Support.didFail();
         runClosure(this.block, 'unsupported', this.el);
       }
