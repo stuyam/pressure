@@ -13,11 +13,11 @@ class AdapterForceTouch extends Adapter{
 
   // Support check methods
   $support(){
-    this.add('webkitmouseforcewillbegin', this.touchForceEnabled);
+    this.add('webkitmouseforcewillbegin', this.forceTouchEnabled);
     this.add('mousedown', this.supportCallback.bind(this));
   }
 
-  touchForceEnabled(event){
+  forceTouchEnabled(event){
     event.preventDefault()
     Support.didSucceed('force');
   }
@@ -27,7 +27,7 @@ class AdapterForceTouch extends Adapter{
       Support.didFail();
       runClosure(this.block, 'unsupported', this.el);
     } else {
-      this.remove('webkitmouseforcewillbegin', this.touchForceEnabled);
+      this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
     }
   }
 
@@ -104,7 +104,7 @@ class AdapterForceTouch extends Adapter{
 
   // make the force the standard 0 to 1 scale and not the 1 to 3 scale
   normalizeForce(force){
-    return (force - 1) / 2;
+    return map(force, 1, 3, 0, 1);
   }
 
 }

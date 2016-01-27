@@ -298,12 +298,12 @@ var AdapterForceTouch = (function (_Adapter2) {
   _createClass(AdapterForceTouch, [{
     key: '$support',
     value: function $support() {
-      this.add('webkitmouseforcewillbegin', this.touchForceEnabled);
+      this.add('webkitmouseforcewillbegin', this.forceTouchEnabled);
       this.add('mousedown', this.supportCallback.bind(this));
     }
   }, {
-    key: 'touchForceEnabled',
-    value: function touchForceEnabled(event) {
+    key: 'forceTouchEnabled',
+    value: function forceTouchEnabled(event) {
       event.preventDefault();
       Support.didSucceed('force');
     }
@@ -314,7 +314,7 @@ var AdapterForceTouch = (function (_Adapter2) {
         Support.didFail();
         runClosure(this.block, 'unsupported', this.el);
       } else {
-        this.remove('webkitmouseforcewillbegin', this.touchForceEnabled);
+        this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
       }
     }
   }, {
@@ -410,7 +410,7 @@ var AdapterForceTouch = (function (_Adapter2) {
   }, {
     key: 'normalizeForce',
     value: function normalizeForce(force) {
-      return (force - 1) / 2;
+      return _map(force, 1, 3, 0, 1);
     }
   }]);
 
