@@ -26,7 +26,7 @@ var block = {
   },
 
   change: function(force, event){
-    this.style.width = ((200 * force) + 200) + 'px';
+    this.style.width = $.pressureMap(force, 0, 1, 200, 300) + 'px';
     this.innerHTML = force;
   },
 

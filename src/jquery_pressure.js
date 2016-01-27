@@ -7,7 +7,7 @@ if($ !== false){
     return this;
   };
 
-  $.fn.pressureMap = function(x, in_min, in_max, out_min, out_max) {
+  $.pressureMap = function(x, in_min, in_max, out_min, out_max) {
     return map(x, in_min, in_max, out_min, out_max);
   };
 
