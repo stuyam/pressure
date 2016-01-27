@@ -8,7 +8,7 @@ var stripDebug = require('gulp-strip-debug');
 var uglify     = require('gulp-uglify');
 var babel      = require('gulp-babel');
 
-var HEADER_COMMENT = '// Pressure v0.0.4 | Created By Stuart Yamartino | MIT License | 2016 \n';
+var HEADER_COMMENT = '// Pressure v0.0.4 | Created By Stuart Yamartino | MIT License | 2015 - Present\n';
 var DESTINATION = '.';
 
 // JS concat, strip debugging and minify
