@@ -8,7 +8,7 @@ var loopPressureElements = function(selector, closure, options = {}){
     for (var i = 0; i < elements.length; i++) {
       new Element(elements[i], closure, options);
     }
-  // if an element object is passed in
+  // if a single element object is passed in
   } else if(isElement(selector)){
     new Element(selector, closure, options);
   // if a node list is passed in ex. jQuery $() object

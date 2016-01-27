@@ -26,11 +26,11 @@ class Element{
     }
     // if it is requesting a type and your browser is of other type
     else{
-      this.failEvents();
+      this.instantFail();
     }
   }
 
-  failEvents(){
+  instantFail(){
     this.element.addEventListener(Support.mobile ? 'touchstart' : 'mousedown', () => runClosure(this.block, 'unsupported', this.element), false);
   }
 

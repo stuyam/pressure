@@ -72,12 +72,12 @@ var Element = (function () {
         }
         // if it is requesting a type and your browser is of other type
         else {
-            this.failEvents();
+            this.instantFail();
           }
     }
   }, {
-    key: 'failEvents',
-    value: function failEvents() {
+    key: 'instantFail',
+    value: function instantFail() {
       var _this = this;
 
       this.element.addEventListener(Support.mobile ? 'touchstart' : 'mousedown', function () {
@@ -96,8 +96,8 @@ var Adapter = (function () {
     this.element = element;
     this.el = element.element;
     this.block = element.block;
-    this.down = false;
-    this.deepDown = false;
+    this.pressed = false;
+    this.deepPressed = false;
   }
 
   _createClass(Adapter, [{
@@ -111,24 +111,14 @@ var Adapter = (function () {
       this.el.removeEventListener(event, set);
     }
   }, {
-    key: '_setDown',
-    value: function _setDown() {
-      this.down = true;
+    key: 'setPressed',
+    value: function setPressed(boolean) {
+      this.down = boolean;
     }
   }, {
-    key: '_setUp',
-    value: function _setUp() {
-      this.down = false;
-    }
-  }, {
-    key: '_setDeepDown',
-    value: function _setDeepDown() {
-      this.deepDown = true;
-    }
-  }, {
-    key: '_setDeepUp',
-    value: function _setDeepUp() {
-      this.deepDown = false;
+    key: 'setDeepPressed',
+    value: function setDeepPressed(boolean) {
+      this.deepDown = boolean;
     }
   }]);
 
@@ -143,39 +133,39 @@ var Adapter3DTouch = (function (_Adapter) {
 
     var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(Adapter3DTouch).call(this, element));
 
-    _this2.support();
-    _this2.start();
-    _this2.change();
-    _this2.end();
+    _this2.$support();
+    _this2.$start();
+    _this2.$change();
+    _this2.$end();
     return _this2;
   }
 
   _createClass(Adapter3DTouch, [{
-    key: 'support',
-    value: function support() {
-      this.supportMethod = this._middleMan.bind(this);
+    key: '$support',
+    value: function $support() {
+      this.supportMethod = this.middleMan.bind(this);
       this.add('touchstart', this.supportMethod);
     }
   }, {
-    key: '_middleMan',
-    value: function _middleMan(event) {
-      this._setDown();
-      this._dispatch(0, event);
+    key: 'middleMan',
+    value: function middleMan(event) {
+      this.setPressed(true);
+      this.supportCallback(0, event);
     }
   }, {
-    key: '_dispatch',
-    value: function _dispatch(iter, event) {
+    key: 'supportCallback',
+    value: function supportCallback(iter, event) {
       // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
       if (Support.hasRun === false) {
         if (event.touches[0].force > 0) {
           Support.didSucceed('3d');
           this.remove('touchstart', this.supportMethod);
           runClosure(this.block, 'start', this.el);
-          this._changeLogic(event);
-        } else if (iter <= 10 && this.down === true) {
+          this.changeLogic(event);
+        } else if (iter <= 10 && this.pressed === true) {
           iter += 1;
-          setTimeout(this._dispatch.bind(this), 10, iter, event);
-        } else if (this.down === true) {
+          setTimeout(this.supportCallback.bind(this), 10, iter, event);
+        } else if (this.pressed === true) {
           Support.didFail();
           runClosure(this.block, 'unsupported', this.el);
         }
@@ -186,44 +176,44 @@ var Adapter3DTouch = (function (_Adapter) {
       }
     }
   }, {
-    key: 'start',
-    value: function start() {
+    key: '$start',
+    value: function $start() {
       var _this3 = this;
 
       // call 'start' when the touch goes down
       this.add('touchstart', function () {
         if (Support.forPressure) {
-          _this3._setDown();
+          _this3.setPressed(true);
           runClosure(_this3.block, 'start', _this3.el);
         }
       });
     }
   }, {
-    key: 'change',
-    value: function change() {
-      this.add('touchstart', this._changeLogic.bind(this));
+    key: '$change',
+    value: function $change() {
+      this.add('touchstart', this.changeLogic.bind(this));
     }
   }, {
-    key: '_changeLogic',
-    value: function _changeLogic(event) {
+    key: 'changeLogic',
+    value: function changeLogic(event) {
       if (Support.forPressure) {
-        this._setDown();
+        this.setPressed(true);
         // set touch event
-        this.touch = this._selectTouch(event);
+        this.touch = this.selectTouch(event);
         if (this.touch) {
-          this._fetchForce(event);
+          this.fetchForce(event);
         }
       }
     }
   }, {
-    key: 'end',
-    value: function end() {
+    key: '$end',
+    value: function $end() {
       var _this4 = this;
 
       // call 'end' when the touch goes up
       this.add('touchend', function () {
         if (Support.forPressure) {
-          _this4._setUp();
+          _this4.setPressed(false);
           runClosure(_this4.block, 'end', _this4.el);
           _this4.endDeepPress();
         }
@@ -232,25 +222,25 @@ var Adapter3DTouch = (function (_Adapter) {
   }, {
     key: 'startDeepPress',
     value: function startDeepPress() {
-      if (this.deepDown === false) {
+      if (this.deepPressed === false) {
         runClosure(this.block, 'startDeepPress', this.el);
       }
-      this._setDeepDown();
+      this.setDeepPressed(true);
     }
   }, {
     key: 'endDeepPress',
     value: function endDeepPress() {
-      if (this.deepDown === true) {
+      if (this.deepPressed === true) {
         runClosure(this.block, 'endDeepPress', this.el);
       }
-      this._setDeepUp();
+      this.setDeepPressed(false);
     }
   }, {
-    key: '_fetchForce',
-    value: function _fetchForce(event) {
-      if (this.down) {
-        this.touch = this._selectTouch(event);
-        setTimeout(this._fetchForce.bind(this), 10, event);
+    key: 'fetchForce',
+    value: function fetchForce(event) {
+      if (this.pressed) {
+        this.touch = this.selectTouch(event);
+        setTimeout(this.fetchForce.bind(this), 10, event);
         runClosure(this.block, 'change', this.el, this.touch.force, event);
       }
     }
@@ -258,15 +248,15 @@ var Adapter3DTouch = (function (_Adapter) {
     // link up the touch point to the correct element, this is to support multitouch
 
   }, {
-    key: '_selectTouch',
-    value: function _selectTouch(event) {
+    key: 'selectTouch',
+    value: function selectTouch(event) {
       if (event.touches.length === 1) {
-        return this._returnTouch(event.touches[0].force);
+        return this.returnTouch(event.touches[0].force);
       } else {
         for (var i = 0; i < event.touches.length; i++) {
           // if the target press is on this element
           if (event.touches[i].target === this.el) {
-            return this._returnTouch(event.touches[i]);
+            return this.returnTouch(event.touches[i]);
           }
         }
       }
@@ -275,8 +265,8 @@ var Adapter3DTouch = (function (_Adapter) {
     // return the touch and run a start or end for deep press
 
   }, {
-    key: '_returnTouch',
-    value: function _returnTouch(touch) {
+    key: 'returnTouch',
+    value: function returnTouch(touch) {
       touch.force >= 0.5 ? this.startDeepPress() : this.endDeepPress();
       return touch;
     }
@@ -293,120 +283,120 @@ var AdapterForceTouch = (function (_Adapter2) {
 
     var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterForceTouch).call(this, element));
 
-    _this5.support();
-    _this5.start();
-    _this5.change();
-    _this5.end();
-    _this5.startDeepPress();
-    _this5.endDeepPress();
-    _this5._preventDefaultForceTouch();
+    _this5.$support();
+    _this5.$start();
+    _this5.$change();
+    _this5.$end();
+    _this5.$startDeepPress();
+    _this5.$endDeepPress();
+    _this5.preventDefaultForceTouch();
     return _this5;
   }
 
   // Support check methods
 
   _createClass(AdapterForceTouch, [{
-    key: 'support',
-    value: function support() {
-      this.add('webkitmouseforcewillbegin', this._touchForceEnabled);
-      this.add('mousedown', this._dispatch.bind(this));
+    key: '$support',
+    value: function $support() {
+      this.add('webkitmouseforcewillbegin', this.touchForceEnabled);
+      this.add('mousedown', this.supportCallback.bind(this));
     }
   }, {
-    key: '_touchForceEnabled',
-    value: function _touchForceEnabled(event) {
+    key: 'touchForceEnabled',
+    value: function touchForceEnabled(event) {
       event.preventDefault();
       Support.didSucceed('force');
     }
   }, {
-    key: '_dispatch',
-    value: function _dispatch() {
+    key: 'supportCallback',
+    value: function supportCallback() {
       if (Support.forPressure === false) {
         Support.didFail();
         runClosure(this.block, 'unsupported', this.el);
       } else {
-        this.remove('webkitmouseforcewillbegin', this._touchForceEnabled);
+        this.remove('webkitmouseforcewillbegin', this.touchForceEnabled);
       }
     }
   }, {
-    key: 'start',
-    value: function start() {
+    key: '$start',
+    value: function $start() {
       var _this6 = this;
 
       // call 'start' when the mouse goes down
       this.add('mousedown', function () {
         if (Support.forPressure) {
-          _this6._setDown();
+          _this6.setPressed(true);
           runClosure(_this6.block, 'start', _this6.el);
         }
       });
     }
   }, {
-    key: 'change',
-    value: function change() {
+    key: '$change',
+    value: function $change() {
       var _this7 = this;
 
       this.add('webkitmouseforcechanged', function (event) {
         if (Support.forPressure && event.webkitForce !== 0) {
-          runClosure(_this7.block, 'change', _this7.el, _this7._normalizeForce(event.webkitForce), event);
+          runClosure(_this7.block, 'change', _this7.el, _this7.normalizeForce(event.webkitForce), event);
         }
       });
     }
   }, {
-    key: 'end',
-    value: function end() {
+    key: '$end',
+    value: function $end() {
       var _this8 = this;
 
       // call 'end' when the mouse goes up or leaves the element
       this.add('mouseup', function () {
         if (Support.forPressure) {
-          _this8._setUp();
+          _this8.setPressed(false);
           runClosure(_this8.block, 'end', _this8.el);
         }
       });
       this.add('mouseleave', function () {
         if (Support.forPressure) {
-          if (_this8.down) {
+          if (_this8.pressed) {
             runClosure(_this8.block, 'end', _this8.el);
           }
-          _this8._setUp();
+          _this8.setPressed(false);
         }
       });
     }
   }, {
-    key: 'startDeepPress',
-    value: function startDeepPress() {
+    key: '$startDeepPress',
+    value: function $startDeepPress() {
       var _this9 = this;
 
       this.add('webkitmouseforcedown', function () {
         if (Support.forPressure) {
-          _this9._setDeepDown();
+          _this9.setDeepPressed(true);
           runClosure(_this9.block, 'startDeepPress', _this9.el);
         }
       });
     }
   }, {
-    key: 'endDeepPress',
-    value: function endDeepPress() {
+    key: '$endDeepPress',
+    value: function $endDeepPress() {
       var _this10 = this;
 
       this.add('webkitmouseforceup', function () {
         if (Support.forPressure) {
-          _this10._setDeepUp();
+          _this10.setDeepPressed(false);
           runClosure(_this10.block, 'endDeepPress', _this10.el);
         }
       });
       this.add('mouseleave', function () {
         if (Support.forPressure) {
-          if (_this10.deepDown) {
+          if (_this10.deepPressed) {
             runClosure(_this10.block, 'endDeepPress', _this10.el);
           }
-          _this10._setDeepUp();
+          _this10.setDeepPressed(false);
         }
       });
     }
   }, {
-    key: '_preventDefaultForceTouch',
-    value: function _preventDefaultForceTouch() {
+    key: 'preventDefaultForceTouch',
+    value: function preventDefaultForceTouch() {
       // prevent the default force touch action for bound elements
       this.add('webkitmouseforcewillbegin', function (event) {
         if (Support.forPressure) {
@@ -418,8 +408,8 @@ var AdapterForceTouch = (function (_Adapter2) {
     // make the force the standard 0 to 1 scale and not the 1 to 3 scale
 
   }, {
-    key: '_normalizeForce',
-    value: function _normalizeForce(force) {
+    key: 'normalizeForce',
+    value: function normalizeForce(force) {
       return (force - 1) / 2;
     }
   }]);
@@ -460,7 +450,7 @@ var loopPressureElements = function loopPressureElements(selector, closure) {
     for (var i = 0; i < elements.length; i++) {
       new Element(elements[i], closure, options);
     }
-    // if an element object is passed in
+    // if a single element object is passed in
   } else if (isElement(selector)) {
       new Element(selector, closure, options);
       // if a node list is passed in ex. jQuery $() object
