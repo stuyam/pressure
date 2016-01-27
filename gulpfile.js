@@ -14,7 +14,6 @@ var DESTINATION = '.';
 // JS concat, strip debugging and minify
 gulp.task('pressure', function() {
   gulp.src([
-    './src/setup.js',
     './src/pressure.js',
     './src/element.js',
     './src/adapter.js',
@@ -30,8 +29,8 @@ gulp.task('pressure', function() {
   }))
   .pipe(iife({
     useStrict: false,
-    params: ['window'],
-    args: ['typeof window !== "undefined" ? window : false']
+    params: ['window', 'document'],
+    args: ['typeof window !== "undefined" ? window : false', 'typeof window !== "undefined" ? window.document : false']
   }))
   .pipe(insert.prepend(HEADER_COMMENT))
   // .pipe(stripDebug())
@@ -48,7 +47,6 @@ gulp.task('pressure', function() {
 
 gulp.task('jquery-pressure', function() {
   gulp.src([
-    './src/setup.js',
     './src/jquery_pressure.js',
     './src/element.js',
     './src/adapter.js',
@@ -64,8 +62,8 @@ gulp.task('jquery-pressure', function() {
   }))
   .pipe(iife({
     useStrict: false,
-    params: ['window', '$'],
-    args: ['typeof window !== "undefined" ? window : false', 'typeof jQuery !== "undefined" ? jQuery : false']
+    params: ['window', 'document', '$'],
+    args: ['typeof window !== "undefined" ? window : false', 'typeof window !== "undefined" ? window.document : false', 'typeof jQuery !== "undefined" ? jQuery : false']
   }))
   .pipe(insert.prepend(HEADER_COMMENT))
   // .pipe(stripDebug())

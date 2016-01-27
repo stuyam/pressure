@@ -15,10 +15,3 @@ var Pressure = {
   }
 
 }
-
-//---- Usage ----//
-// Pressure.init('.btn', {
-//   change: function(){
-
-//   }
-// }, {css: false, only: '3d'});
