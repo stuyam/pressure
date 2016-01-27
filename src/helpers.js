@@ -40,3 +40,6 @@ var runClosure = function(closure, method, element){
 var map = function(x, in_min, in_max, out_min, out_max){
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+
+// Check if the device is mobile or desktop
+Support.mobile = 'ontouchstart' in document;

@@ -22,7 +22,7 @@ gulp.task('pressure', function() {
     './src/adapter_force_touch.js',
     './src/support.js',
     './src/helpers.js',
-    './src/final.js',
+    './src/globalize.js',
   ])
   .pipe(concat('dist/pressure.js'))
   .pipe(babel({
@@ -56,7 +56,7 @@ gulp.task('jquery-pressure', function() {
     './src/adapter_force_touch.js',
     './src/support.js',
     './src/helpers.js',
-    './src/final.js',
+    './src/globalize.js',
   ])
   .pipe(concat('dist/jquery.pressure.js'))
   .pipe(babel({

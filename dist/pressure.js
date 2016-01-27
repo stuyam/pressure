@@ -22,7 +22,7 @@ var Pressure = {
 
   // targets any device with Force of 3D Touch
 
-  init: function init(selector, closure, options) {
+  set: function set(selector, closure, options) {
     loopPressureElements(selector, closure, options);
   },
 
@@ -496,14 +496,25 @@ Support.mobile = 'ontouchstart' in document;
 
 // Assign the Pressure object to the global object (or module for npm) so it can be called from inside the self executing anonymous function
 if (window !== false) {
-  if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === "object" && _typeof(module.exports) === "object") {
-    // For CommonJS and CommonJS-like environments where a proper `window`
-    // is present, execute Pressure.
-    // For environments that do not have a `window` with a `document`
-    // (such as Node.js) Pressure does not work
-    module.exports = Pressure;
-  } else {
-    window.Pressure = Pressure;
+  // if Pressure is not defined, it is the jquery.pressure library and skip the next setup
+  if (typeof Pressure !== "undefined") {
+    // this if block came from: http://ifandelse.com/its-not-hard-making-your-library-support-amd-and-commonjs/
+    if (typeof define === "function" && define.amd) {
+      // Now we're wrapping the factory and assigning the return
+      // value to the root (window) and returning it as well to
+      // the AMD loader.
+      define(["Pressure"], function (Pressure) {
+        return Pressure;
+      });
+    } else if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === "object" && module.exports) {
+      // I've not encountered a need for this yet, since I haven't
+      // run into a scenario where plain modules depend on CommonJS
+      // *and* I happen to be loading in a CJS browser environment
+      // but I'm including it for the sake of being thorough
+      module.exports = Pressure;
+    } else {
+      window.Pressure = Pressure;
+    }
   }
 } else {
   throw new Error("Pressure requires a window with a document");

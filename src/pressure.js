@@ -4,7 +4,7 @@
 var Pressure = {
 
   // targets any device with Force of 3D Touch
-  init(selector, closure, options){
+  set(selector, closure, options){
     loopPressureElements(selector, closure, options);
   },
 

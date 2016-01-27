@@ -49,9 +49,9 @@ var block = {
   }
 }
 
-Pressure.init(document.querySelectorAll('#el1'), block);
-Pressure.init($('#el2'), block, {only: 'force'});
-Pressure.init('#el3', block, {only: '3d'});
+Pressure.set(document.querySelectorAll('#el1'), block);
+Pressure.set($('#el2'), block, {only: 'force'});
+Pressure.set('#el3', block, {only: '3d'});
 
 $('#el1-jquery').pressure(block);
 $('#el2-jquery').pressure(block, {only: 'force'});
