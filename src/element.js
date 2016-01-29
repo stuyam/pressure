@@ -5,13 +5,13 @@ class Element{
     this.block = block;
     this.type = options.hasOwnProperty('only') ? options.only : null;
     this.cssPrevention(options);
+    this.options = options;
     this.routeEvents();
   }
 
   cssPrevention(options){
     if(!options.hasOwnProperty('css') || options.css !== false){
       this.element.style.webkitUserSelect = "none";
-      this.element.style.webkitTouchCallout = "none";
     }
   }
 

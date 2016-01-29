@@ -36,6 +36,7 @@ var Element = (function () {
     this.block = block;
     this.type = options.hasOwnProperty('only') ? options.only : null;
     this.cssPrevention(options);
+    this.options = options;
     this.routeEvents();
   }
 
@@ -44,7 +45,6 @@ var Element = (function () {
     value: function cssPrevention(options) {
       if (!options.hasOwnProperty('css') || options.css !== false) {
         this.element.style.webkitUserSelect = "none";
-        this.element.style.webkitTouchCallout = "none";
       }
     }
   }, {
@@ -171,6 +171,7 @@ var Adapter3DTouch = (function (_Adapter) {
       // call 'start' when the touch goes down
       this.add('touchstart', function () {
         if (Support.forPressure) {
+          _this3.preventDefault3DTouch();
           _this3.setPressed(true);
           runClosure(_this3.block, 'start', _this3.el);
         }
@@ -257,6 +258,16 @@ var Adapter3DTouch = (function (_Adapter) {
     value: function returnTouch(touch) {
       touch.force >= 0.5 ? this.startDeepPress() : this.endDeepPress();
       return touch;
+    }
+
+    // prevent the default action on iOS of "peek and pop" and other 3D Touch features
+
+  }, {
+    key: 'preventDefault3DTouch',
+    value: function preventDefault3DTouch() {
+      if (!this.element.options.hasOwnProperty('preventDefault') || this.element.options.preventDefault !== false) {
+        this.element.style.webkitTouchCallout = "none";
+      }
     }
   }]);
 
@@ -385,10 +396,14 @@ var AdapterForceTouch = (function (_Adapter2) {
   }, {
     key: 'preventDefaultForceTouch',
     value: function preventDefaultForceTouch() {
+      var _this11 = this;
+
       // prevent the default force touch action for bound elements
       this.add('webkitmouseforcewillbegin', function (event) {
         if (Support.forPressure) {
-          event.preventDefault();
+          if (!_this11.element.options.hasOwnProperty('preventDefault') || _this11.element.options.preventDefault !== false) {
+            event.preventDefault();
+          }
         }
       });
     }

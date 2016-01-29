@@ -23,6 +23,7 @@
 // The failure block will return with an "error" and message showing why the device doesn't support 3D Touch and Force Touch
 var block = {
   start: function(){
+    console.log('start');
   },
 
   change: function(force, event){
@@ -31,6 +32,7 @@ var block = {
   },
 
   end: function(){
+    console.log('end');
     this.style.width = '200px';
     this.innerHTML = 0;
   },
@@ -49,13 +51,19 @@ var block = {
   }
 }
 
-Pressure.set(document.querySelectorAll('#el1'), block);
+Pressure.set(document.querySelectorAll('#el1'), block, {preventDefault: false});
 Pressure.set($('#el2'), block, {only: 'force'});
 Pressure.set('#el3', block, {only: '3d'});
 
 $('#el1-jquery').pressure(block);
 $('#el2-jquery').pressure(block, {only: 'force', css: false});
 $('#el3-jquery').pressure(block, {only: '3d'});
+
+$('h3').pressure({
+  start: function(){
+    console.log('preventDefault text');
+  }
+}, {preventDefault: false, css: false});
 
 // Pressure.set('#el1', {
 //   start: function(){

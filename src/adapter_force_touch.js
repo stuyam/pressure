@@ -97,7 +97,9 @@ class AdapterForceTouch extends Adapter{
     // prevent the default force touch action for bound elements
     this.add('webkitmouseforcewillbegin', (event) => {
       if(Support.forPressure){
-        event.preventDefault();
+        if(!this.element.options.hasOwnProperty('preventDefault') || this.element.options.preventDefault !== false){
+          event.preventDefault();
+        }
       }
     });
   }

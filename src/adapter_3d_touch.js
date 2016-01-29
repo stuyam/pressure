@@ -44,6 +44,7 @@ class Adapter3DTouch extends Adapter{
     // call 'start' when the touch goes down
     this.add('touchstart', () => {
       if(Support.forPressure){
+        this.preventDefault3DTouch();
         this.setPressed(true);
         runClosure(this.block, 'start', this.el);
       }
@@ -116,6 +117,13 @@ class Adapter3DTouch extends Adapter{
   returnTouch(touch){
     touch.force >= 0.5 ? this.startDeepPress() : this.endDeepPress();
     return touch;
+  }
+
+  // prevent the default action on iOS of "peek and pop" and other 3D Touch features
+  preventDefault3DTouch(){
+    if(!this.element.options.hasOwnProperty('preventDefault') || this.element.options.preventDefault !== false){
+      this.element.style.webkitTouchCallout = "none";
+    }
   }
 
 }
