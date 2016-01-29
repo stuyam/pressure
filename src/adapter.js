@@ -17,11 +17,11 @@ class Adapter{
   }
 
   setPressed(boolean){
-    this.down = boolean;
+    this.pressed = boolean;
   }
 
   setDeepPressed(boolean){
-    this.deepDown = boolean;
+    this.deepPressed = boolean;
   }
 
 }

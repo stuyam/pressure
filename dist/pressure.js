@@ -103,12 +103,12 @@ var Adapter = (function () {
   }, {
     key: 'setPressed',
     value: function setPressed(boolean) {
-      this.down = boolean;
+      this.pressed = boolean;
     }
   }, {
     key: 'setDeepPressed',
     value: function setDeepPressed(boolean) {
-      this.deepDown = boolean;
+      this.deepPressed = boolean;
     }
   }]);
 
