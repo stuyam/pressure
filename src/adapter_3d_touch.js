@@ -24,7 +24,7 @@ class Adapter3DTouch extends Adapter{
       if(event.touches[0].force > 0){
         Support.didSucceed('3d');
         this.remove('touchstart', this.supportMethod);
-        runClosure(this.block, 'start', this.el);
+        runClosure(this.block, 'start', this.el, event);
         this.changeLogic(event);
       } else if(iter <= 10 && this.pressed) {
         iter += 1;
@@ -42,11 +42,11 @@ class Adapter3DTouch extends Adapter{
 
   $start(){
     // call 'start' when the touch goes down
-    this.add('touchstart', () => {
+    this.add('touchstart', (event) => {
       if(Support.forPressure){
         this.preventDefault3DTouch();
         this.setPressed(true);
-        runClosure(this.block, 'start', this.el);
+        runClosure(this.block, 'start', this.el, event);
       }
     });
   }
@@ -77,16 +77,16 @@ class Adapter3DTouch extends Adapter{
     });
   }
 
-  startDeepPress(){
+  startDeepPress(event){
     if(this.deepPressed === false){
-      runClosure(this.block, 'startDeepPress', this.el);
+      runClosure(this.block, 'startDeepPress', this.el, event);
     }
     this.setDeepPressed(true);
   }
 
-  endDeepPress(){
+  endDeepPress(event){
     if(this.deepPressed === true){
-      runClosure(this.block, 'endDeepPress', this.el);
+      runClosure(this.block, 'endDeepPress', this.el, event);
     }
     this.setDeepPressed(false);
   }
@@ -107,15 +107,15 @@ class Adapter3DTouch extends Adapter{
       for(var i = 0; i < event.touches.length; i++){
         // if the target press is on this element
         if(event.touches[i].target === this.el){
-          return this.returnTouch(event.touches[i]);
+          return this.returnTouch(event.touches[i], event);
         }
       }
     }
   }
 
   // return the touch and run a start or end for deep press
-  returnTouch(touch){
-    touch.force >= 0.5 ? this.startDeepPress() : this.endDeepPress();
+  returnTouch(touch, event){
+    touch.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress(event);
     return touch;
   }
 

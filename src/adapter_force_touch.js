@@ -33,10 +33,10 @@ class AdapterForceTouch extends Adapter{
 
   $start(){
     // call 'start' when the mouse goes down
-    this.add('mousedown', () => {
+    this.add('mousedown', (event) => {
       if(Support.forPressure){
         this.setPressed(true);
-        runClosure(this.block, 'start', this.el);
+        runClosure(this.block, 'start', this.el, event);
       }
     });
   }
@@ -68,25 +68,25 @@ class AdapterForceTouch extends Adapter{
   }
 
   $startDeepPress(){
-    this.add('webkitmouseforcedown', () => {
+    this.add('webkitmouseforcedown', (event) => {
       if(Support.forPressure){
         this.setDeepPressed(true);
-        runClosure(this.block, 'startDeepPress', this.el);
+        runClosure(this.block, 'startDeepPress', this.el, event);
       }
     });
   }
 
   $endDeepPress(){
-    this.add('webkitmouseforceup', () => {
+    this.add('webkitmouseforceup', (event) => {
       if(Support.forPressure){
         this.setDeepPressed(false);
-        runClosure(this.block, 'endDeepPress', this.el);
+        runClosure(this.block, 'endDeepPress', this.el, event);
       }
     });
-    this.add('mouseleave', () => {
+    this.add('mouseleave', (event) => {
       if(Support.forPressure){
         if(this.deepPressed){
-          runClosure(this.block, 'endDeepPress', this.el);
+          runClosure(this.block, 'endDeepPress', this.el, event);
         }
         this.setDeepPressed(false);
       }

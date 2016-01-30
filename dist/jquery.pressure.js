@@ -148,7 +148,7 @@ var Adapter3DTouch = (function (_Adapter) {
         if (event.touches[0].force > 0) {
           Support.didSucceed('3d');
           this.remove('touchstart', this.supportMethod);
-          runClosure(this.block, 'start', this.el);
+          runClosure(this.block, 'start', this.el, event);
           this.changeLogic(event);
         } else if (iter <= 10 && this.pressed) {
           iter += 1;
@@ -169,11 +169,11 @@ var Adapter3DTouch = (function (_Adapter) {
       var _this3 = this;
 
       // call 'start' when the touch goes down
-      this.add('touchstart', function () {
+      this.add('touchstart', function (event) {
         if (Support.forPressure) {
           _this3.preventDefault3DTouch();
           _this3.setPressed(true);
-          runClosure(_this3.block, 'start', _this3.el);
+          runClosure(_this3.block, 'start', _this3.el, event);
         }
       });
     }
@@ -210,17 +210,17 @@ var Adapter3DTouch = (function (_Adapter) {
     }
   }, {
     key: 'startDeepPress',
-    value: function startDeepPress() {
+    value: function startDeepPress(event) {
       if (this.deepPressed === false) {
-        runClosure(this.block, 'startDeepPress', this.el);
+        runClosure(this.block, 'startDeepPress', this.el, event);
       }
       this.setDeepPressed(true);
     }
   }, {
     key: 'endDeepPress',
-    value: function endDeepPress() {
+    value: function endDeepPress(event) {
       if (this.deepPressed === true) {
-        runClosure(this.block, 'endDeepPress', this.el);
+        runClosure(this.block, 'endDeepPress', this.el, event);
       }
       this.setDeepPressed(false);
     }
@@ -245,7 +245,7 @@ var Adapter3DTouch = (function (_Adapter) {
         for (var i = 0; i < event.touches.length; i++) {
           // if the target press is on this element
           if (event.touches[i].target === this.el) {
-            return this.returnTouch(event.touches[i]);
+            return this.returnTouch(event.touches[i], event);
           }
         }
       }
@@ -255,8 +255,8 @@ var Adapter3DTouch = (function (_Adapter) {
 
   }, {
     key: 'returnTouch',
-    value: function returnTouch(touch) {
-      touch.force >= 0.5 ? this.startDeepPress() : this.endDeepPress();
+    value: function returnTouch(touch, event) {
+      touch.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress(event);
       return touch;
     }
 
@@ -322,10 +322,10 @@ var AdapterForceTouch = (function (_Adapter2) {
       var _this6 = this;
 
       // call 'start' when the mouse goes down
-      this.add('mousedown', function () {
+      this.add('mousedown', function (event) {
         if (Support.forPressure) {
           _this6.setPressed(true);
-          runClosure(_this6.block, 'start', _this6.el);
+          runClosure(_this6.block, 'start', _this6.el, event);
         }
       });
     }
@@ -366,10 +366,10 @@ var AdapterForceTouch = (function (_Adapter2) {
     value: function $startDeepPress() {
       var _this9 = this;
 
-      this.add('webkitmouseforcedown', function () {
+      this.add('webkitmouseforcedown', function (event) {
         if (Support.forPressure) {
           _this9.setDeepPressed(true);
-          runClosure(_this9.block, 'startDeepPress', _this9.el);
+          runClosure(_this9.block, 'startDeepPress', _this9.el, event);
         }
       });
     }
@@ -378,16 +378,16 @@ var AdapterForceTouch = (function (_Adapter2) {
     value: function $endDeepPress() {
       var _this10 = this;
 
-      this.add('webkitmouseforceup', function () {
+      this.add('webkitmouseforceup', function (event) {
         if (Support.forPressure) {
           _this10.setDeepPressed(false);
-          runClosure(_this10.block, 'endDeepPress', _this10.el);
+          runClosure(_this10.block, 'endDeepPress', _this10.el, event);
         }
       });
-      this.add('mouseleave', function () {
+      this.add('mouseleave', function (event) {
         if (Support.forPressure) {
           if (_this10.deepPressed) {
-            runClosure(_this10.block, 'endDeepPress', _this10.el);
+            runClosure(_this10.block, 'endDeepPress', _this10.el, event);
           }
           _this10.setDeepPressed(false);
         }

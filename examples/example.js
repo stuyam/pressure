@@ -22,27 +22,28 @@
 // This structure can be used in any methods of Pressure
 // The failure block will return with an "error" and message showing why the device doesn't support 3D Touch and Force Touch
 var block = {
-  start: function(){
-    console.log('start');
+  start: function(event){
+    console.log('start', event);
   },
 
   change: function(force, event){
     this.style.width = $.pressureMap(force, 0, 1, 200, 300) + 'px';
     this.innerHTML = force;
+    console.log('change', event);
+  },
+
+  startDeepPress: function(event){
+    console.log('start deep press', event);
+  },
+
+  endDeepPress: function(event){
+    console.log('end deep press', event);
   },
 
   end: function(){
     console.log('end');
     this.style.width = '200px';
     this.innerHTML = 0;
-  },
-
-  startDeepPress: function(){
-    console.log('start deep PRESS!');
-  },
-
-  endDeepPress: function(){
-    console.log('END deep PRESS!');
   },
 
   unsupported: function(){
