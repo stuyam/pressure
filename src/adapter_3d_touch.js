@@ -56,7 +56,7 @@ class Adapter3DTouch extends Adapter{
   }
 
   changeLogic(event){
-    if(Support.forPressure){
+    if(Support.forPressure && this.pressed){
       this.setPressed(true);
       // set touch event
       this.touch = this.selectTouch(event);
@@ -70,9 +70,9 @@ class Adapter3DTouch extends Adapter{
     // call 'end' when the touch goes up
     this.add('touchend', () => {
       if(Support.forPressure){
+        this.endDeepPress();
         this.setPressed(false);
         runClosure(this.block, 'end', this.el);
-        this.endDeepPress();
       }
     });
   }

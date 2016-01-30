@@ -187,7 +187,7 @@ var Adapter3DTouch = (function (_Adapter) {
   }, {
     key: 'changeLogic',
     value: function changeLogic(event) {
-      if (Support.forPressure) {
+      if (Support.forPressure && this.pressed) {
         this.setPressed(true);
         // set touch event
         this.touch = this.selectTouch(event);
@@ -204,9 +204,9 @@ var Adapter3DTouch = (function (_Adapter) {
       // call 'end' when the touch goes up
       this.add('touchend', function () {
         if (Support.forPressure) {
+          _this4.endDeepPress();
           _this4.setPressed(false);
           runClosure(_this4.block, 'end', _this4.el);
-          _this4.endDeepPress();
         }
       });
     }
