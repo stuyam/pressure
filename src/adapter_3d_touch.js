@@ -80,9 +80,9 @@ class Adapter3DTouch extends Adapter{
     this.setDeepPressed(true);
   }
 
-  endDeepPress(event){
+  endDeepPress(){
     if(this.deepPressed === true){
-      runClosure(this.block, 'endDeepPress', this.el, event);
+      runClosure(this.block, 'endDeepPress', this.el);
     }
     this.setDeepPressed(false);
   }
@@ -111,7 +111,7 @@ class Adapter3DTouch extends Adapter{
 
   // return the touch and run a start or end for deep press
   returnTouch(touch, event){
-    touch.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress(event);
+    touch.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
     return touch;
   }
 

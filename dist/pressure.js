@@ -216,9 +216,9 @@ var Adapter3DTouch = (function (_Adapter) {
     }
   }, {
     key: 'endDeepPress',
-    value: function endDeepPress(event) {
+    value: function endDeepPress() {
       if (this.deepPressed === true) {
-        runClosure(this.block, 'endDeepPress', this.el, event);
+        runClosure(this.block, 'endDeepPress', this.el);
       }
       this.setDeepPressed(false);
     }
@@ -254,7 +254,7 @@ var Adapter3DTouch = (function (_Adapter) {
   }, {
     key: 'returnTouch',
     value: function returnTouch(touch, event) {
-      touch.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress(event);
+      touch.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
       return touch;
     }
 
@@ -376,16 +376,16 @@ var AdapterForceTouch = (function (_Adapter2) {
     value: function $endDeepPress() {
       var _this10 = this;
 
-      this.add('webkitmouseforceup', function (event) {
+      this.add('webkitmouseforceup', function () {
         if (Support.forPressure) {
           _this10.setDeepPressed(false);
-          runClosure(_this10.block, 'endDeepPress', _this10.el, event);
+          runClosure(_this10.block, 'endDeepPress', _this10.el);
         }
       });
-      this.add('mouseleave', function (event) {
+      this.add('mouseleave', function () {
         if (Support.forPressure) {
           if (_this10.deepPressed) {
-            runClosure(_this10.block, 'endDeepPress', _this10.el, event);
+            runClosure(_this10.block, 'endDeepPress', _this10.el);
           }
           _this10.setDeepPressed(false);
         }

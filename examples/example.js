@@ -36,8 +36,8 @@ var block = {
     console.log('start deep press', event);
   },
 
-  endDeepPress: function(event){
-    console.log('end deep press', event);
+  endDeepPress: function(){
+    console.log('end deep press');
   },
 
   end: function(){

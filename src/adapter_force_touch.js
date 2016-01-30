@@ -77,16 +77,16 @@ class AdapterForceTouch extends Adapter{
   }
 
   $endDeepPress(){
-    this.add('webkitmouseforceup', (event) => {
+    this.add('webkitmouseforceup', () => {
       if(Support.forPressure){
         this.setDeepPressed(false);
-        runClosure(this.block, 'endDeepPress', this.el, event);
+        runClosure(this.block, 'endDeepPress', this.el);
       }
     });
-    this.add('mouseleave', (event) => {
+    this.add('mouseleave', () => {
       if(Support.forPressure){
         if(this.deepPressed){
-          runClosure(this.block, 'endDeepPress', this.el, event);
+          runClosure(this.block, 'endDeepPress', this.el);
         }
         this.setDeepPressed(false);
       }
