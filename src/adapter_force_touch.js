@@ -43,7 +43,7 @@ class AdapterForceTouch extends Adapter{
 
   $change(){
     this.add('webkitmouseforcechanged', (event) => {
-      if(Support.forPressure && event.webkitForce !== 0){
+      if(Support.forPressure && event.webkitForce !== 0 && this.pressed){
         runClosure(this.block, 'change', this.el, this.normalizeForce(event.webkitForce), event);
       }
     });

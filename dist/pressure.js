@@ -337,7 +337,7 @@ var AdapterForceTouch = (function (_Adapter2) {
       var _this7 = this;
 
       this.add('webkitmouseforcechanged', function (event) {
-        if (Support.forPressure && event.webkitForce !== 0) {
+        if (Support.forPressure && event.webkitForce !== 0 && _this7.pressed) {
           runClosure(_this7.block, 'change', _this7.el, _this7.normalizeForce(event.webkitForce), event);
         }
       });
