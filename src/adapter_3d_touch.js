@@ -46,6 +46,7 @@ class Adapter3DTouch extends Adapter{
     this.add('touchstart', (event) => {
       if(Support.forPressure){
         this.setPressed(true);
+        this.preventDefault3DTouch();
         runClosure(this.block, 'start', this.el, event);
       }
     });
@@ -117,8 +118,8 @@ class Adapter3DTouch extends Adapter{
 
   // prevent the default action on iOS of "peek and pop" and other 3D Touch features
   preventDefault3DTouch(){
-    if(!this.element.options.hasOwnProperty('preventDefault') || this.element.options.preventDefault !== false){
-      this.element.style.webkitTouchCallout = "none";
+    if(this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false){
+      this.el.style.webkitTouchCallout = "none";
     }
   }
 

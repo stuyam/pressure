@@ -173,6 +173,7 @@ var Adapter3DTouch = (function (_Adapter) {
       this.add('touchstart', function (event) {
         if (Support.forPressure) {
           _this3.setPressed(true);
+          _this3.preventDefault3DTouch();
           runClosure(_this3.block, 'start', _this3.el, event);
         }
       });
@@ -261,8 +262,8 @@ var Adapter3DTouch = (function (_Adapter) {
   }, {
     key: 'preventDefault3DTouch',
     value: function preventDefault3DTouch() {
-      if (!this.element.options.hasOwnProperty('preventDefault') || this.element.options.preventDefault !== false) {
-        this.element.style.webkitTouchCallout = "none";
+      if (this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false) {
+        this.el.style.webkitTouchCallout = "none";
       }
     }
   }]);
