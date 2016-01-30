@@ -5,9 +5,9 @@ class AdapterForceTouch extends Adapter{
     this.$support();
     this.$start();
     this.$change();
-    this.$end();
     this.$startDeepPress();
     this.$endDeepPress();
+    this.$end();
     this.preventDefaultForceTouch();
   }
 

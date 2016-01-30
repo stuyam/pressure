@@ -285,9 +285,9 @@ var AdapterForceTouch = (function (_Adapter2) {
     _this5.$support();
     _this5.$start();
     _this5.$change();
-    _this5.$end();
     _this5.$startDeepPress();
     _this5.$endDeepPress();
+    _this5.$end();
     _this5.preventDefaultForceTouch();
     return _this5;
   }
