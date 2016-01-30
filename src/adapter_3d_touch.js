@@ -22,6 +22,7 @@ class Adapter3DTouch extends Adapter{
     // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
     if(Support.hasRun === false){
       if(event.touches[0].force > 0){
+        this.preventDefault3DTouch();
         Support.didSucceed('3d');
         this.remove('touchstart', this.supportMethod);
         runClosure(this.block, 'start', this.el, event);
@@ -44,7 +45,6 @@ class Adapter3DTouch extends Adapter{
     // call 'start' when the touch goes down
     this.add('touchstart', (event) => {
       if(Support.forPressure){
-        this.preventDefault3DTouch();
         this.setPressed(true);
         runClosure(this.block, 'start', this.el, event);
       }
@@ -58,11 +58,7 @@ class Adapter3DTouch extends Adapter{
   changeLogic(event){
     if(Support.forPressure && this.pressed){
       this.setPressed(true);
-      // set touch event
-      this.touch = this.selectTouch(event);
-      if(this.touch){
-        this.fetchForce(event);
-      }
+      this.runForce(event);
     }
   }
 
@@ -91,10 +87,10 @@ class Adapter3DTouch extends Adapter{
     this.setDeepPressed(false);
   }
 
-  fetchForce(event){
+  runForce(event){
     if(this.pressed) {
       this.touch = this.selectTouch(event);
-      setTimeout(this.fetchForce.bind(this), 10, event);
+      setTimeout(this.runForce.bind(this), 10, event);
       runClosure(this.block, 'change', this.el, this.touch.force, event);
     }
   }
@@ -102,7 +98,7 @@ class Adapter3DTouch extends Adapter{
   // link up the touch point to the correct element, this is to support multitouch
   selectTouch(event){
     if(event.touches.length === 1){
-      return this.returnTouch(event.touches[0].force);
+      return this.returnTouch(event.touches[0], event);
     } else {
       for(var i = 0; i < event.touches.length; i++){
         // if the target press is on this element

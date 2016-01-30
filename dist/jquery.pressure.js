@@ -146,6 +146,7 @@ var Adapter3DTouch = (function (_Adapter) {
       // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
       if (Support.hasRun === false) {
         if (event.touches[0].force > 0) {
+          this.preventDefault3DTouch();
           Support.didSucceed('3d');
           this.remove('touchstart', this.supportMethod);
           runClosure(this.block, 'start', this.el, event);
@@ -171,7 +172,6 @@ var Adapter3DTouch = (function (_Adapter) {
       // call 'start' when the touch goes down
       this.add('touchstart', function (event) {
         if (Support.forPressure) {
-          _this3.preventDefault3DTouch();
           _this3.setPressed(true);
           runClosure(_this3.block, 'start', _this3.el, event);
         }
@@ -187,11 +187,7 @@ var Adapter3DTouch = (function (_Adapter) {
     value: function changeLogic(event) {
       if (Support.forPressure && this.pressed) {
         this.setPressed(true);
-        // set touch event
-        this.touch = this.selectTouch(event);
-        if (this.touch) {
-          this.fetchForce(event);
-        }
+        this.runForce(event);
       }
     }
   }, {
@@ -225,11 +221,11 @@ var Adapter3DTouch = (function (_Adapter) {
       this.setDeepPressed(false);
     }
   }, {
-    key: 'fetchForce',
-    value: function fetchForce(event) {
+    key: 'runForce',
+    value: function runForce(event) {
       if (this.pressed) {
         this.touch = this.selectTouch(event);
-        setTimeout(this.fetchForce.bind(this), 10, event);
+        setTimeout(this.runForce.bind(this), 10, event);
         runClosure(this.block, 'change', this.el, this.touch.force, event);
       }
     }
@@ -240,7 +236,7 @@ var Adapter3DTouch = (function (_Adapter) {
     key: 'selectTouch',
     value: function selectTouch(event) {
       if (event.touches.length === 1) {
-        return this.returnTouch(event.touches[0].force);
+        return this.returnTouch(event.touches[0], event);
       } else {
         for (var i = 0; i < event.touches.length; i++) {
           // if the target press is on this element
