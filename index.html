@@ -88,10 +88,9 @@
           </div>
 
           <div class="h4 doc-title">2. Unblur Photo</div>
-          <p>The harder you press on the button the less blurry the image will become.</p>
+          <p>The harder you press on the image the less blurry it will become.</p>
           <div class="doc-section">
             <div class="doc-top">
-              <button id="peanuts-btn" class="btn btn-primary btn-lg">Press Me!</button>
               <p>(try pressing with variable amounts of pressure)</p>
               <div class="wrap-peanuts">
                 <img src="peanuts.jpg" id="peanuts"/>
@@ -344,7 +343,7 @@ Pressure.set('#stuart', {
           <p>Pressure sets <code>user-select: none;</code> css property on all of the elements it is attached to. It does this to keep text from being selected while force touching. However, sometimes you may want this turned off. You can pass in the "css" option set to false to make sure that never gets set.</p>
           <div class="doc-section">
             <div class="doc-bottom">
-              <pre class="language-javascript"><code>Pressure.set('#element-3d', {
+              <pre class="language-javascript"><code>Pressure.set('span', {
   start: function(event){
     console.log('cool it started');
   }
