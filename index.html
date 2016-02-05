@@ -312,13 +312,14 @@ Pressure.set('#stuart', {
 
           <h4><b>Prevent Default</b></h4>
           <p>Both Mac and iPhones have system wide features that they default to when force clicking on something (ex. defining a word on Mac or "peeking and popping" an image on iOS). Pressure prevents those actions from happening, however if you still want those actions to be possible on "Pressure" elements, you can pass in "preventDefault" as an option.</p>
+          <div class="alert alert-success">Pressure sets <code>user-select: none;</code> css property on all of the elements it is attached to. It does this to keep text from being selected while force touching. However, sometimes you may want this turned off. The "preventDefault" option also handles removing that"</div>
           <div class="doc-section">
             <div class="doc-top">
               <div style="width: 100%;padding: 10px;">Push the image hard on an iPhone6s to "peek and pop" it</div>
               <img src="pickle.jpg" style="widht: 100%; max-width: 200px" id="element-3d-prevent" />
             </div>
             <div class="doc-bottom">
-              <pre class="language-javascript"><code>Pressure.set('#element-3d', {
+              <pre class="language-javascript"><code>Pressure.set('#element-3d-prevent', {
   start: function(event){
     console.log('cool it started');
   }
@@ -331,7 +332,7 @@ Pressure.set('#stuart', {
               <div id="element-force-prevent" style="width: 100%;padding: 10px;">Force touch one of these words on a Force Touch trackpad to define it.</div>
             </div>
             <div class="doc-bottom">
-              <pre class="language-javascript"><code>Pressure.set('#element-force', {
+              <pre class="language-javascript"><code>Pressure.set('#element-force-prevent', {
   start: function(event){
     console.log('cool it started');
   }
@@ -339,17 +340,6 @@ Pressure.set('#stuart', {
             </div>
           </div>
 
-          <h4><b>CSS Preset</b></h4>
-          <p>Pressure sets <code>user-select: none;</code> css property on all of the elements it is attached to. It does this to keep text from being selected while force touching. However, sometimes you may want this turned off. You can pass in the "css" option set to false to make sure that never gets set.</p>
-          <div class="doc-section">
-            <div class="doc-bottom">
-              <pre class="language-javascript"><code>Pressure.set('span', {
-  start: function(event){
-    console.log('cool it started');
-  }
-}, {css: false});</code></pre>
-            </div>
-          </div>
 
           <div class="h4 doc-title">6. Helper</div>
           <p>You can use <code>Pressure.map()</code> to map a value from one range of values to another. It takes 5 params: <code>Pressure.map(inputValue, inputValueMin, inputValueMax, mapToMin, mapToMax);</code> Here is a good write up on how this works in the Processing framework: <a href="https://processing.org/reference/map_.html">Map Function</a>.</p>
@@ -381,7 +371,7 @@ Pressure.set('#stuart', {
     <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
-    <script type="text/javascript" src="js/pressure.min.js"></script>
+    <script type="text/javascript" src="js/pressure.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
     <!-- GitHub. -->
     <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
