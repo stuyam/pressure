@@ -10,7 +10,7 @@ class Element{
   }
 
   cssPrevention(options){
-    if(!options.hasOwnProperty('css') || options.css !== false){
+    if(!options.hasOwnProperty('preventDefault') || options.preventDefault !== false){
       this.element.style.webkitUserSelect = "none";
     }
   }

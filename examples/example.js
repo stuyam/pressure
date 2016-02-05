@@ -37,11 +37,11 @@ Pressure.set($('#el2'), block, {only: 'force'});
 Pressure.set('#el3', block, {only: '3d'});
 
 $('#el1-jquery').pressure(block);
-$('#el2-jquery').pressure(block, {only: 'force', css: false});
+$('#el2-jquery').pressure(block, {only: 'force', preventDefault: false});
 $('#el3-jquery').pressure(block, {only: '3d'});
 
 // $('h3').pressure({
 //   start: function(){
 //     console.log('preventDefault text');
 //   }
-// }, {preventDefault: false, css: false});
+// }, {preventDefault: false, preventDefault: false});
