@@ -22,7 +22,7 @@
         <a class="text-center-block download" href="https://github.com/yamartino/pressure">Download on <b>GitHub</b></a>
         <div class="social-buttons">
           <iframe src="https://ghbtns.com/github-btn.html?user=yamartino&repo=pressure&type=star&count=true&size=large" frameborder="0" scrolling="0" width="145px" height="30px"></iframe>
-          <a class="twitter-share-button" data-size="large" href="https://twitter.com/intent/tweet?text=Pressure.js makes working with #ForceTouch and #3DTouch painless to use on the web">Tweet</a>
+          <a class="twitter-share-button" data-size="large" href="https://twitter.com/intent/tweet?text=Pressure.js makes working with #ForceTouch and #3DTouch painless to use on the web via @StuYam">Tweet</a>
         </div>
       </div>
     </header>
@@ -178,6 +178,22 @@ Pressure.set('#test', {
 });</code></pre>
             </div>
           </div>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// RequireJS
+requirejs(['Pressure'], function( Pressure ) {
+
+  Pressure.set('#test', {
+    change: function(force, event){
+      console.log(force);
+    }
+  });
+
+});
+</code></pre>
+            </div>
+          </div>
+
 
           <div class="h4 doc-title">3. Usage</div>
           <p>Pressure has a really simple method signature. The first argument is the element(s) you are targeting and the second argument is an object with optional callback functions.</p>
