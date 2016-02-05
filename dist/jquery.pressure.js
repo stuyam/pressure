@@ -35,19 +35,11 @@ var Element = (function () {
     this.element = element;
     this.block = block;
     this.type = options.hasOwnProperty('only') ? options.only : null;
-    this.cssPrevention(options);
     this.options = options;
     this.routeEvents();
   }
 
   _createClass(Element, [{
-    key: 'cssPrevention',
-    value: function cssPrevention(options) {
-      if (!options.hasOwnProperty('preventDefault') || options.preventDefault !== false) {
-        this.element.style.webkitUserSelect = "none";
-      }
-    }
-  }, {
     key: 'routeEvents',
     value: function routeEvents() {
       // if on desktop and requesting Force Touch or not requesting 3D Touch
@@ -264,6 +256,7 @@ var Adapter3DTouch = (function (_Adapter) {
     value: function preventDefault3DTouch() {
       if (this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false) {
         this.el.style.webkitTouchCallout = "none";
+        this.el.style.webkitUserSelect = "none";
       }
     }
   }]);
@@ -398,8 +391,9 @@ var AdapterForceTouch = (function (_Adapter2) {
       // prevent the default force touch action for bound elements
       this.add('webkitmouseforcewillbegin', function (event) {
         if (Support.forPressure) {
-          if (!_this11.element.options.hasOwnProperty('preventDefault') || _this11.element.options.preventDefault !== false) {
+          if (_this11.element.options.hasOwnProperty('preventDefault') === false || _this11.element.options.preventDefault !== false) {
             event.preventDefault();
+            _this11.el.style.webkitUserSelect = "none";
           }
         }
       });

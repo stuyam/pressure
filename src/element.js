@@ -4,15 +4,8 @@ class Element{
     this.element = element;
     this.block = block;
     this.type = options.hasOwnProperty('only') ? options.only : null;
-    this.cssPrevention(options);
     this.options = options;
     this.routeEvents();
-  }
-
-  cssPrevention(options){
-    if(!options.hasOwnProperty('preventDefault') || options.preventDefault !== false){
-      this.element.style.webkitUserSelect = "none";
-    }
   }
 
   routeEvents(){

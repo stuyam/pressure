@@ -120,6 +120,7 @@ class Adapter3DTouch extends Adapter{
   preventDefault3DTouch(){
     if(this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false){
       this.el.style.webkitTouchCallout = "none";
+      this.el.style.webkitUserSelect = "none";
     }
   }
 
