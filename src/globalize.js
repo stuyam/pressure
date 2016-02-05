@@ -7,7 +7,8 @@ if(window !== false){
       // Now we're wrapping the factory and assigning the return
       // value to the root (window) and returning it as well to
       // the AMD loader.
-      define(["Pressure"], function(Pressure){
+      var pressure = Pressure;
+      define(["pressure"], function(Pressure){
         return Pressure;
       });
     } else if(typeof module === "object" && module.exports) {
@@ -15,7 +16,8 @@ if(window !== false){
       // run into a scenario where plain modules depend on CommonJS
       // *and* I happen to be loading in a CJS browser environment
       // but I'm including it for the sake of being thorough
-      module.exports = Pressure;
+      var pressure = Pressure;
+      module.exports = pressure;
     } else {
       window.Pressure = Pressure;
     }
