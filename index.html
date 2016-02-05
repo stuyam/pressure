@@ -181,7 +181,7 @@ Pressure.set('#test', {
           <div class="doc-section">
             <div class="doc-bottom">
               <pre class="language-javascript"><code>// RequireJS
-requirejs(['Pressure'], function( Pressure ) {
+requirejs(['pressure'], function( Pressure ) {
 
   Pressure.set('#test', {
     change: function(force, event){
@@ -196,7 +196,7 @@ requirejs(['Pressure'], function( Pressure ) {
 
 
           <div class="h4 doc-title">3. Usage</div>
-          <p>Pressure has a really simple method signature. The first argument is the element(s) you are targeting and the second argument is an object with optional callback functions.</p>
+          <p>Pressure has a really simple method signature. The first argument is the element(s) you are targeting and the second argument is an object with optional callback functions. This lists all the element types that can be passed into Pressure, anything from a string selector, to a DOM node object.</p>
           <div class="doc-section">
             <div class="doc-top">
               <div id="output-element" style="width: 100%;padding: 10px;">Click Me</div>
@@ -227,7 +227,7 @@ Pressure.set('#stuart', {
 
           <div class="alert alert-success" role="alert"><b>Pro Tip:</b> "force" is a value passed back by the "change" function and is a value from 0 to 1. On Mac it is converted from a 1 to 3 scale to a 0 to 1 scale so it can be used in a consistent manner.</div>
 
-          <p>This example uses all of the methods available to you in the callback object.</p>
+          <p>This example uses all of the optional methods available to you in the callback object.</p>
           <div class="doc-section">
             <div class="doc-bottom">
               <pre class="language-javascript"><code>Pressure.set('#element', {
@@ -253,18 +253,47 @@ Pressure.set('#stuart', {
             </div>
           </div>
 
-          <div class="h4 doc-title">4. Device Targeting</div>
-          <p>With Pressure, the standard <code>Pressure.set()</code> targets all devices, but you can target just 3D or Force touch seperaratly using <code>Pressure.set3DTouch()</code> and <code>Pressure.setForceTouch()</code>.</p>
+          <div class="h4 doc-title">4. jQuery Usage</div>
+          <p>Use the <code>jquery.pressure.min.js</code> file if you are using jQuery in your project. Using the Pressure jQuery library makes it simple to attach pressure events to jQuery elements.</p>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>$('a').pressure({
+  start: function(){
+    // this is called on force start
+  },
+  end: function(){
+    // this is called on force end
+  },
+  startDeepPress: function(){
+    // this is called on "force click" / "deep press", aka once the force is greater than 0.5
+  },
+  endDeepPress: function(){
+    // this is called when the "force click" / "deep press" end
+  },
+  change: function(force, event){
+    // this is called every time there is a change in pressure
+  },
+  unsupported: function(){
+    // this is called once there is a touch on the element and the device or browser does not support Force or 3D touch
+  }
+});
+</code></pre>
+            </div>
+          </div>
+
+
+          <div class="h4 doc-title">5. Options</div>
+          <p>With Pressure, the third paramater is an optional object of options that can be passed in. The first option is device targeting. Using the "only" keyword, you can define if you want pressure to run on ONLY Mac or ONLY iPhone.</p>
           <div class="doc-section">
             <div class="doc-top">
               <div id="element-3d" style="width: 100%;padding: 10px;">Click Me On an iPhone 6s</div>
             </div>
             <div class="doc-bottom">
-              <pre class="language-javascript"><code>Pressure.set3DTouch('#element-3d', {
+              <pre class="language-javascript"><code>Pressure.set('#element-3d', {
   change: function(force, event){
     this.innerHTML = force + 'on an iphone';
   }
-});</code></pre>
+}, {only: '3d'});</code></pre>
             </div>
           </div>
 
@@ -273,11 +302,11 @@ Pressure.set('#stuart', {
               <div id="element-force" style="width: 100%;padding: 10px;">Click Me On a Mac with Force Touch</div>
             </div>
             <div class="doc-bottom">
-              <pre class="language-javascript"><code>Pressure.setForceTouch('#element-force', {
+              <pre class="language-javascript"><code>Pressure.set('#element-force', {
   change: function(force, event){
     this.innerHTML = force + 'on a Mac';
   }
-});</code></pre>
+}, {only: 'force'});</code></pre>
             </div>
           </div>
 
