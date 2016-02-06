@@ -130,6 +130,7 @@ var Adapter3DTouch = (function (_Adapter) {
     key: 'middleMan',
     value: function middleMan(event) {
       this.setPressed(true);
+      this.forceValueTest = event.touches[0].force;
       this.supportCallback(0, event);
     }
   }, {
@@ -137,7 +138,8 @@ var Adapter3DTouch = (function (_Adapter) {
     value: function supportCallback(iter, event) {
       // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
       if (Support.hasRun === false) {
-        if (event.touches[0].force > 0) {
+        // if the force value has changed it means the device supports pressure
+        if (event.touches[0].force !== this.forceValueTest) {
           this.preventDefault3DTouch();
           Support.didSucceed('3d');
           this.remove('touchstart', this.supportMethod);
