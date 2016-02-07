@@ -1,4 +1,4 @@
-// Pressure v0.0.4 | Created By Stuart Yamartino | MIT License | 2015 - Present
+// Pressure v0.0.4 | Created By Stuart Yamartino | MIT License | 2015-Present
 ;(function(window, document) {
 'use strict';
 
@@ -37,19 +37,11 @@ var Element = (function () {
     this.element = element;
     this.block = block;
     this.type = options.hasOwnProperty('only') ? options.only : null;
-    this.cssPrevention(options);
     this.options = options;
     this.routeEvents();
   }
 
   _createClass(Element, [{
-    key: 'cssPrevention',
-    value: function cssPrevention(options) {
-      if (!options.hasOwnProperty('preventDefault') || options.preventDefault !== false) {
-        this.element.style.webkitUserSelect = "none";
-      }
-    }
-  }, {
     key: 'routeEvents',
     value: function routeEvents() {
       // if on desktop and requesting Force Touch or not requesting 3D Touch
@@ -140,6 +132,7 @@ var Adapter3DTouch = (function (_Adapter) {
     key: 'middleMan',
     value: function middleMan(event) {
       this.setPressed(true);
+      this.forceValueTest = event.touches[0].force;
       this.supportCallback(0, event);
     }
   }, {
@@ -147,7 +140,8 @@ var Adapter3DTouch = (function (_Adapter) {
     value: function supportCallback(iter, event) {
       // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
       if (Support.hasRun === false) {
-        if (event.touches[0].force > 0) {
+        // if the force value has changed it means the device supports pressure
+        if (event.touches[0].force !== this.forceValueTest) {
           this.preventDefault3DTouch();
           Support.didSucceed('3d');
           this.remove('touchstart', this.supportMethod);
@@ -266,6 +260,7 @@ var Adapter3DTouch = (function (_Adapter) {
     value: function preventDefault3DTouch() {
       if (this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false) {
         this.el.style.webkitTouchCallout = "none";
+        this.el.style.webkitUserSelect = "none";
       }
     }
   }]);
@@ -400,8 +395,9 @@ var AdapterForceTouch = (function (_Adapter2) {
       // prevent the default force touch action for bound elements
       this.add('webkitmouseforcewillbegin', function (event) {
         if (Support.forPressure) {
-          if (!_this11.element.options.hasOwnProperty('preventDefault') || _this11.element.options.preventDefault !== false) {
+          if (_this11.element.options.hasOwnProperty('preventDefault') === false || _this11.element.options.preventDefault !== false) {
             event.preventDefault();
+            _this11.el.style.webkitUserSelect = "none";
           }
         }
       });
