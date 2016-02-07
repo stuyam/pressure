@@ -1,17 +1,27 @@
 class Adapter{
 
-  constructor(adapter){
-    this.adapter = adapter;
+  constructor(element){
+    this.element = element;
+    this.el = element.element;
+    this.block = element.block;
+    this.pressed = false;
+    this.deepPressed = false;
   }
 
-  handle(){
-    this.adapter.support();
+  add(event, set){
+    this.el.addEventListener(event, set, false);
+  }
 
-    this.adapter.start();
-    this.adapter.change();
-    this.adapter.end();
-    this.adapter.startDeepPress();
-    this.adapter.endDeepPress();
+  remove(event, set){
+    this.el.removeEventListener(event, set);
+  }
+
+  setPressed(boolean){
+    this.pressed = boolean;
+  }
+
+  setDeepPressed(boolean){
+    this.deepPressed = boolean;
   }
 
 }

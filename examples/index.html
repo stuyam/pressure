@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <style>
+      .element{
+        width: 200px;
+        padding: 20px;
+        background: #0081af;
+        margin-bottom: 10px;
+        color: white;
+        cursor: pointer;
+      }
+      div[id*='jquery']{
+        background: #72238e;
+      }
+      h3{
+        margin-top: 0;
+        margin-bottom: 10px;
+      }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <h1>Pressure Tests</h1>
+    <h3>Change Pressure</h3>
+    <div class="element" id="el1">0</div>
+    <h3>Change Pressure (target ONLY Force Touch | Mac)</h3>
+    <div class="element" id="el2">0</div>
+    <h3>Change Pressure (target ONLY 3D Touch | iPhone6s)</h3>
+    <div class="element" id="el3">0</div>
+    <hr />
+    <h1>jQuery Pressure Tests</h1>
+    <h3>Change Pressure</h3>
+    <div class="element" id="el1-jquery">0</div>
+    <h3>Change Pressure (target ONLY Force Touch | Mac)</h3>
+    <div class="element" id="el2-jquery">0</div>
+    <h3>Change Pressure (target ONLY 3D Touch | iPhone6s)</h3>
+    <div class="element" id="el3-jquery">0</div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.js"></script>
+    <script type="text/javascript" src="../dist/pressure.js"></script>
+    <script type="text/javascript" src="../dist/jquery.pressure.js"></script>
+    <script type="text/javascript" src="example.js"></script>
+  </body>
+</html>

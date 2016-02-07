@@ -1,42 +1,30 @@
 class Element{
 
-  constructor(element, block, type){
+  constructor(element, block, options){
     this.element = element;
     this.block = block;
-    this.type = type;
+    this.type = options.hasOwnProperty('only') ? options.only : null;
+    this.options = options;
+    this.routeEvents();
   }
 
   routeEvents(){
     // if on desktop and requesting Force Touch or not requesting 3D Touch
     if(Support.mobile === false && (this.type === 'force' || this.type !== '3d')){
-      this.touchForceAdapter();
+      new AdapterForceTouch(this);
     }
     // if on mobile and requesting 3D Touch or not requestion Force Touch
     else if(Support.mobile === true && (this.type === '3d' || this.type !== 'force')){
-      this.touch3DAdapter();
+      new Adapter3DTouch(this);
     }
     // if it is requesting a type and your browser is of other type
     else{
-      this.failEvents();
+      this.instantFail();
     }
   }
 
-  touchForceAdapter(){
-    var adapter = new Adapter(new TouchForceAdapter(this));
-    adapter.handle();
-  }
-
-  touch3DAdapter(){
-    var adapter = new Adapter(new Touch3DAdapter(this));
-    adapter.handle();
-  }
-
-  failEvents(){
-    if(Support.mobile){
-      this.element.addEventListener('touchstart', () => runClosure(this.block, 'unsupported', this.element), false);
-    } else {
-      this.element.addEventListener('mousedown', () => runClosure(this.block, 'unsupported', this.element), false);
-    }
+  instantFail(){
+    this.element.addEventListener(Support.mobile ? 'touchstart' : 'mousedown', () => runClosure(this.block, 'unsupported', this.element), false);
   }
 
 }
