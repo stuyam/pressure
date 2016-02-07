@@ -30,8 +30,8 @@ var block = {
 }
 
 Pressure.set('#el1', block);
-Pressure.setForceTouch('#el2', block);
-Pressure.set3DTouch('#el3', block);
+Pressure.set('#el2', block, {only: 'force'});
+Pressure.set('#el3', block, {only: '3d'});
 
 Pressure.set('#pressure-test', {
   start: function(){
@@ -43,17 +43,17 @@ Pressure.set('#pressure-test', {
 });
 
 
-Pressure.set('#peanuts-btn', {
+Pressure.set('#peanuts', {
   change: function(force, event){
-    document.getElementById('peanuts').style.webkitFilter = 'blur(' + Pressure.map(force, 0, 0.7, 20, 0) + 'px)';
+    this.style.webkitFilter = 'blur(' + Pressure.map(force, 0, 0.7, 20, 0) + 'px)';
   },
 
   end: function(){
-    document.getElementById('peanuts').style.webkitFilter = 'blur(20px)';
+    this.style.webkitFilter = 'blur(20px)';
   },
 
   unsupported: function(){
-    document.getElementById('peanuts').innerHTML = 'Your device / browser does not support this :(';
+    this.innerHTML = 'Your device / browser does not support this :(';
   }
 });
 
@@ -91,17 +91,21 @@ Pressure.set('#output-element', {
   }
 });
 
-Pressure.set3DTouch('#element-3d', {
+Pressure.set('#element-3d', {
   change: function(force, event){
     this.innerHTML = force + 'on an iphone';
   }
-});
+}, {only: '3d'});
 
-Pressure.setForceTouch('#element-force', {
+Pressure.set('#element-force', {
   change: function(force, event){
     this.innerHTML = force + 'on a Mac';
   }
-});
+}, {only: 'force'});
+
+Pressure.set('#element-3d-prevent', {}, {only: '3d', preventDefault: false});
+
+Pressure.set('#element-force-prevent', {}, {only: 'force', preventDefault: false});
 
 // Twitter BTN
 window.twttr = (function(d, s, id) {
