@@ -66,3 +66,30 @@ Pressure.set('#element', {
   }
 });
 ```
+
+
+## jQuery Usage
+NOTE: the "this" keyword in each of the callback methods will be the element itself that has force applied to it
+```javascript
+$('#element').pressure({
+  start: function(){
+    // this is called on force start
+  },
+  end: function(){
+    // this is called on force end
+  },
+  startDeepPress: function(){
+    // this is called on "force click" / "deep press", aka once the force is greater than 0.5
+  },
+  endDeepPress: function(){
+    // this is called when the "force click" / "deep press" end
+  },
+  change: function(force, event){
+    // this is called every time there is a change in pressure
+    // force will always be a value from 0 to 1 on mobile and desktop
+  },
+  unsupported: function(){
+    // this is called once there is a touch on the element and the device or browser does not support Force or 3D touch
+  }
+});
+```
