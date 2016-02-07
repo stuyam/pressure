@@ -8,7 +8,7 @@ var stripDebug = require('gulp-strip-debug');
 var uglify     = require('gulp-uglify');
 var babel      = require('gulp-babel');
 
-var HEADER_COMMENT = '// Pressure v0.0.4 | Created By Stuart Yamartino | MIT License | 2015 - Present\n';
+var HEADER_COMMENT = '// Pressure v0.0.4 | Created By Stuart Yamartino | MIT License | 2015-Present\n';
 var DESTINATION = '.';
 
 // JS concat, strip debugging and minify
@@ -70,7 +70,7 @@ gulp.task('jquery-pressure', function() {
   // This will output the non-minified version
   .pipe(gulp.dest(DESTINATION))
 
-  // This will minify and rename to pressure.min.js
+  // This will minify and rename to jquery.pressure.min.js
   .pipe(stripDebug())
   .pipe(uglify())
   .pipe(insert.prepend(HEADER_COMMENT))
