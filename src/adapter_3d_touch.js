@@ -23,6 +23,7 @@ class Adapter3DTouch extends Adapter{
     // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
     if(Support.hasRun === false){
       // if the force value has changed it means the device supports pressure
+      // more info from this issue https://github.com/yamartino/pressure/issues/15
       if(event.touches[0].force !== this.forceValueTest){
         this.preventDefault3DTouch();
         Support.didSucceed('3d');
