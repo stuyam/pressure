@@ -35,10 +35,10 @@ Pressure.set('#el3', block, {only: '3d'});
 
 Pressure.set('#pressure-test', {
   start: function(){
-    this.innerHTML = 'Your Browser Supports Pressure!';
+    this.innerHTML = 'Pressure is Supported!';
   },
   unsupported: function(){
-    this.innerHTML = 'Your Browser/Device Does NOT Support Pressure!';
+    this.innerHTML = 'Pressure is NOT Supported!';
   }
 });
 
