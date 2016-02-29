@@ -1,7 +1,7 @@
 # pressure.js
 
 [![Join the chat at https://gitter.im/yamartino/pressure](https://badges.gitter.im/yamartino/pressure.svg)](https://gitter.im/yamartino/pressure?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![GitHub Rank](http://reporank.com/yamartino/pressure)](http://reporank.com)
+[![GitHub Rank](https://reporank.com/yamartino/pressure)](http://reporank.com)
 
 ![Pressure Example](http://yamartino.github.io/pressure/pressure.gif)
 
