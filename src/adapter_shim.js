@@ -82,7 +82,7 @@ class AdapterShim extends Adapter{
 
   // prevent the default action of text selection is all browsers
   preventDefaultShim(event){
-    if(this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false){
+    if(getConfig('preventDefault', this.element.options) === true){
       event.preventDefault();
       this.el.style.webkitTouchCallout = "none";
       this.el.style.userSelect = "none";

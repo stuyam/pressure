@@ -36,7 +36,7 @@ class Adapter3DTouch extends Adapter{
       } else if(this.pressed){
         Support.didFail();
         // is the shim option set
-        if(this.element.options.hasOwnProperty('shim') && this.element.options.shim == true){
+        if(getConfig('shim', this.element.options) === true){
           this.shim = new AdapterShim(this.element, event);
         } else {
           runClosure(this.block, 'unsupported', this.el);
@@ -126,7 +126,7 @@ class Adapter3DTouch extends Adapter{
 
   // prevent the default action on iOS of "peek and pop" and other 3D Touch features
   preventDefault3DTouch(){
-    if(this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false){
+    if(getConfig('preventDefault', this.element.options) === true){
       this.el.style.webkitTouchCallout = "none";
       this.el.style.webkitUserSelect = "none";
     }

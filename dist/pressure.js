@@ -36,7 +36,7 @@ var Element = (function () {
 
     this.element = element;
     this.block = block;
-    this.type = options.hasOwnProperty('only') ? options.only : null;
+    this.type = getConfig('only', options);
     this.options = options;
     this.routeEvents();
   }
@@ -154,7 +154,7 @@ var Adapter3DTouch = (function (_Adapter) {
         } else if (this.pressed) {
           Support.didFail();
           // is the shim option set
-          if (this.element.options.hasOwnProperty('shim') && this.element.options.shim == true) {
+          if (getConfig('shim', this.element.options) === true) {
             this.shim = new AdapterShim(this.element, event);
           } else {
             runClosure(this.block, 'unsupported', this.el);
@@ -264,7 +264,7 @@ var Adapter3DTouch = (function (_Adapter) {
   }, {
     key: 'preventDefault3DTouch',
     value: function preventDefault3DTouch() {
-      if (this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false) {
+      if (getConfig('preventDefault', this.element.options) === true) {
         this.el.style.webkitTouchCallout = "none";
         this.el.style.webkitUserSelect = "none";
       }
@@ -314,7 +314,7 @@ var AdapterForceTouch = (function (_Adapter2) {
       } else {
         Support.didFail();
         // is the shim option set
-        if (this.element.options.hasOwnProperty('shim') && this.element.options.shim == true) {
+        if (getConfig('shim', this.element.options) === true) {
           this.shim = new AdapterShim(this.element, event);
         } else {
           runClosure(this.block, 'unsupported', this.el);
@@ -406,7 +406,7 @@ var AdapterForceTouch = (function (_Adapter2) {
       // prevent the default force touch action for bound elements
       this.add('webkitmouseforcewillbegin', function (event) {
         if (Support.forPressure) {
-          if (_this11.element.options.hasOwnProperty('preventDefault') === false || _this11.element.options.preventDefault !== false) {
+          if (getConfig('preventDefault', _this11.element.options) === true) {
             event.preventDefault();
             _this11.el.style.webkitUserSelect = "none";
           }
@@ -532,7 +532,7 @@ var AdapterShim = (function (_Adapter3) {
   }, {
     key: 'preventDefaultShim',
     value: function preventDefaultShim(event) {
-      if (this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false) {
+      if (getConfig('preventDefault', this.element.options) === true) {
         event.preventDefault();
         this.el.style.webkitTouchCallout = "none";
         this.el.style.userSelect = "none";
@@ -545,8 +545,19 @@ var AdapterShim = (function (_Adapter3) {
   return AdapterShim;
 })(Adapter);
 
-// This class holds the states of the the Pressure support the user has
+// This class holds the states of the the Pressure config
 
+var Config = {
+
+  preventDefault: true,
+
+  only: null,
+
+  shim: false
+
+};
+
+// This class holds the states of the the Pressure support the user has
 var Support = {
 
   // if the support has already been checked
@@ -607,6 +618,11 @@ var runClosure = function runClosure(closure, method, element) {
     // call the closure method and apply nth arguments if they exist
     closure[method].apply(element || this, Array.prototype.slice.call(arguments, 3));
   }
+};
+
+// this will get the correct config / option settings for the current pressure check
+var getConfig = function getConfig(option, options) {
+  return options.hasOwnProperty(option) ? options[option] : Config.option;
 };
 
 // the map method allows for interpolating a value from one range of values to another

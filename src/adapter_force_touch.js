@@ -28,7 +28,7 @@ class AdapterForceTouch extends Adapter{
     } else {
        Support.didFail();
       // is the shim option set
-      if(this.element.options.hasOwnProperty('shim') && this.element.options.shim == true){
+      if(getConfig('shim', this.element.options) === true){
         this.shim = new AdapterShim(this.element, event);
       } else {
         runClosure(this.block, 'unsupported', this.el);
@@ -102,7 +102,7 @@ class AdapterForceTouch extends Adapter{
     // prevent the default force touch action for bound elements
     this.add('webkitmouseforcewillbegin', (event) => {
       if(Support.forPressure){
-        if(this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false){
+        if(getConfig('preventDefault', this.element.options) === true){
           event.preventDefault();
           this.el.style.webkitUserSelect = "none";
         }
