@@ -137,7 +137,7 @@ var Adapter3DTouch = (function (_Adapter) {
     key: 'supportCallback',
     value: function supportCallback(iter, event) {
       // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
-      if (Support.hasRun === false) {
+      if (Support.hasRun === false && !(this.shim instanceof AdapterShim)) {
         // if the force value has changed it means the device supports pressure
         // more info from this issue https://github.com/yamartino/pressure/issues/15
         if (event.touches[0].force !== this.forceValueTest) {
@@ -151,9 +151,14 @@ var Adapter3DTouch = (function (_Adapter) {
           setTimeout(this.supportCallback.bind(this), 10, iter, event);
         } else if (this.pressed) {
           Support.didFail();
-          runClosure(this.block, 'unsupported', this.el);
+          // is the shim option set
+          if (this.element.options.hasOwnProperty('shim') && this.element.options.shim == true) {
+            this.shim = new AdapterShim(this.element, event);
+          } else {
+            runClosure(this.block, 'unsupported', this.el);
+          }
         }
-      } else if (Support.forPressure) {
+      } else if (Support.forPressure || this.shim instanceof AdapterShim) {
         this.remove('touchstart', this.supportMethod);
       } else {
         runClosure(this.block, 'unsupported', this.el);

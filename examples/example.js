@@ -32,7 +32,7 @@ var block = {
   }
 }
 
-Pressure.set(document.querySelectorAll('#el1'), block, {preventDefault: false, shim: true});
+Pressure.set(document.querySelectorAll('#el1'), block, {shim: true});
 Pressure.set($('#el2'), block, {only: 'force'});
 Pressure.set('#el3', block, {only: '3d'});
 

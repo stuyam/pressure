@@ -139,7 +139,7 @@ var Adapter3DTouch = (function (_Adapter) {
     key: 'supportCallback',
     value: function supportCallback(iter, event) {
       // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
-      if (Support.hasRun === false) {
+      if (Support.hasRun === false && !(this.shim instanceof AdapterShim)) {
         // if the force value has changed it means the device supports pressure
         // more info from this issue https://github.com/yamartino/pressure/issues/15
         if (event.touches[0].force !== this.forceValueTest) {
@@ -153,9 +153,14 @@ var Adapter3DTouch = (function (_Adapter) {
           setTimeout(this.supportCallback.bind(this), 10, iter, event);
         } else if (this.pressed) {
           Support.didFail();
-          runClosure(this.block, 'unsupported', this.el);
+          // is the shim option set
+          if (this.element.options.hasOwnProperty('shim') && this.element.options.shim == true) {
+            this.shim = new AdapterShim(this.element, event);
+          } else {
+            runClosure(this.block, 'unsupported', this.el);
+          }
         }
-      } else if (Support.forPressure) {
+      } else if (Support.forPressure || this.shim instanceof AdapterShim) {
         this.remove('touchstart', this.supportMethod);
       } else {
         runClosure(this.block, 'unsupported', this.el);
@@ -427,8 +432,6 @@ var AdapterShim = (function (_Adapter3) {
   function AdapterShim(element, firstEvent) {
     _classCallCheck(this, AdapterShim);
 
-    // this.$support();
-
     var _this12 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterShim).call(this, element));
 
     _this12.$start();
@@ -444,8 +447,7 @@ var AdapterShim = (function (_Adapter3) {
     key: 'firstRun',
     value: function firstRun(event) {
       this.preventDefaultShim(event);
-      runClosure(this.block, 'start', this.el, event);
-      this.setPressed(true);
+      this.startLogic(event);
       this.changeLogic(event);
     }
   }, {
@@ -454,15 +456,20 @@ var AdapterShim = (function (_Adapter3) {
       var _this13 = this;
 
       // call 'start' when the touch goes down
-      this.add('mousedown', function (event) {
-        _this13.setPressed(true);
-        runClosure(_this13.block, 'start', _this13.el, event);
+      this.add(Support.mobile ? 'touchstart' : 'mousedown', function (event) {
+        _this13.startLogic(event);
       });
+    }
+  }, {
+    key: 'startLogic',
+    value: function startLogic(event) {
+      this.setPressed(true);
+      runClosure(this.block, 'start', this.el, event);
     }
   }, {
     key: '$change',
     value: function $change() {
-      this.add('mousedown', this.changeLogic.bind(this));
+      this.add(Support.mobile ? 'touchstart' : 'mousedown', this.changeLogic.bind(this));
     }
   }, {
     key: 'changeLogic',
@@ -478,7 +485,7 @@ var AdapterShim = (function (_Adapter3) {
       var _this14 = this;
 
       // call 'end' when the mouse goes up or leaves the element
-      this.add('mouseup', function () {
+      this.add(Support.mobile ? 'touchend' : 'mouseup', function () {
         _this14.endDeepPress();
         _this14.setPressed(false);
         runClosure(_this14.block, 'end', _this14.el);
@@ -520,7 +527,7 @@ var AdapterShim = (function (_Adapter3) {
       }
     }
 
-    // prevent the default action on iOS of "peek and pop" and other 3D Touch features
+    // prevent the default action of text selection is all browsers
 
   }, {
     key: 'preventDefaultShim',
@@ -528,7 +535,9 @@ var AdapterShim = (function (_Adapter3) {
       if (this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false) {
         event.preventDefault();
         this.el.style.webkitTouchCallout = "none";
+        this.el.style.userSelect = "none";
         this.el.style.webkitUserSelect = "none";
+        this.el.style.MozUserSelect = "none";
       }
     }
   }]);

@@ -2,7 +2,6 @@ class AdapterShim extends Adapter{
 
   constructor(element, firstEvent){
     super(element);
-    // this.$support();
     this.$start();
     this.$change();
     this.$end();
@@ -13,21 +12,24 @@ class AdapterShim extends Adapter{
 
   firstRun(event){
     this.preventDefaultShim(event);
-    runClosure(this.block, 'start', this.el, event);
-    this.setPressed(true);
+    this.startLogic(event);
     this.changeLogic(event);
   }
 
   $start(){
     // call 'start' when the touch goes down
-    this.add('mousedown', (event) => {
-      this.setPressed(true);
-      runClosure(this.block, 'start', this.el, event);
+    this.add(Support.mobile ? 'touchstart' : 'mousedown', (event) => {
+      this.startLogic(event);
     });
   }
 
+  startLogic(event){
+    this.setPressed(true);
+    runClosure(this.block, 'start', this.el, event);
+  }
+
   $change(){
-    this.add('mousedown', this.changeLogic.bind(this));
+    this.add(Support.mobile ? 'touchstart' : 'mousedown', this.changeLogic.bind(this));
   }
 
   changeLogic(event){
@@ -39,7 +41,7 @@ class AdapterShim extends Adapter{
 
   $end(){
     // call 'end' when the mouse goes up or leaves the element
-    this.add('mouseup', () => {
+    this.add(Support.mobile ? 'touchend' : 'mouseup', () => {
       this.endDeepPress();
       this.setPressed(false);
       runClosure(this.block, 'end', this.el);
@@ -78,12 +80,14 @@ class AdapterShim extends Adapter{
     }
   }
 
-  // prevent the default action on iOS of "peek and pop" and other 3D Touch features
+  // prevent the default action of text selection is all browsers
   preventDefaultShim(event){
     if(this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false){
       event.preventDefault();
       this.el.style.webkitTouchCallout = "none";
+      this.el.style.userSelect = "none";
       this.el.style.webkitUserSelect = "none";
+      this.el.style.MozUserSelect = "none";
     }
   }
 
