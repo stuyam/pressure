@@ -25,7 +25,7 @@ class Adapter3DTouch extends Adapter{
       // if the force value has changed it means the device supports pressure
       // more info from this issue https://github.com/yamartino/pressure/issues/15
       if(event.touches[0].force !== this.forceValueTest){
-        this.preventDefault3DTouch();
+        this.preventDefault(event);
         Support.didSucceed('3d');
         this.remove('touchstart', this.supportMethod);
         runClosure(this.block, 'start', this.el, event);
@@ -54,7 +54,7 @@ class Adapter3DTouch extends Adapter{
     this.add('touchstart', (event) => {
       if(Support.forPressure){
         this.setPressed(true);
-        this.preventDefault3DTouch();
+        this.preventDefault(event);
         runClosure(this.block, 'start', this.el, event);
       }
     });
@@ -122,14 +122,6 @@ class Adapter3DTouch extends Adapter{
   returnTouch(touch, event){
     touch.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
     return touch;
-  }
-
-  // prevent the default action on iOS of "peek and pop" and other 3D Touch features
-  preventDefault3DTouch(){
-    if(getConfig('preventDefault', this.element.options) === true){
-      this.el.style.webkitTouchCallout = "none";
-      this.el.style.webkitUserSelect = "none";
-    }
   }
 
 }

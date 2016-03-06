@@ -102,6 +102,20 @@ var Adapter = (function () {
     value: function setDeepPressed(boolean) {
       this.deepPressed = boolean;
     }
+
+    // prevent the default action of text selection, "peak & pop", and force touch special feature
+
+  }, {
+    key: 'preventDefault',
+    value: function preventDefault(event) {
+      if (getConfig('preventDefault', this.element.options) === true) {
+        event.preventDefault();
+        this.el.style.webkitTouchCallout = "none";
+        this.el.style.userSelect = "none";
+        this.el.style.webkitUserSelect = "none";
+        this.el.style.MozUserSelect = "none";
+      }
+    }
   }]);
 
   return Adapter;
@@ -143,7 +157,7 @@ var Adapter3DTouch = (function (_Adapter) {
         // if the force value has changed it means the device supports pressure
         // more info from this issue https://github.com/yamartino/pressure/issues/15
         if (event.touches[0].force !== this.forceValueTest) {
-          this.preventDefault3DTouch();
+          this.preventDefault(event);
           Support.didSucceed('3d');
           this.remove('touchstart', this.supportMethod);
           runClosure(this.block, 'start', this.el, event);
@@ -175,7 +189,7 @@ var Adapter3DTouch = (function (_Adapter) {
       this.add('touchstart', function (event) {
         if (Support.forPressure) {
           _this3.setPressed(true);
-          _this3.preventDefault3DTouch();
+          _this3.preventDefault(event);
           runClosure(_this3.block, 'start', _this3.el, event);
         }
       });
@@ -258,17 +272,6 @@ var Adapter3DTouch = (function (_Adapter) {
       touch.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
       return touch;
     }
-
-    // prevent the default action on iOS of "peek and pop" and other 3D Touch features
-
-  }, {
-    key: 'preventDefault3DTouch',
-    value: function preventDefault3DTouch() {
-      if (getConfig('preventDefault', this.element.options) === true) {
-        this.el.style.webkitTouchCallout = "none";
-        this.el.style.webkitUserSelect = "none";
-      }
-    }
   }]);
 
   return Adapter3DTouch;
@@ -288,7 +291,6 @@ var AdapterForceTouch = (function (_Adapter2) {
     _this5.$startDeepPress();
     _this5.$endDeepPress();
     _this5.$end();
-    _this5.preventDefaultForceTouch();
     return _this5;
   }
 
@@ -311,6 +313,7 @@ var AdapterForceTouch = (function (_Adapter2) {
     value: function supportCallback(event) {
       if (Support.forPressure === true || this.shim instanceof AdapterShim) {
         this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
+        this.preventDefault(event);
       } else {
         Support.didFail();
         // is the shim option set
@@ -398,21 +401,6 @@ var AdapterForceTouch = (function (_Adapter2) {
         }
       });
     }
-  }, {
-    key: 'preventDefaultForceTouch',
-    value: function preventDefaultForceTouch() {
-      var _this11 = this;
-
-      // prevent the default force touch action for bound elements
-      this.add('webkitmouseforcewillbegin', function (event) {
-        if (Support.forPressure) {
-          if (getConfig('preventDefault', _this11.element.options) === true) {
-            event.preventDefault();
-            _this11.el.style.webkitUserSelect = "none";
-          }
-        }
-      });
-    }
 
     // make the force the standard 0 to 1 scale and not the 1 to 3 scale
 
@@ -432,32 +420,32 @@ var AdapterShim = (function (_Adapter3) {
   function AdapterShim(element, firstEvent) {
     _classCallCheck(this, AdapterShim);
 
-    var _this12 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterShim).call(this, element));
+    var _this11 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterShim).call(this, element));
 
-    _this12.$start();
-    _this12.$change();
-    _this12.$end();
-    _this12.force = 0;
-    _this12.increment = 0.01;
-    _this12.firstRun(firstEvent);
-    return _this12;
+    _this11.$start();
+    _this11.$change();
+    _this11.$end();
+    _this11.force = 0;
+    _this11.increment = 0.01;
+    _this11.firstRun(firstEvent);
+    return _this11;
   }
 
   _createClass(AdapterShim, [{
     key: 'firstRun',
     value: function firstRun(event) {
-      this.preventDefaultShim(event);
+      this.preventDefault(event);
       this.startLogic(event);
       this.changeLogic(event);
     }
   }, {
     key: '$start',
     value: function $start() {
-      var _this13 = this;
+      var _this12 = this;
 
       // call 'start' when the touch goes down
       this.add(Support.mobile ? 'touchstart' : 'mousedown', function (event) {
-        _this13.startLogic(event);
+        _this12.startLogic(event);
       });
     }
   }, {
@@ -482,22 +470,22 @@ var AdapterShim = (function (_Adapter3) {
   }, {
     key: '$end',
     value: function $end() {
-      var _this14 = this;
+      var _this13 = this;
 
       // call 'end' when the mouse goes up or leaves the element
       this.add(Support.mobile ? 'touchend' : 'mouseup', function () {
-        _this14.endDeepPress();
-        _this14.setPressed(false);
-        runClosure(_this14.block, 'end', _this14.el);
-        _this14.force = 0;
+        _this13.endDeepPress();
+        _this13.setPressed(false);
+        runClosure(_this13.block, 'end', _this13.el);
+        _this13.force = 0;
       });
       this.add('mouseleave', function () {
-        _this14.endDeepPress();
-        if (_this14.pressed) {
-          runClosure(_this14.block, 'end', _this14.el);
+        _this13.endDeepPress();
+        if (_this13.pressed) {
+          runClosure(_this13.block, 'end', _this13.el);
         }
-        _this14.setPressed(false);
-        _this14.force = 0;
+        _this13.setPressed(false);
+        _this13.force = 0;
       });
     }
   }, {
@@ -524,20 +512,6 @@ var AdapterShim = (function (_Adapter3) {
         this.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
         this.force = this.force + this.increment > 1 ? 1 : this.force + this.increment;
         setTimeout(this.runForce.bind(this), 10, event);
-      }
-    }
-
-    // prevent the default action of text selection is all browsers
-
-  }, {
-    key: 'preventDefaultShim',
-    value: function preventDefaultShim(event) {
-      if (getConfig('preventDefault', this.element.options) === true) {
-        event.preventDefault();
-        this.el.style.webkitTouchCallout = "none";
-        this.el.style.userSelect = "none";
-        this.el.style.webkitUserSelect = "none";
-        this.el.style.MozUserSelect = "none";
       }
     }
   }]);

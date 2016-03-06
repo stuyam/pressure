@@ -8,7 +8,6 @@ class AdapterForceTouch extends Adapter{
     this.$startDeepPress();
     this.$endDeepPress();
     this.$end();
-    this.preventDefaultForceTouch();
   }
 
   // Support check methods
@@ -18,13 +17,14 @@ class AdapterForceTouch extends Adapter{
   }
 
   forceTouchEnabled(event){
-    event.preventDefault()
+    event.preventDefault();
     Support.didSucceed('force');
   }
 
   supportCallback(event){
     if(Support.forPressure === true || this.shim instanceof AdapterShim){
       this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
+      this.preventDefault(event);
     } else {
        Support.didFail();
       // is the shim option set
@@ -94,18 +94,6 @@ class AdapterForceTouch extends Adapter{
           runClosure(this.block, 'endDeepPress', this.el);
         }
         this.setDeepPressed(false);
-      }
-    });
-  }
-
-  preventDefaultForceTouch(){
-    // prevent the default force touch action for bound elements
-    this.add('webkitmouseforcewillbegin', (event) => {
-      if(Support.forPressure){
-        if(getConfig('preventDefault', this.element.options) === true){
-          event.preventDefault();
-          this.el.style.webkitUserSelect = "none";
-        }
       }
     });
   }

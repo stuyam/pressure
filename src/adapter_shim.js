@@ -11,7 +11,7 @@ class AdapterShim extends Adapter{
   }
 
   firstRun(event){
-    this.preventDefaultShim(event);
+    this.preventDefault(event);
     this.startLogic(event);
     this.changeLogic(event);
   }
@@ -77,17 +77,6 @@ class AdapterShim extends Adapter{
       this.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
       this.force = this.force + this.increment > 1 ? 1 : this.force + this.increment;
       setTimeout(this.runForce.bind(this), 10, event);
-    }
-  }
-
-  // prevent the default action of text selection is all browsers
-  preventDefaultShim(event){
-    if(getConfig('preventDefault', this.element.options) === true){
-      event.preventDefault();
-      this.el.style.webkitTouchCallout = "none";
-      this.el.style.userSelect = "none";
-      this.el.style.webkitUserSelect = "none";
-      this.el.style.MozUserSelect = "none";
     }
   }
 

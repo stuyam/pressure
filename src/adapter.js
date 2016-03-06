@@ -24,4 +24,15 @@ class Adapter{
     this.deepPressed = boolean;
   }
 
+  // prevent the default action of text selection, "peak & pop", and force touch special feature
+  preventDefault(event){
+    if(getConfig('preventDefault', this.element.options) === true){
+      event.preventDefault();
+      this.el.style.webkitTouchCallout = "none";
+      this.el.style.userSelect = "none";
+      this.el.style.webkitUserSelect = "none";
+      this.el.style.MozUserSelect = "none";
+    }
+  }
+
 }

@@ -100,6 +100,20 @@ var Adapter = (function () {
     value: function setDeepPressed(boolean) {
       this.deepPressed = boolean;
     }
+
+    // prevent the default action of text selection, "peak & pop", and force touch special feature
+
+  }, {
+    key: 'preventDefault',
+    value: function preventDefault(event) {
+      if (getConfig('preventDefault', this.element.options) === true) {
+        event.preventDefault();
+        this.el.style.webkitTouchCallout = "none";
+        this.el.style.userSelect = "none";
+        this.el.style.webkitUserSelect = "none";
+        this.el.style.MozUserSelect = "none";
+      }
+    }
   }]);
 
   return Adapter;
@@ -141,7 +155,7 @@ var Adapter3DTouch = (function (_Adapter) {
         // if the force value has changed it means the device supports pressure
         // more info from this issue https://github.com/yamartino/pressure/issues/15
         if (event.touches[0].force !== this.forceValueTest) {
-          this.preventDefault3DTouch();
+          this.preventDefault(event);
           Support.didSucceed('3d');
           this.remove('touchstart', this.supportMethod);
           runClosure(this.block, 'start', this.el, event);
@@ -173,7 +187,7 @@ var Adapter3DTouch = (function (_Adapter) {
       this.add('touchstart', function (event) {
         if (Support.forPressure) {
           _this3.setPressed(true);
-          _this3.preventDefault3DTouch();
+          _this3.preventDefault(event);
           runClosure(_this3.block, 'start', _this3.el, event);
         }
       });
@@ -256,17 +270,6 @@ var Adapter3DTouch = (function (_Adapter) {
       touch.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
       return touch;
     }
-
-    // prevent the default action on iOS of "peek and pop" and other 3D Touch features
-
-  }, {
-    key: 'preventDefault3DTouch',
-    value: function preventDefault3DTouch() {
-      if (getConfig('preventDefault', this.element.options) === true) {
-        this.el.style.webkitTouchCallout = "none";
-        this.el.style.webkitUserSelect = "none";
-      }
-    }
   }]);
 
   return Adapter3DTouch;
@@ -286,7 +289,6 @@ var AdapterForceTouch = (function (_Adapter2) {
     _this5.$startDeepPress();
     _this5.$endDeepPress();
     _this5.$end();
-    _this5.preventDefaultForceTouch();
     return _this5;
   }
 
@@ -309,6 +311,7 @@ var AdapterForceTouch = (function (_Adapter2) {
     value: function supportCallback(event) {
       if (Support.forPressure === true || this.shim instanceof AdapterShim) {
         this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
+        this.preventDefault(event);
       } else {
         Support.didFail();
         // is the shim option set
@@ -393,21 +396,6 @@ var AdapterForceTouch = (function (_Adapter2) {
             runClosure(_this10.block, 'endDeepPress', _this10.el);
           }
           _this10.setDeepPressed(false);
-        }
-      });
-    }
-  }, {
-    key: 'preventDefaultForceTouch',
-    value: function preventDefaultForceTouch() {
-      var _this11 = this;
-
-      // prevent the default force touch action for bound elements
-      this.add('webkitmouseforcewillbegin', function (event) {
-        if (Support.forPressure) {
-          if (getConfig('preventDefault', _this11.element.options) === true) {
-            event.preventDefault();
-            _this11.el.style.webkitUserSelect = "none";
-          }
         }
       });
     }
