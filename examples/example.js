@@ -32,16 +32,16 @@ var block = {
   }
 }
 
-Pressure.set(document.querySelectorAll('#el1'), {preventDefault: false}, block);
-Pressure.set($('#el2'), {only: 'force'}, block);
-Pressure.set('#el3', {only: '3d'}, block);
+Pressure.set(document.querySelectorAll('#el1'), block, {preventDefault: false});
+Pressure.set($('#el2'), block, {only: 'force'});
+Pressure.set('#el3', block, {only: '3d'});
 
 $('#el1-jquery').pressure(block);
-$('#el2-jquery').pressure({only: 'force', preventDefault: false}, block);
-$('#el3-jquery').pressure({only: '3d'}, block);
+$('#el2-jquery').pressure(block, {only: 'force', preventDefault: false});
+$('#el3-jquery').pressure(block, {only: '3d'});
 
-$('h3').pressure({preventDefault: false},{
-  start: function(){
-    console.log('preventDefault text');
-  }
-});
+// $('h3').pressure({
+//   start: function(){
+//     console.log('preventDefault text');
+//   }
+// }, {preventDefault: false});
