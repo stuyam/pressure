@@ -303,12 +303,17 @@ var AdapterForceTouch = (function (_Adapter2) {
     }
   }, {
     key: 'supportCallback',
-    value: function supportCallback() {
-      if (Support.forPressure === false) {
-        Support.didFail();
-        runClosure(this.block, 'unsupported', this.el);
-      } else {
+    value: function supportCallback(event) {
+      if (Support.forPressure === true || this.shim instanceof AdapterShim) {
         this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
+      } else {
+        Support.didFail();
+        // is the shim option set
+        if (this.element.options.hasOwnProperty('shim') && this.element.options.shim == true) {
+          this.shim = new AdapterShim(this.element, event);
+        } else {
+          runClosure(this.block, 'unsupported', this.el);
+        }
       }
     }
   }, {
@@ -414,6 +419,121 @@ var AdapterForceTouch = (function (_Adapter2) {
   }]);
 
   return AdapterForceTouch;
+})(Adapter);
+
+var AdapterShim = (function (_Adapter3) {
+  _inherits(AdapterShim, _Adapter3);
+
+  function AdapterShim(element, firstEvent) {
+    _classCallCheck(this, AdapterShim);
+
+    // this.$support();
+
+    var _this12 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterShim).call(this, element));
+
+    _this12.$start();
+    _this12.$change();
+    _this12.$end();
+    _this12.force = 0;
+    _this12.increment = 0.01;
+    _this12.firstRun(firstEvent);
+    return _this12;
+  }
+
+  _createClass(AdapterShim, [{
+    key: 'firstRun',
+    value: function firstRun(event) {
+      this.preventDefaultShim(event);
+      runClosure(this.block, 'start', this.el, event);
+      this.setPressed(true);
+      this.changeLogic(event);
+    }
+  }, {
+    key: '$start',
+    value: function $start() {
+      var _this13 = this;
+
+      // call 'start' when the touch goes down
+      this.add('mousedown', function (event) {
+        _this13.setPressed(true);
+        runClosure(_this13.block, 'start', _this13.el, event);
+      });
+    }
+  }, {
+    key: '$change',
+    value: function $change() {
+      this.add('mousedown', this.changeLogic.bind(this));
+    }
+  }, {
+    key: 'changeLogic',
+    value: function changeLogic(event) {
+      if (this.pressed) {
+        this.setPressed(true);
+        this.runForce(event);
+      }
+    }
+  }, {
+    key: '$end',
+    value: function $end() {
+      var _this14 = this;
+
+      // call 'end' when the mouse goes up or leaves the element
+      this.add('mouseup', function () {
+        _this14.endDeepPress();
+        _this14.setPressed(false);
+        runClosure(_this14.block, 'end', _this14.el);
+        _this14.force = 0;
+      });
+      this.add('mouseleave', function () {
+        _this14.endDeepPress();
+        if (_this14.pressed) {
+          runClosure(_this14.block, 'end', _this14.el);
+        }
+        _this14.setPressed(false);
+        _this14.force = 0;
+      });
+    }
+  }, {
+    key: 'startDeepPress',
+    value: function startDeepPress(event) {
+      if (this.deepPressed === false) {
+        runClosure(this.block, 'startDeepPress', this.el, event);
+      }
+      this.setDeepPressed(true);
+    }
+  }, {
+    key: 'endDeepPress',
+    value: function endDeepPress() {
+      if (this.deepPressed === true) {
+        runClosure(this.block, 'endDeepPress', this.el);
+      }
+      this.setDeepPressed(false);
+    }
+  }, {
+    key: 'runForce',
+    value: function runForce(event) {
+      if (this.pressed) {
+        runClosure(this.block, 'change', this.el, this.force, event);
+        this.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
+        this.force = this.force + this.increment > 1 ? 1 : this.force + this.increment;
+        setTimeout(this.runForce.bind(this), 10, event);
+      }
+    }
+
+    // prevent the default action on iOS of "peek and pop" and other 3D Touch features
+
+  }, {
+    key: 'preventDefaultShim',
+    value: function preventDefaultShim(event) {
+      if (this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false) {
+        event.preventDefault();
+        this.el.style.webkitTouchCallout = "none";
+        this.el.style.webkitUserSelect = "none";
+      }
+    }
+  }]);
+
+  return AdapterShim;
 })(Adapter);
 
 // This class holds the states of the the Pressure support the user has

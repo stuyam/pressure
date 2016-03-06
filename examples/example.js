@@ -9,7 +9,7 @@ var block = {
   change: function(force, event){
     this.style.width = $.pressureMap(force, 0, 1, 200, 300) + 'px';
     this.innerHTML = force;
-    console.log('change', event);
+    console.log('change', force);
   },
 
   startDeepPress: function(event){
@@ -32,7 +32,7 @@ var block = {
   }
 }
 
-Pressure.set(document.querySelectorAll('#el1'), block, {preventDefault: false});
+Pressure.set(document.querySelectorAll('#el1'), block, {preventDefault: false, shim: true});
 Pressure.set($('#el2'), block, {only: 'force'});
 Pressure.set('#el3', block, {only: '3d'});
 

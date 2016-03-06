@@ -301,12 +301,17 @@ var AdapterForceTouch = (function (_Adapter2) {
     }
   }, {
     key: 'supportCallback',
-    value: function supportCallback() {
-      if (Support.forPressure === false) {
-        Support.didFail();
-        runClosure(this.block, 'unsupported', this.el);
-      } else {
+    value: function supportCallback(event) {
+      if (Support.forPressure === true || this.shim instanceof AdapterShim) {
         this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
+      } else {
+        Support.didFail();
+        // is the shim option set
+        if (this.element.options.hasOwnProperty('shim') && this.element.options.shim == true) {
+          this.shim = new AdapterShim(this.element, event);
+        } else {
+          runClosure(this.block, 'unsupported', this.el);
+        }
       }
     }
   }, {

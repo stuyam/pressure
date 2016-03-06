@@ -19,6 +19,7 @@ gulp.task('pressure', function() {
     './src/adapter.js',
     './src/adapter_3d_touch.js',
     './src/adapter_force_touch.js',
+    './src/adapter_shim.js',
     './src/support.js',
     './src/helpers.js',
     './src/globalize.js',
