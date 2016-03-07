@@ -7,6 +7,10 @@ if($ !== false){
     return this;
   };
 
+  $.pressureConfig = function(options){
+    Config.set(options);
+  },
+
   $.pressureMap = function(x, in_min, in_max, out_min, out_max) {
     return map(x, in_min, in_max, out_min, out_max);
   };

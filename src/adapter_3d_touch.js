@@ -36,7 +36,7 @@ class Adapter3DTouch extends Adapter{
       } else if(this.pressed){
         Support.didFail();
         // is the shim option set
-        if(getConfig('shim', this.element.options) === true){
+        if(Config.get('shim', this.element.options) === true){
           this.shim = new AdapterShim(this.element, event);
         } else {
           runClosure(this.block, 'unsupported', this.el);

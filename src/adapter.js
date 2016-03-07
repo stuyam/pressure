@@ -26,7 +26,7 @@ class Adapter{
 
   // prevent the default action of text selection, "peak & pop", and force touch special feature
   preventDefault(event){
-    if(getConfig('preventDefault', this.element.options) === true){
+    if(Config.get('preventDefault', this.element.options) === true){
       event.preventDefault();
       this.el.style.webkitTouchCallout = "none";
       this.el.style.userSelect = "none";

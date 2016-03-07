@@ -21,7 +21,9 @@ if ($ !== false) {
     return this;
   };
 
-  $.pressureMap = function (x, in_min, in_max, out_min, out_max) {
+  $.pressureConfig = function (options) {
+    Config.set(options);
+  }, $.pressureMap = function (x, in_min, in_max, out_min, out_max) {
     return map(x, in_min, in_max, out_min, out_max);
   };
 } else {
@@ -34,7 +36,7 @@ var Element = (function () {
 
     this.element = element;
     this.block = block;
-    this.type = getConfig('only', options);
+    this.type = Config.get('only', options);
     this.options = options;
     this.routeEvents();
   }
@@ -106,7 +108,7 @@ var Adapter = (function () {
   }, {
     key: 'preventDefault',
     value: function preventDefault(event) {
-      if (getConfig('preventDefault', this.element.options) === true) {
+      if (Config.get('preventDefault', this.element.options) === true) {
         event.preventDefault();
         this.el.style.webkitTouchCallout = "none";
         this.el.style.userSelect = "none";
@@ -166,7 +168,7 @@ var Adapter3DTouch = (function (_Adapter) {
         } else if (this.pressed) {
           Support.didFail();
           // is the shim option set
-          if (getConfig('shim', this.element.options) === true) {
+          if (Config.get('shim', this.element.options) === true) {
             this.shim = new AdapterShim(this.element, event);
           } else {
             runClosure(this.block, 'unsupported', this.el);
@@ -315,7 +317,7 @@ var AdapterForceTouch = (function (_Adapter2) {
       } else {
         Support.didFail();
         // is the shim option set
-        if (getConfig('shim', this.element.options) === true) {
+        if (Config.get('shim', this.element.options) === true) {
           this.shim = new AdapterShim(this.element, event);
         } else {
           runClosure(this.block, 'unsupported', this.el);
@@ -405,11 +407,124 @@ var AdapterForceTouch = (function (_Adapter2) {
   }, {
     key: 'normalizeForce',
     value: function normalizeForce(force) {
-      return map(force, 1, 3, 0, 1);
+      return this.reachOne(map(force, 1, 3, 0, 1));
+    }
+
+    // if the force value is above 0.999 set the force to 1
+
+  }, {
+    key: 'reachOne',
+    value: function reachOne(force) {
+      return force > 0.999 ? 1 : force;
     }
   }]);
 
   return AdapterForceTouch;
+})(Adapter);
+
+var AdapterShim = (function (_Adapter3) {
+  _inherits(AdapterShim, _Adapter3);
+
+  function AdapterShim(element, firstEvent) {
+    _classCallCheck(this, AdapterShim);
+
+    var _this11 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterShim).call(this, element));
+
+    _this11.$start();
+    _this11.$change();
+    _this11.$end();
+    _this11.force = 0;
+    _this11.increment = 0.01;
+    _this11.firstRun(firstEvent);
+    return _this11;
+  }
+
+  _createClass(AdapterShim, [{
+    key: 'firstRun',
+    value: function firstRun(event) {
+      this.preventDefault(event);
+      this.startLogic(event);
+      this.changeLogic(event);
+    }
+  }, {
+    key: '$start',
+    value: function $start() {
+      var _this12 = this;
+
+      // call 'start' when the touch goes down
+      this.add(Support.mobile ? 'touchstart' : 'mousedown', function (event) {
+        _this12.startLogic(event);
+      });
+    }
+  }, {
+    key: 'startLogic',
+    value: function startLogic(event) {
+      this.setPressed(true);
+      runClosure(this.block, 'start', this.el, event);
+    }
+  }, {
+    key: '$change',
+    value: function $change() {
+      this.add(Support.mobile ? 'touchstart' : 'mousedown', this.changeLogic.bind(this));
+    }
+  }, {
+    key: 'changeLogic',
+    value: function changeLogic(event) {
+      if (this.pressed) {
+        this.setPressed(true);
+        this.runForce(event);
+      }
+    }
+  }, {
+    key: '$end',
+    value: function $end() {
+      var _this13 = this;
+
+      // call 'end' when the mouse goes up or leaves the element
+      this.add(Support.mobile ? 'touchend' : 'mouseup', function () {
+        _this13.endDeepPress();
+        _this13.setPressed(false);
+        runClosure(_this13.block, 'end', _this13.el);
+        _this13.force = 0;
+      });
+      this.add('mouseleave', function () {
+        _this13.endDeepPress();
+        if (_this13.pressed) {
+          runClosure(_this13.block, 'end', _this13.el);
+        }
+        _this13.setPressed(false);
+        _this13.force = 0;
+      });
+    }
+  }, {
+    key: 'startDeepPress',
+    value: function startDeepPress(event) {
+      if (this.deepPressed === false) {
+        runClosure(this.block, 'startDeepPress', this.el, event);
+      }
+      this.setDeepPressed(true);
+    }
+  }, {
+    key: 'endDeepPress',
+    value: function endDeepPress() {
+      if (this.deepPressed === true) {
+        runClosure(this.block, 'endDeepPress', this.el);
+      }
+      this.setDeepPressed(false);
+    }
+  }, {
+    key: 'runForce',
+    value: function runForce(event) {
+      if (this.pressed) {
+        runClosure(this.block, 'change', this.el, this.force, event);
+        this.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
+        this.force = this.force + this.increment > 1 ? 1 : this.force + this.increment;
+        setTimeout(this.runForce.bind(this), 10, event);
+      }
+    }
+  }]);
+
+  return AdapterShim;
 })(Adapter);
 
 // This class holds the states of the the Pressure config
@@ -420,8 +535,21 @@ var Config = {
 
   only: null,
 
-  shim: false
+  shim: false,
 
+  // this will get the correct config / option settings for the current pressure check
+  get: function get(option, options) {
+    return options.hasOwnProperty(option) ? options[option] : this[option];
+  },
+
+  // this will set the global configs
+  set: function set(options) {
+    for (var k in options) {
+      if (options.hasOwnProperty(k) && this.hasOwnProperty(k) && k != 'get' && k != 'set') {
+        this[k] = options[k];
+      }
+    }
+  }
 };
 
 // This class holds the states of the the Pressure support the user has
@@ -485,11 +613,6 @@ var runClosure = function runClosure(closure, method, element) {
     // call the closure method and apply nth arguments if they exist
     closure[method].apply(element || this, Array.prototype.slice.call(arguments, 3));
   }
-};
-
-// this will get the correct config / option settings for the current pressure check
-var getConfig = function getConfig(option, options) {
-  return options.hasOwnProperty(option) ? options[option] : Config.option;
 };
 
 // the map method allows for interpolating a value from one range of values to another

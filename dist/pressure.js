@@ -23,6 +23,11 @@ var Pressure = {
     loopPressureElements(selector, closure, options);
   },
 
+  // set configuration options for global config
+  config: function config(options) {
+    Config.set(options);
+  },
+
   // the map method allows for interpolating a value from one range of values to another
   // example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
   map: function map(x, in_min, in_max, out_min, out_max) {
@@ -36,7 +41,7 @@ var Element = (function () {
 
     this.element = element;
     this.block = block;
-    this.type = getConfig('only', options);
+    this.type = Config.get('only', options);
     this.options = options;
     this.routeEvents();
   }
@@ -108,7 +113,7 @@ var Adapter = (function () {
   }, {
     key: 'preventDefault',
     value: function preventDefault(event) {
-      if (getConfig('preventDefault', this.element.options) === true) {
+      if (Config.get('preventDefault', this.element.options) === true) {
         event.preventDefault();
         this.el.style.webkitTouchCallout = "none";
         this.el.style.userSelect = "none";
@@ -168,7 +173,7 @@ var Adapter3DTouch = (function (_Adapter) {
         } else if (this.pressed) {
           Support.didFail();
           // is the shim option set
-          if (getConfig('shim', this.element.options) === true) {
+          if (Config.get('shim', this.element.options) === true) {
             this.shim = new AdapterShim(this.element, event);
           } else {
             runClosure(this.block, 'unsupported', this.el);
@@ -317,7 +322,7 @@ var AdapterForceTouch = (function (_Adapter2) {
       } else {
         Support.didFail();
         // is the shim option set
-        if (getConfig('shim', this.element.options) === true) {
+        if (Config.get('shim', this.element.options) === true) {
           this.shim = new AdapterShim(this.element, event);
         } else {
           runClosure(this.block, 'unsupported', this.el);
@@ -407,7 +412,15 @@ var AdapterForceTouch = (function (_Adapter2) {
   }, {
     key: 'normalizeForce',
     value: function normalizeForce(force) {
-      return _map(force, 1, 3, 0, 1);
+      return this.reachOne(_map(force, 1, 3, 0, 1));
+    }
+
+    // if the force value is above 0.999 set the force to 1
+
+  }, {
+    key: 'reachOne',
+    value: function reachOne(force) {
+      return force > 0.999 ? 1 : force;
     }
   }]);
 
@@ -527,8 +540,21 @@ var Config = {
 
   only: null,
 
-  shim: false
+  shim: false,
 
+  // this will get the correct config / option settings for the current pressure check
+  get: function get(option, options) {
+    return options.hasOwnProperty(option) ? options[option] : this[option];
+  },
+
+  // this will set the global configs
+  set: function set(options) {
+    for (var k in options) {
+      if (options.hasOwnProperty(k) && this.hasOwnProperty(k) && k != 'get' && k != 'set') {
+        this[k] = options[k];
+      }
+    }
+  }
 };
 
 // This class holds the states of the the Pressure support the user has
@@ -592,11 +618,6 @@ var runClosure = function runClosure(closure, method, element) {
     // call the closure method and apply nth arguments if they exist
     closure[method].apply(element || this, Array.prototype.slice.call(arguments, 3));
   }
-};
-
-// this will get the correct config / option settings for the current pressure check
-var getConfig = function getConfig(option, options) {
-  return options.hasOwnProperty(option) ? options[option] : Config.option;
 };
 
 // the map method allows for interpolating a value from one range of values to another

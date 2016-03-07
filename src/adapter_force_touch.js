@@ -28,7 +28,7 @@ class AdapterForceTouch extends Adapter{
     } else {
        Support.didFail();
       // is the shim option set
-      if(getConfig('shim', this.element.options) === true){
+      if(Config.get('shim', this.element.options) === true){
         this.shim = new AdapterShim(this.element, event);
       } else {
         runClosure(this.block, 'unsupported', this.el);
@@ -100,7 +100,12 @@ class AdapterForceTouch extends Adapter{
 
   // make the force the standard 0 to 1 scale and not the 1 to 3 scale
   normalizeForce(force){
-    return map(force, 1, 3, 0, 1);
+    return this.reachOne(map(force, 1, 3, 0, 1));
+  }
+
+  // if the force value is above 0.999 set the force to 1
+  reachOne(force){
+    return force > 0.999 ? 1 : force;
   }
 
 }

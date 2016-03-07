@@ -35,11 +35,6 @@ var runClosure = function(closure, method, element){
   }
 }
 
-// this will get the correct config / option settings for the current pressure check
-var getConfig = function(option, options){
-  return options.hasOwnProperty(option) ? options[option] : Config.option;
-}
-
 // the map method allows for interpolating a value from one range of values to another
 // example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
 var map = function(x, in_min, in_max, out_min, out_max){
