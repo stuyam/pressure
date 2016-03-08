@@ -26,13 +26,7 @@ class AdapterForceTouch extends Adapter{
       this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
       this.preventDefault(event);
     } else {
-       Support.didFail();
-      // is the shim option set
-      if(Config.get('shim', this.element.options) === true){
-        this.shim = new AdapterShim(this.element, event);
-      } else {
-        runClosure(this.block, 'unsupported', this.el);
-      }
+      this.failOrShim(event);
     }
   }
 

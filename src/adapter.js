@@ -24,6 +24,16 @@ class Adapter{
     this.deepPressed = boolean;
   }
 
+  failOrShim(event){
+    Support.didFail();
+    // is the shim option set
+    if(Config.get('shim', this.element.options) === true){
+      this.shim = new AdapterShim(this.element, event);
+    } else {
+      runClosure(this.block, 'unsupported', this.el);
+    }
+  }
+
   // prevent the default action of text selection, "peak & pop", and force touch special feature
   preventDefault(event){
     if(Config.get('preventDefault', this.element.options) === true){

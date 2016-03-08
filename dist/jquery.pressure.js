@@ -102,6 +102,17 @@ var Adapter = (function () {
     value: function setDeepPressed(boolean) {
       this.deepPressed = boolean;
     }
+  }, {
+    key: 'failOrShim',
+    value: function failOrShim(event) {
+      Support.didFail();
+      // is the shim option set
+      if (Config.get('shim', this.element.options) === true) {
+        this.shim = new AdapterShim(this.element, event);
+      } else {
+        runClosure(this.block, 'unsupported', this.el);
+      }
+    }
 
     // prevent the default action of text selection, "peak & pop", and force touch special feature
 
@@ -166,23 +177,12 @@ var Adapter3DTouch = (function (_Adapter) {
           iter += 1;
           setTimeout(this.supportCallback.bind(this), 10, iter, event);
         } else if (this.pressed) {
-          Support.didFail();
           this.failOrShim(event);
         }
       } else if (Support.forPressure || this.shim instanceof AdapterShim) {
         this.remove('touchstart', this.supportMethod);
       } else {
         this.failOrShim(event);
-      }
-    }
-  }, {
-    key: 'failOrShim',
-    value: function failOrShim(event) {
-      // is the shim option set
-      if (Config.get('shim', this.element.options) === true) {
-        this.shim = new AdapterShim(this.element, event);
-      } else {
-        runClosure(this.block, 'unsupported', this.el);
       }
     }
   }, {
@@ -320,13 +320,7 @@ var AdapterForceTouch = (function (_Adapter2) {
         this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
         this.preventDefault(event);
       } else {
-        Support.didFail();
-        // is the shim option set
-        if (Config.get('shim', this.element.options) === true) {
-          this.shim = new AdapterShim(this.element, event);
-        } else {
-          runClosure(this.block, 'unsupported', this.el);
-        }
+        this.failOrShim(event);
       }
     }
   }, {
