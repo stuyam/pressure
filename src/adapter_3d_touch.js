@@ -35,15 +35,19 @@ class Adapter3DTouch extends Adapter{
         setTimeout(this.supportCallback.bind(this), 10, iter, event);
       } else if(this.pressed){
         Support.didFail();
-        // is the shim option set
-        if(Config.get('shim', this.element.options) === true){
-          this.shim = new AdapterShim(this.element, event);
-        } else {
-          runClosure(this.block, 'unsupported', this.el);
-        }
+        this.failOrShim(event);
       }
     } else if(Support.forPressure || this.shim instanceof AdapterShim){
       this.remove('touchstart', this.supportMethod);
+    } else {
+      this.failOrShim(event);
+    }
+  }
+
+  failOrShim(event){
+    // is the shim option set
+    if(Config.get('shim', this.element.options) === true){
+      this.shim = new AdapterShim(this.element, event);
     } else {
       runClosure(this.block, 'unsupported', this.el);
     }

@@ -6,6 +6,10 @@ Pressure.config({
   shim: true
 });
 
+$.pressureConfig({
+  preventDefault: false
+});
+
 var block = {
   start: function(event){
     console.log('start', event);
