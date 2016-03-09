@@ -114,6 +114,9 @@ Pressure.set('#element-force-prevent', {}, {only: 'force', preventDefault: false
 Pressure.set('#shim-example', {
   change: function(force, event){
     this.innerHTML = force;
+  },
+  end: function(){
+    this.innerHTML = 0;
   }
 }, {shim: true});
 
