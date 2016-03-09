@@ -6,6 +6,10 @@ $(function () {
   $('[data-toggle="popover"]').popover({trigger: 'manual'});
 });
 
+// Pressure.config({
+//   shim: true
+// });
+
 var block = {
   start: function(){
   },
@@ -29,9 +33,9 @@ var block = {
   }
 }
 
-Pressure.set('#el1', block);
-Pressure.set('#el2', block, {only: 'force'});
-Pressure.set('#el3', block, {only: '3d'});
+Pressure.set('#el1', block, {shim: true});
+Pressure.set('#el2', block, {only: 'force', shim: true});
+Pressure.set('#el3', block, {only: '3d', shim: true});
 
 Pressure.set('#pressure-test', {
   start: function(){
@@ -40,7 +44,7 @@ Pressure.set('#pressure-test', {
   unsupported: function(){
     this.innerHTML = 'Pressure is NOT Supported!';
   }
-});
+}, {shim: false});
 
 
 Pressure.set('#peanuts', {
@@ -55,7 +59,7 @@ Pressure.set('#peanuts', {
   unsupported: function(){
     this.innerHTML = 'Your device / browser does not support this :(';
   }
-});
+}, {shim: true});
 
 Pressure.set('#text-sizer', {
   change: function(force){
@@ -64,7 +68,7 @@ Pressure.set('#text-sizer', {
   end: function(){
     this.style.fontSize = 16;
   }
-});
+}, {shim: true});
 
 Pressure.set('#cube-btn', {
   change: function(force){
@@ -73,7 +77,7 @@ Pressure.set('#cube-btn', {
   end: function(){
     document.getElementById('spinning-cube').style.webkitTransform = 'rotateZ(0deg)';
   }
-});
+}, {shim: true});
 
 Pressure.set('#popover', {
   startDeepPress: function(force){
@@ -82,7 +86,7 @@ Pressure.set('#popover', {
   endDeepPress: function(){
     $(this).popover('hide');
   }
-});
+}, {shim: true});
 
 // docs
 Pressure.set('#output-element', {
@@ -106,6 +110,12 @@ Pressure.set('#element-force', {
 Pressure.set('#element-3d-prevent', {}, {only: '3d', preventDefault: false});
 
 Pressure.set('#element-force-prevent', {}, {only: 'force', preventDefault: false});
+
+Pressure.set('#shim-example', {
+  change: function(force, event){
+    this.innerHTML = force;
+  }
+}, {shim: true});
 
 // Twitter BTN
 window.twttr = (function(d, s, id) {
