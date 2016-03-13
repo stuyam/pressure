@@ -16,6 +16,7 @@
     <header>
       <div class="container">
         <span class="mighty-2 text-center-block">Pressure.js</span>
+        <span class="h4 text-center-block" style="font-weight: 400;">current v0.0.5</span>
         <p class="text-fluid text-indent" style="margin-bottom: 0;">Pressure is a JavaScript library that makes dealing with Apple's Force Touch and 3D Touch simple. Force Touch for new Macs and 3D Touch for the new iPhone 6s and 6s Plus, all bundled under one roof with a simple API that makes working with them painless.</p>
         <p class="text-fluid text-indent">Pressure gives you a handle on browsers that do and don't support Force or 3D touch so you can have sensible fallbacks for users that don't support it.</p>
         <div class="text-center-block download" id="pressure-test">Pressure Browser Test (click me)</div>
@@ -99,16 +100,20 @@
           <hr>
           <p>If you are not using one of the devices / browsers listed above, here is a gif to show it in action.</p>
           <img src="pressure.gif" style="width: 100%;box-shadow: 0 0 5px 5px rgba(0,0,0,0.1);margin: 20px 0;" />
+          <hr />
           <h3>Examples</h3>
+          <div class="alert alert-success">
+            <strong>Note:</strong> This page is using the "shim" option on most of the Pressure elements to give support for browsers that do not support Force or 3D touch. The "shim" option is disabled by default but can be useful in lots of situations where time is an ok replacement for force. <strong>For Example:</strong> The Instagram app uses 3D touch to allow users to quick look images, however if you do not have 3D touchs support, you can simply hold down on the image for a second and it will do the same thing.
+          </div>
           <div class="h4 doc-title">1. Pressure Change</div>
           <p>The best part about Pressure is that is uses a single API that works on both Force Touch and 3D Touch. (note: Apple currently only has support for desktop and mobile safari, but luckily with pressure you can test for that)</p>
           <div class="doc-section">
             <div class="doc-top">
               <h4>Targets All</h4>
               <div class="element" id="el1">0</div>
-              <h4>Targets ONLY Force Touch</h4>
+              <h4>Targets ONLY Force Touch (desktop)</h4>
               <div class="element" id="el2">0</div>
-              <h4>Targets ONLY 3D Touch</h4>
+              <h4>Targets ONLY 3D Touch (mobile)</h4>
               <div class="element" id="el3">0</div>
             </div>
     <!--         <div class="doc-bottom">
@@ -311,6 +316,21 @@ Pressure.set('#stuart', {
 
 
           <div class="h4 doc-title">5. Options</div>
+          <h4><b>Shim Support</b></h4>
+          <p>With Pressure, the third paramater is an optional object of options that can be passed in. Using the "shim" keyword, you can enable shim support for the element. What this means is that if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support force or 3D touch and see for yourself how it works.</p>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div id="shim-example" style="width: 100%;padding: 10px;">Click on me on any device :)</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#shim-example', {
+  change: function(force, event){
+    this.innerHTML = force;
+  }
+}, {shim: true});</code></pre>
+            </div>
+          </div>
+
           <h4><b>Device Detection</b></h4>
           <p>With Pressure, the third paramater is an optional object of options that can be passed in. The first option is device targeting. Using the "only" keyword, you can define if you want pressure to run on ONLY Mac or ONLY iPhone.</p>
           <div class="doc-section">
@@ -370,7 +390,23 @@ Pressure.set('#stuart', {
           </div>
 
 
-          <div class="h4 doc-title">6. Helper</div>
+          <div class="h4 doc-title">6. Helpers</div>
+          <p>You can use <code>Pressure.config()</code> to set default configurations for site wide setup. All of the configurations are the same as the options listed above.</p>
+          <div class="alert alert-warning">
+            <strong>Heads Up:</strong> If you have a config set, you can always overide the config on individual Pressure elements by passing in any of the options listed above to a specific Pressure block.
+          </div>
+          <div class="alert alert-success">When using the jQuery Pressure library, use <code>$.pressureConfig()</code> rather than <code>Pressure.map()</code></div>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// These are the default configs set by Pressure
+Pressure.config({
+  shim: false,
+  preventDefault: true,
+  only: null
+});</code></pre>
+            </div>
+          </div>
+
           <p>You can use <code>Pressure.map()</code> to map a value from one range of values to another. It takes 5 params: <code>Pressure.map(inputValue, inputValueMin, inputValueMax, mapToMin, mapToMax);</code> Here is a good write up on how this works in the Processing framework: <a href="https://processing.org/reference/map_.html">Map Function</a>.</p>
           <div class="alert alert-success">When using the jQuery Pressure library, use <code>$.pressureMap()</code> rather than <code>Pressure.map()</code></div>
           <div class="doc-section">
