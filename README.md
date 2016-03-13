@@ -138,8 +138,10 @@ $('#element').pressure({
 ## Helpers
 
 ### Config
-You can use ```Pressure.config()``` to set default configurations for site wide setup. All of the configurations are the same as the options listed above.</p>
+You can use ```Pressure.config()``` to set default configurations for site wide setup. All of the configurations are the same as the options listed above.
+
 *Heads Up: If you have a config set, you can always overide the config on individual Pressure elements by passing in any of the options listed above to a specific Pressure block.*
+
 **When using the jQuery Pressure library, use ```$.pressureConfig()``` rather than ```Pressure.map()```**
 ```javascript
 // These are the default configs set by Pressure
@@ -152,6 +154,7 @@ Pressure.config({
 
 ### Map
 You can use ```Pressure.map()``` to map a value from one range of values to another. It takes 5 params: ```Pressure.map(inputValue, inputValueMin, inputValueMax, mapToMin, mapToMax);``` Here is a good write up on how this works in the Processing framework: [Map Function](https://processing.org/reference/map_.html).
+
 **When using the jQuery Pressure library, use ```$.pressureMap()``` rather than ```Pressure.map()```**
 ```javascript
 Pressure.set('#element', {
