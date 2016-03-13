@@ -103,7 +103,7 @@
           <hr />
           <h3>Examples</h3>
           <div class="alert alert-success">
-            <strong>Note:</strong> This page is using the "shim" option on most of the Pressure elements to give support for browsers that do not support Force or 3D touch. The "shim" option is disabled by default but can be useful in lots of situations where time is an ok replacement for force. <strong>For Example:</strong> The Instagram app uses 3D touch to allow users to quick look images, however if you do not have 3D touchs support, you can simply hold down on the image for a second and it will do the same thing.
+            <strong>Note:</strong> This page is using the "polyfill" option on most of the Pressure elements to give support for browsers that do not support Force or 3D touch. The "polyfill" option is disabled by default but can be useful in lots of situations where time is an ok replacement for force. <strong>For Example:</strong> The Instagram app uses 3D touch to allow users to quick look images, however if you do not have 3D touchs support, you can simply hold down on the image for a second and it will do the same thing.
           </div>
           <div class="h4 doc-title">1. Pressure Change</div>
           <p>The best part about Pressure is that is uses a single API that works on both Force Touch and 3D Touch. (note: Apple currently only has support for desktop and mobile safari, but luckily with pressure you can test for that)</p>
@@ -316,18 +316,18 @@ Pressure.set('#stuart', {
 
 
           <div class="h4 doc-title">5. Options</div>
-          <h4><b>Shim Support</b></h4>
-          <p>With Pressure, the third paramater is an optional object of options that can be passed in. Using the "shim" keyword, you can enable shim support for the element. What this means is that if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support force or 3D touch and see for yourself how it works.</p>
+          <h4><b>Polyfill Support</b></h4>
+          <p>With Pressure, the third paramater is an optional object of options that can be passed in. Using the "polyfill" keyword, you can enable polyfill support for the element. What this means is that if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support force or 3D touch and see for yourself how it works.</p>
           <div class="doc-section">
             <div class="doc-top">
-              <div id="shim-example" style="width: 100%;padding: 10px;">Click on me on any device :)</div>
+              <div id="polyfill-example" style="width: 100%;padding: 10px;">Click on me on any device :)</div>
             </div>
             <div class="doc-bottom">
-              <pre class="language-javascript"><code>Pressure.set('#shim-example', {
+              <pre class="language-javascript"><code>Pressure.set('#polyfill-example', {
   change: function(force, event){
     this.innerHTML = force;
   }
-}, {shim: true});</code></pre>
+}, {polyfill: true});</code></pre>
             </div>
           </div>
 
@@ -400,7 +400,7 @@ Pressure.set('#stuart', {
             <div class="doc-bottom">
               <pre class="language-javascript"><code>// These are the default configs set by Pressure
 Pressure.config({
-  shim: false,
+  polyfill: false,
   preventDefault: true,
   only: null
 });</code></pre>
