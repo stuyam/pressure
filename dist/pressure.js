@@ -1,4 +1,4 @@
-// Pressure v0.0.5 | Created By Stuart Yamartino | MIT License | 2015-Present
+// Pressure v1.0.0 | Created By Stuart Yamartino | MIT License | 2015-Present
 ;(function(window, document) {
 'use strict';
 
