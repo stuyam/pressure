@@ -21,10 +21,11 @@ class Adapter3DTouch extends Adapter{
 
   supportCallback(iter, event){
     // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
-    if(Support.hasRun === false){
+    if(Support.hasRun === false && !(this.shim instanceof AdapterShim)){
       // if the force value has changed it means the device supports pressure
+      // more info from this issue https://github.com/yamartino/pressure/issues/15
       if(event.touches[0].force !== this.forceValueTest){
-        this.preventDefault3DTouch();
+        this.preventDefault(event);
         Support.didSucceed('3d');
         this.remove('touchstart', this.supportMethod);
         runClosure(this.block, 'start', this.el, event);
@@ -33,13 +34,12 @@ class Adapter3DTouch extends Adapter{
         iter += 1;
         setTimeout(this.supportCallback.bind(this), 10, iter, event);
       } else if(this.pressed){
-        Support.didFail();
-        runClosure(this.block, 'unsupported', this.el);
+        this.failOrShim(event);
       }
-    } else if(Support.forPressure){
+    } else if(Support.forPressure || this.shim instanceof AdapterShim){
       this.remove('touchstart', this.supportMethod);
     } else {
-      runClosure(this.block, 'unsupported', this.el);
+      this.failOrShim(event);
     }
   }
 
@@ -48,7 +48,7 @@ class Adapter3DTouch extends Adapter{
     this.add('touchstart', (event) => {
       if(Support.forPressure){
         this.setPressed(true);
-        this.preventDefault3DTouch();
+        this.preventDefault(event);
         runClosure(this.block, 'start', this.el, event);
       }
     });
@@ -116,14 +116,6 @@ class Adapter3DTouch extends Adapter{
   returnTouch(touch, event){
     touch.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
     return touch;
-  }
-
-  // prevent the default action on iOS of "peek and pop" and other 3D Touch features
-  preventDefault3DTouch(){
-    if(this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false){
-      this.el.style.webkitTouchCallout = "none";
-      this.el.style.webkitUserSelect = "none";
-    }
   }
 
 }

@@ -8,6 +8,11 @@ var Pressure = {
     loopPressureElements(selector, closure, options);
   },
 
+  // set configuration options for global config
+  config(options){
+    Config.set(options);
+  },
+
   // the map method allows for interpolating a value from one range of values to another
   // example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
   map(x, in_min, in_max, out_min, out_max){

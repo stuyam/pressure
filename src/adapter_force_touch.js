@@ -8,7 +8,6 @@ class AdapterForceTouch extends Adapter{
     this.$startDeepPress();
     this.$endDeepPress();
     this.$end();
-    this.preventDefaultForceTouch();
   }
 
   // Support check methods
@@ -18,16 +17,16 @@ class AdapterForceTouch extends Adapter{
   }
 
   forceTouchEnabled(event){
-    event.preventDefault()
+    event.preventDefault();
     Support.didSucceed('force');
   }
 
-  supportCallback(){
-    if(Support.forPressure === false){
-      Support.didFail();
-      runClosure(this.block, 'unsupported', this.el);
-    } else {
+  supportCallback(event){
+    if(Support.forPressure === true || this.shim instanceof AdapterShim){
       this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
+      this.preventDefault(event);
+    } else {
+      this.failOrShim(event);
     }
   }
 
@@ -93,21 +92,14 @@ class AdapterForceTouch extends Adapter{
     });
   }
 
-  preventDefaultForceTouch(){
-    // prevent the default force touch action for bound elements
-    this.add('webkitmouseforcewillbegin', (event) => {
-      if(Support.forPressure){
-        if(this.element.options.hasOwnProperty('preventDefault') === false || this.element.options.preventDefault !== false){
-          event.preventDefault();
-          this.el.style.webkitUserSelect = "none";
-        }
-      }
-    });
-  }
-
   // make the force the standard 0 to 1 scale and not the 1 to 3 scale
   normalizeForce(force){
-    return map(force, 1, 3, 0, 1);
+    return this.reachOne(map(force, 1, 3, 0, 1));
+  }
+
+  // if the force value is above 0.999 set the force to 1
+  reachOne(force){
+    return force > 0.999 ? 1 : force;
   }
 
 }

@@ -1,6 +1,15 @@
 // Example of change method with a failure closure
 // This structure can be used in any methods of Pressure
 // The failure block will return with an "error" and message showing why the device doesn't support 3D Touch and Force Touch
+
+Pressure.config({
+  shim: true
+});
+
+$.pressureConfig({
+  preventDefault: false
+});
+
 var block = {
   start: function(event){
     console.log('start', event);
@@ -9,7 +18,7 @@ var block = {
   change: function(force, event){
     this.style.width = $.pressureMap(force, 0, 1, 200, 300) + 'px';
     this.innerHTML = force;
-    console.log('change', event);
+    console.log('change', force);
   },
 
   startDeepPress: function(event){
@@ -32,9 +41,9 @@ var block = {
   }
 }
 
-Pressure.set(document.querySelectorAll('#el1'), block, {preventDefault: false});
+Pressure.set(document.querySelectorAll('#el1'), block, {shim: true});
 Pressure.set($('#el2'), block, {only: 'force'});
-Pressure.set('#el3', block, {only: '3d'});
+Pressure.set('#el3', block, {only: '3d', shim: true});
 
 $('#el1-jquery').pressure(block);
 $('#el2-jquery').pressure(block, {only: 'force', preventDefault: false});
@@ -44,4 +53,4 @@ $('#el3-jquery').pressure(block, {only: '3d'});
 //   start: function(){
 //     console.log('preventDefault text');
 //   }
-// }, {preventDefault: false, preventDefault: false});
+// }, {preventDefault: false});

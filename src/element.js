@@ -3,7 +3,7 @@ class Element{
   constructor(element, block, options){
     this.element = element;
     this.block = block;
-    this.type = options.hasOwnProperty('only') ? options.only : null;
+    this.type = Config.get('only', options);
     this.options = options;
     this.routeEvents();
   }

@@ -96,6 +96,17 @@ $('#element').pressure({
 ```
 
 ## Options
+
+###Shim Support
+With Pressure, the third paramater is an optional object of options that can be passed in. Using the "shim" keyword, you can enable shim support for the element. What this means is that if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the [main page](http://pressurejs.com) on a devices that does not support force or 3D touch and see for yourself how it works.
+```javascript
+Pressure.set('#shim-example', {
+  change: function(force, event){
+    this.innerHTML = force;
+  }
+}, {shim: true});
+```
+
 ### Only run on Force Touch trackpads (Mac)
 Set the option only to the type you want it to run on 'force' or '3d'
 ```javascript
@@ -122,4 +133,34 @@ $('#element').pressure({
     console.log(force);
   },
 }, {preventDefault: false});
+```
+
+## Helpers
+
+### Config
+You can use ```Pressure.config()``` to set default configurations for site wide setup. All of the configurations are the same as the options listed above.
+
+*Heads Up: If you have a config set, you can always overide the config on individual Pressure elements by passing in any of the options listed above to a specific Pressure block.*
+
+**When using the jQuery Pressure library, use ```$.pressureConfig()``` rather than ```Pressure.map()```**
+```javascript
+// These are the default configs set by Pressure
+Pressure.config({
+  shim: false,
+  preventDefault: true,
+  only: null
+});
+```
+
+### Map
+You can use ```Pressure.map()``` to map a value from one range of values to another. It takes 5 params: ```Pressure.map(inputValue, inputValueMin, inputValueMax, mapToMin, mapToMax);``` Here is a good write up on how this works in the Processing framework: [Map Function](https://processing.org/reference/map_.html).
+
+**When using the jQuery Pressure library, use ```$.pressureMap()``` rather than ```Pressure.map()```**
+```javascript
+Pressure.set('#element', {
+  change: function(force, event){
+    // this takes the force, given that the force can range from 0 to 1, and maps that force value on a 100 to 200 range
+    this.style.width = Pressure.map(force, 0, 1, 100, 200);
+  }
+});
 ```

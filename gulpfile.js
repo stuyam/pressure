@@ -8,7 +8,7 @@ var stripDebug = require('gulp-strip-debug');
 var uglify     = require('gulp-uglify');
 var babel      = require('gulp-babel');
 
-var HEADER_COMMENT = '// Pressure v0.0.4 | Created By Stuart Yamartino | MIT License | 2015-Present\n';
+var HEADER_COMMENT = '// Pressure v0.0.5 | Created By Stuart Yamartino | MIT License | 2015-Present\n';
 var DESTINATION = '.';
 
 // JS concat, strip debugging and minify
@@ -19,6 +19,8 @@ gulp.task('pressure', function() {
     './src/adapter.js',
     './src/adapter_3d_touch.js',
     './src/adapter_force_touch.js',
+    './src/adapter_shim.js',
+    './src/config.js',
     './src/support.js',
     './src/helpers.js',
     './src/globalize.js',
@@ -52,6 +54,8 @@ gulp.task('jquery-pressure', function() {
     './src/adapter.js',
     './src/adapter_3d_touch.js',
     './src/adapter_force_touch.js',
+    './src/adapter_shim.js',
+    './src/config.js',
     './src/support.js',
     './src/helpers.js',
     './src/globalize.js',
