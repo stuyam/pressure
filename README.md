@@ -163,4 +163,4 @@ Pressure.set('#element', {
     this.style.width = Pressure.map(force, 0, 1, 100, 200);
   }
 });
-```b
+```
