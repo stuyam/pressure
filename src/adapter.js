@@ -24,11 +24,11 @@ class Adapter{
     this.deepPressed = boolean;
   }
 
-  failOrShim(event){
+  failOrPolyfill(event){
     Support.didFail();
-    // is the shim option set
-    if(Config.get('shim', this.element.options) === true){
-      this.shim = new AdapterShim(this.element, event);
+    // is the polyfill option set
+    if(Config.get('polyfill', this.element.options) === true){
+      this.polyfill = new AdapterPolyfill(this.element, event);
     } else {
       runClosure(this.block, 'unsupported', this.el);
     }

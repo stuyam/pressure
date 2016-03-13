@@ -3,7 +3,7 @@
 // The failure block will return with an "error" and message showing why the device doesn't support 3D Touch and Force Touch
 
 Pressure.config({
-  shim: true
+  polyfill: true
 });
 
 $.pressureConfig({
@@ -41,9 +41,9 @@ var block = {
   }
 }
 
-Pressure.set(document.querySelectorAll('#el1'), block, {shim: true});
+Pressure.set(document.querySelectorAll('#el1'), block, {polyfill: true});
 Pressure.set($('#el2'), block, {only: 'force'});
-Pressure.set('#el3', block, {only: '3d', shim: true});
+Pressure.set('#el3', block, {only: '3d', polyfill: true});
 
 $('#el1-jquery').pressure(block);
 $('#el2-jquery').pressure(block, {only: 'force', preventDefault: false});

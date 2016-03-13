@@ -21,7 +21,7 @@ class Adapter3DTouch extends Adapter{
 
   supportCallback(iter, event){
     // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
-    if(Support.hasRun === false && !(this.shim instanceof AdapterShim)){
+    if(Support.hasRun === false && !(this.polyfill instanceof AdapterPolyfill)){
       // if the force value has changed it means the device supports pressure
       // more info from this issue https://github.com/yamartino/pressure/issues/15
       if(event.touches[0].force !== this.forceValueTest){
@@ -34,12 +34,12 @@ class Adapter3DTouch extends Adapter{
         iter += 1;
         setTimeout(this.supportCallback.bind(this), 10, iter, event);
       } else if(this.pressed){
-        this.failOrShim(event);
+        this.failOrPolyfill(event);
       }
-    } else if(Support.forPressure || this.shim instanceof AdapterShim){
+    } else if(Support.forPressure || this.polyfill instanceof AdapterPolyfill){
       this.remove('touchstart', this.supportMethod);
     } else {
-      this.failOrShim(event);
+      this.failOrPolyfill(event);
     }
   }
 

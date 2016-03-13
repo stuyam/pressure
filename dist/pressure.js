@@ -108,12 +108,12 @@ var Adapter = (function () {
       this.deepPressed = boolean;
     }
   }, {
-    key: 'failOrShim',
-    value: function failOrShim(event) {
+    key: 'failOrPolyfill',
+    value: function failOrPolyfill(event) {
       Support.didFail();
-      // is the shim option set
-      if (Config.get('shim', this.element.options) === true) {
-        this.shim = new AdapterShim(this.element, event);
+      // is the polyfill option set
+      if (Config.get('polyfill', this.element.options) === true) {
+        this.polyfill = new AdapterPolyfill(this.element, event);
       } else {
         runClosure(this.block, 'unsupported', this.el);
       }
@@ -169,7 +169,7 @@ var Adapter3DTouch = (function (_Adapter) {
     key: 'supportCallback',
     value: function supportCallback(iter, event) {
       // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
-      if (Support.hasRun === false && !(this.shim instanceof AdapterShim)) {
+      if (Support.hasRun === false && !(this.polyfill instanceof AdapterPolyfill)) {
         // if the force value has changed it means the device supports pressure
         // more info from this issue https://github.com/yamartino/pressure/issues/15
         if (event.touches[0].force !== this.forceValueTest) {
@@ -182,12 +182,12 @@ var Adapter3DTouch = (function (_Adapter) {
           iter += 1;
           setTimeout(this.supportCallback.bind(this), 10, iter, event);
         } else if (this.pressed) {
-          this.failOrShim(event);
+          this.failOrPolyfill(event);
         }
-      } else if (Support.forPressure || this.shim instanceof AdapterShim) {
+      } else if (Support.forPressure || this.polyfill instanceof AdapterPolyfill) {
         this.remove('touchstart', this.supportMethod);
       } else {
-        this.failOrShim(event);
+        this.failOrPolyfill(event);
       }
     }
   }, {
@@ -321,11 +321,11 @@ var AdapterForceTouch = (function (_Adapter2) {
   }, {
     key: 'supportCallback',
     value: function supportCallback(event) {
-      if (Support.forPressure === true || this.shim instanceof AdapterShim) {
+      if (Support.forPressure === true || this.polyfill instanceof AdapterPolyfill) {
         this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
         this.preventDefault(event);
       } else {
-        this.failOrShim(event);
+        this.failOrPolyfill(event);
       }
     }
   }, {
@@ -426,13 +426,13 @@ var AdapterForceTouch = (function (_Adapter2) {
   return AdapterForceTouch;
 })(Adapter);
 
-var AdapterShim = (function (_Adapter3) {
-  _inherits(AdapterShim, _Adapter3);
+var AdapterPolyfill = (function (_Adapter3) {
+  _inherits(AdapterPolyfill, _Adapter3);
 
-  function AdapterShim(element, firstEvent) {
-    _classCallCheck(this, AdapterShim);
+  function AdapterPolyfill(element, firstEvent) {
+    _classCallCheck(this, AdapterPolyfill);
 
-    var _this11 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterShim).call(this, element));
+    var _this11 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterPolyfill).call(this, element));
 
     _this11.$start();
     _this11.$change();
@@ -443,7 +443,7 @@ var AdapterShim = (function (_Adapter3) {
     return _this11;
   }
 
-  _createClass(AdapterShim, [{
+  _createClass(AdapterPolyfill, [{
     key: 'firstRun',
     value: function firstRun(event) {
       this.preventDefault(event);
@@ -528,7 +528,7 @@ var AdapterShim = (function (_Adapter3) {
     }
   }]);
 
-  return AdapterShim;
+  return AdapterPolyfill;
 })(Adapter);
 
 // This class holds the states of the the Pressure config
@@ -539,7 +539,7 @@ var Config = {
 
   only: null,
 
-  shim: false,
+  polyfill: false,
 
   // this will get the correct config / option settings for the current pressure check
   get: function get(option, options) {

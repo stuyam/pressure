@@ -5,7 +5,7 @@ var Config = {
 
   only: null,
 
-  shim: false,
+  polyfill: false,
 
   // this will get the correct config / option settings for the current pressure check
   get(option, options){

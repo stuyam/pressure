@@ -1,4 +1,4 @@
-class AdapterShim extends Adapter{
+class AdapterPolyfill extends Adapter{
 
   constructor(element, firstEvent){
     super(element);

@@ -22,11 +22,11 @@ class AdapterForceTouch extends Adapter{
   }
 
   supportCallback(event){
-    if(Support.forPressure === true || this.shim instanceof AdapterShim){
+    if(Support.forPressure === true || this.polyfill instanceof AdapterPolyfill){
       this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
       this.preventDefault(event);
     } else {
-      this.failOrShim(event);
+      this.failOrPolyfill(event);
     }
   }
 
