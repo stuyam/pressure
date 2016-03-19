@@ -2,15 +2,15 @@
 ;(function(window, document) {
 "use strict";
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 //--------------------- Public API Section ---------------------//
 // this is the Pressure Object, this is the only object that is accessible to the end user
@@ -23,10 +23,12 @@ var Pressure = {
     loopPressureElements(selector, closure, options);
   },
 
+
   // set configuration options for global config
   config: function config(options) {
     Config.set(options);
   },
+
 
   // the map method allows for interpolating a value from one range of values to another
   // example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
@@ -67,7 +69,7 @@ if (window !== false) {
   return;
 }
 
-var Element = (function () {
+var Element = function () {
   function Element(element, block, options) {
     _classCallCheck(this, Element);
 
@@ -106,9 +108,9 @@ var Element = (function () {
   }]);
 
   return Element;
-})();
+}();
 
-var Adapter = (function () {
+var Adapter = function () {
   function Adapter(element) {
     _classCallCheck(this, Adapter);
 
@@ -167,9 +169,9 @@ var Adapter = (function () {
   }]);
 
   return Adapter;
-})();
+}();
 
-var Adapter3DTouch = (function (_Adapter) {
+var Adapter3DTouch = function (_Adapter) {
   _inherits(Adapter3DTouch, _Adapter);
 
   function Adapter3DTouch(element) {
@@ -317,9 +319,9 @@ var Adapter3DTouch = (function (_Adapter) {
   }]);
 
   return Adapter3DTouch;
-})(Adapter);
+}(Adapter);
 
-var AdapterForceTouch = (function (_Adapter2) {
+var AdapterForceTouch = function (_Adapter2) {
   _inherits(AdapterForceTouch, _Adapter2);
 
   function AdapterForceTouch(element) {
@@ -337,6 +339,7 @@ var AdapterForceTouch = (function (_Adapter2) {
   }
 
   // Support check methods
+
 
   _createClass(AdapterForceTouch, [{
     key: "$support",
@@ -456,9 +459,9 @@ var AdapterForceTouch = (function (_Adapter2) {
   }]);
 
   return AdapterForceTouch;
-})(Adapter);
+}(Adapter);
 
-var AdapterPolyfill = (function (_Adapter3) {
+var AdapterPolyfill = function (_Adapter3) {
   _inherits(AdapterPolyfill, _Adapter3);
 
   function AdapterPolyfill(element, firstEvent) {
@@ -561,9 +564,10 @@ var AdapterPolyfill = (function (_Adapter3) {
   }]);
 
   return AdapterPolyfill;
-})(Adapter);
+}(Adapter);
 
 // This class holds the states of the the Pressure config
+
 
 var Config = {
 
@@ -577,6 +581,7 @@ var Config = {
   get: function get(option, options) {
     return options.hasOwnProperty(option) ? options[option] : this[option];
   },
+
 
   // this will set the global configs
   set: function set(options) {
