@@ -23,5 +23,9 @@ if(window !== false){
     }
   }
 } else {
-  throw new Error( "Pressure requires a window with a document" );
+  console.warn( "Pressure requires a window with a document" );
+  // I can't put 'return' here because babel blows up when it is compiled with gulp
+  // because it is not in a function. It is only put into the iife when gulp runs.
+  // The next line is replaced with 'return;' when gulp runs.
+  //REPLACE-ME-IN-GULP-WITH-RETURN
 }
