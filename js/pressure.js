@@ -1,10 +1,10 @@
-// Pressure v1.0.0 | Created By Stuart Yamartino | MIT License | 2015-Present
+// Pressure v1.0.1 | Created By Stuart Yamartino | MIT License | 2015-Present
 ;(function(window, document) {
-'use strict';
+"use strict";
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
@@ -23,10 +23,12 @@ var Pressure = {
     loopPressureElements(selector, closure, options);
   },
 
+
   // set configuration options for global config
   config: function config(options) {
     Config.set(options);
   },
+
 
   // the map method allows for interpolating a value from one range of values to another
   // example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
@@ -35,7 +37,39 @@ var Pressure = {
   }
 };
 
-var Element = (function () {
+// Assign the Pressure object to the global object (or module for npm) so it can be called from inside the self executing anonymous function
+if (window !== false) {
+  // if Pressure is not defined, it is the jquery.pressure library and skip the next setup
+  if (typeof Pressure !== "undefined") {
+    // this if block came from: http://ifandelse.com/its-not-hard-making-your-library-support-amd-and-commonjs/
+    if (typeof define === "function" && define.amd) {
+      // Now we're wrapping the factory and assigning the return
+      // value to the root (window) and returning it as well to
+      // the AMD loader.
+      var pressure = Pressure;
+      define(["pressure"], function (Pressure) {
+        return Pressure;
+      });
+    } else if ((typeof module === "undefined" ? "undefined" : _typeof(module)) === "object" && module.exports) {
+      // I've not encountered a need for this yet, since I haven't
+      // run into a scenario where plain modules depend on CommonJS
+      // *and* I happen to be loading in a CJS browser environment
+      // but I'm including it for the sake of being thorough
+      var pressure = Pressure;
+      module.exports = pressure;
+    } else {
+      window.Pressure = Pressure;
+    }
+  }
+} else {
+  console.warn("Pressure requires a window with a document");
+  // I can't put 'return' here because babel blows up when it is compiled with gulp
+  // because it is not in a function. It is only put into the iife when gulp runs.
+  // The next line is replaced with 'return;' when gulp runs.
+  return;
+}
+
+var Element = function () {
   function Element(element, block, options) {
     _classCallCheck(this, Element);
 
@@ -47,7 +81,7 @@ var Element = (function () {
   }
 
   _createClass(Element, [{
-    key: 'routeEvents',
+    key: "routeEvents",
     value: function routeEvents() {
       // if on desktop and requesting Force Touch or not requesting 3D Touch
       if (Support.mobile === false && (this.type === 'force' || this.type !== '3d')) {
@@ -63,7 +97,7 @@ var Element = (function () {
           }
     }
   }, {
-    key: 'instantFail',
+    key: "instantFail",
     value: function instantFail() {
       var _this = this;
 
@@ -74,9 +108,9 @@ var Element = (function () {
   }]);
 
   return Element;
-})();
+}();
 
-var Adapter = (function () {
+var Adapter = function () {
   function Adapter(element) {
     _classCallCheck(this, Adapter);
 
@@ -88,27 +122,27 @@ var Adapter = (function () {
   }
 
   _createClass(Adapter, [{
-    key: 'add',
+    key: "add",
     value: function add(event, set) {
       this.el.addEventListener(event, set, false);
     }
   }, {
-    key: 'remove',
+    key: "remove",
     value: function remove(event, set) {
       this.el.removeEventListener(event, set);
     }
   }, {
-    key: 'setPressed',
+    key: "setPressed",
     value: function setPressed(boolean) {
       this.pressed = boolean;
     }
   }, {
-    key: 'setDeepPressed',
+    key: "setDeepPressed",
     value: function setDeepPressed(boolean) {
       this.deepPressed = boolean;
     }
   }, {
-    key: 'failOrPolyfill',
+    key: "failOrPolyfill",
     value: function failOrPolyfill(event) {
       Support.didFail();
       // is the polyfill option set
@@ -122,7 +156,7 @@ var Adapter = (function () {
     // prevent the default action of text selection, "peak & pop", and force touch special feature
 
   }, {
-    key: 'preventDefault',
+    key: "preventDefault",
     value: function preventDefault(event) {
       if (Config.get('preventDefault', this.element.options) === true) {
         event.preventDefault();
@@ -135,9 +169,9 @@ var Adapter = (function () {
   }]);
 
   return Adapter;
-})();
+}();
 
-var Adapter3DTouch = (function (_Adapter) {
+var Adapter3DTouch = function (_Adapter) {
   _inherits(Adapter3DTouch, _Adapter);
 
   function Adapter3DTouch(element) {
@@ -153,20 +187,20 @@ var Adapter3DTouch = (function (_Adapter) {
   }
 
   _createClass(Adapter3DTouch, [{
-    key: '$support',
+    key: "$support",
     value: function $support() {
       this.supportMethod = this.middleMan.bind(this);
       this.add('touchstart', this.supportMethod);
     }
   }, {
-    key: 'middleMan',
+    key: "middleMan",
     value: function middleMan(event) {
       this.setPressed(true);
       this.forceValueTest = event.touches[0].force;
       this.supportCallback(0, event);
     }
   }, {
-    key: 'supportCallback',
+    key: "supportCallback",
     value: function supportCallback(iter, event) {
       // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
       if (Support.hasRun === false && !(this.polyfill instanceof AdapterPolyfill)) {
@@ -191,7 +225,7 @@ var Adapter3DTouch = (function (_Adapter) {
       }
     }
   }, {
-    key: '$start',
+    key: "$start",
     value: function $start() {
       var _this3 = this;
 
@@ -205,12 +239,12 @@ var Adapter3DTouch = (function (_Adapter) {
       });
     }
   }, {
-    key: '$change',
+    key: "$change",
     value: function $change() {
       this.add('touchstart', this.changeLogic.bind(this));
     }
   }, {
-    key: 'changeLogic',
+    key: "changeLogic",
     value: function changeLogic(event) {
       if (Support.forPressure && this.pressed) {
         this.setPressed(true);
@@ -218,7 +252,7 @@ var Adapter3DTouch = (function (_Adapter) {
       }
     }
   }, {
-    key: '$end',
+    key: "$end",
     value: function $end() {
       var _this4 = this;
 
@@ -232,7 +266,7 @@ var Adapter3DTouch = (function (_Adapter) {
       });
     }
   }, {
-    key: 'startDeepPress',
+    key: "startDeepPress",
     value: function startDeepPress(event) {
       if (this.deepPressed === false) {
         runClosure(this.block, 'startDeepPress', this.el, event);
@@ -240,7 +274,7 @@ var Adapter3DTouch = (function (_Adapter) {
       this.setDeepPressed(true);
     }
   }, {
-    key: 'endDeepPress',
+    key: "endDeepPress",
     value: function endDeepPress() {
       if (this.deepPressed === true) {
         runClosure(this.block, 'endDeepPress', this.el);
@@ -248,7 +282,7 @@ var Adapter3DTouch = (function (_Adapter) {
       this.setDeepPressed(false);
     }
   }, {
-    key: 'runForce',
+    key: "runForce",
     value: function runForce(event) {
       if (this.pressed) {
         this.touch = this.selectTouch(event);
@@ -260,7 +294,7 @@ var Adapter3DTouch = (function (_Adapter) {
     // link up the touch point to the correct element, this is to support multitouch
 
   }, {
-    key: 'selectTouch',
+    key: "selectTouch",
     value: function selectTouch(event) {
       if (event.touches.length === 1) {
         return this.returnTouch(event.touches[0], event);
@@ -277,7 +311,7 @@ var Adapter3DTouch = (function (_Adapter) {
     // return the touch and run a start or end for deep press
 
   }, {
-    key: 'returnTouch',
+    key: "returnTouch",
     value: function returnTouch(touch, event) {
       touch.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
       return touch;
@@ -285,9 +319,9 @@ var Adapter3DTouch = (function (_Adapter) {
   }]);
 
   return Adapter3DTouch;
-})(Adapter);
+}(Adapter);
 
-var AdapterForceTouch = (function (_Adapter2) {
+var AdapterForceTouch = function (_Adapter2) {
   _inherits(AdapterForceTouch, _Adapter2);
 
   function AdapterForceTouch(element) {
@@ -306,20 +340,21 @@ var AdapterForceTouch = (function (_Adapter2) {
 
   // Support check methods
 
+
   _createClass(AdapterForceTouch, [{
-    key: '$support',
+    key: "$support",
     value: function $support() {
       this.add('webkitmouseforcewillbegin', this.forceTouchEnabled);
       this.add('mousedown', this.supportCallback.bind(this));
     }
   }, {
-    key: 'forceTouchEnabled',
+    key: "forceTouchEnabled",
     value: function forceTouchEnabled(event) {
       event.preventDefault();
       Support.didSucceed('force');
     }
   }, {
-    key: 'supportCallback',
+    key: "supportCallback",
     value: function supportCallback(event) {
       if (Support.forPressure === true || this.polyfill instanceof AdapterPolyfill) {
         this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
@@ -329,7 +364,7 @@ var AdapterForceTouch = (function (_Adapter2) {
       }
     }
   }, {
-    key: '$start',
+    key: "$start",
     value: function $start() {
       var _this6 = this;
 
@@ -342,7 +377,7 @@ var AdapterForceTouch = (function (_Adapter2) {
       });
     }
   }, {
-    key: '$change',
+    key: "$change",
     value: function $change() {
       var _this7 = this;
 
@@ -353,7 +388,7 @@ var AdapterForceTouch = (function (_Adapter2) {
       });
     }
   }, {
-    key: '$end',
+    key: "$end",
     value: function $end() {
       var _this8 = this;
 
@@ -374,7 +409,7 @@ var AdapterForceTouch = (function (_Adapter2) {
       });
     }
   }, {
-    key: '$startDeepPress',
+    key: "$startDeepPress",
     value: function $startDeepPress() {
       var _this9 = this;
 
@@ -386,7 +421,7 @@ var AdapterForceTouch = (function (_Adapter2) {
       });
     }
   }, {
-    key: '$endDeepPress',
+    key: "$endDeepPress",
     value: function $endDeepPress() {
       var _this10 = this;
 
@@ -409,7 +444,7 @@ var AdapterForceTouch = (function (_Adapter2) {
     // make the force the standard 0 to 1 scale and not the 1 to 3 scale
 
   }, {
-    key: 'normalizeForce',
+    key: "normalizeForce",
     value: function normalizeForce(force) {
       return this.reachOne(_map(force, 1, 3, 0, 1));
     }
@@ -417,16 +452,16 @@ var AdapterForceTouch = (function (_Adapter2) {
     // if the force value is above 0.999 set the force to 1
 
   }, {
-    key: 'reachOne',
+    key: "reachOne",
     value: function reachOne(force) {
       return force > 0.999 ? 1 : force;
     }
   }]);
 
   return AdapterForceTouch;
-})(Adapter);
+}(Adapter);
 
-var AdapterPolyfill = (function (_Adapter3) {
+var AdapterPolyfill = function (_Adapter3) {
   _inherits(AdapterPolyfill, _Adapter3);
 
   function AdapterPolyfill(element, firstEvent) {
@@ -444,14 +479,14 @@ var AdapterPolyfill = (function (_Adapter3) {
   }
 
   _createClass(AdapterPolyfill, [{
-    key: 'firstRun',
+    key: "firstRun",
     value: function firstRun(event) {
       this.preventDefault(event);
       this.startLogic(event);
       this.changeLogic(event);
     }
   }, {
-    key: '$start',
+    key: "$start",
     value: function $start() {
       var _this12 = this;
 
@@ -461,18 +496,18 @@ var AdapterPolyfill = (function (_Adapter3) {
       });
     }
   }, {
-    key: 'startLogic',
+    key: "startLogic",
     value: function startLogic(event) {
       this.setPressed(true);
       runClosure(this.block, 'start', this.el, event);
     }
   }, {
-    key: '$change',
+    key: "$change",
     value: function $change() {
       this.add(Support.mobile ? 'touchstart' : 'mousedown', this.changeLogic.bind(this));
     }
   }, {
-    key: 'changeLogic',
+    key: "changeLogic",
     value: function changeLogic(event) {
       if (this.pressed) {
         this.setPressed(true);
@@ -480,7 +515,7 @@ var AdapterPolyfill = (function (_Adapter3) {
       }
     }
   }, {
-    key: '$end',
+    key: "$end",
     value: function $end() {
       var _this13 = this;
 
@@ -501,7 +536,7 @@ var AdapterPolyfill = (function (_Adapter3) {
       });
     }
   }, {
-    key: 'startDeepPress',
+    key: "startDeepPress",
     value: function startDeepPress(event) {
       if (this.deepPressed === false) {
         runClosure(this.block, 'startDeepPress', this.el, event);
@@ -509,7 +544,7 @@ var AdapterPolyfill = (function (_Adapter3) {
       this.setDeepPressed(true);
     }
   }, {
-    key: 'endDeepPress',
+    key: "endDeepPress",
     value: function endDeepPress() {
       if (this.deepPressed === true) {
         runClosure(this.block, 'endDeepPress', this.el);
@@ -517,7 +552,7 @@ var AdapterPolyfill = (function (_Adapter3) {
       this.setDeepPressed(false);
     }
   }, {
-    key: 'runForce',
+    key: "runForce",
     value: function runForce(event) {
       if (this.pressed) {
         runClosure(this.block, 'change', this.el, this.force, event);
@@ -529,9 +564,10 @@ var AdapterPolyfill = (function (_Adapter3) {
   }]);
 
   return AdapterPolyfill;
-})(Adapter);
+}(Adapter);
 
 // This class holds the states of the the Pressure config
+
 
 var Config = {
 
@@ -545,6 +581,7 @@ var Config = {
   get: function get(option, options) {
     return options.hasOwnProperty(option) ? options[option] : this[option];
   },
+
 
   // this will set the global configs
   set: function set(options) {
@@ -607,8 +644,8 @@ var loopPressureElements = function loopPressureElements(selector, closure) {
 
 //Returns true if it is a DOM element
 var isElement = function isElement(o) {
-  return (typeof HTMLElement === 'undefined' ? 'undefined' : _typeof(HTMLElement)) === "object" ? o instanceof HTMLElement : //DOM2
-  o && (typeof o === 'undefined' ? 'undefined' : _typeof(o)) === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string";
+  return (typeof HTMLElement === "undefined" ? "undefined" : _typeof(HTMLElement)) === "object" ? o instanceof HTMLElement : //DOM2
+  o && (typeof o === "undefined" ? "undefined" : _typeof(o)) === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string";
 };
 
 // run the closure if the property exists in the object
@@ -624,32 +661,4 @@ var runClosure = function runClosure(closure, method, element) {
 var _map = function _map(x, in_min, in_max, out_min, out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 };
-
-// Assign the Pressure object to the global object (or module for npm) so it can be called from inside the self executing anonymous function
-if (window !== false) {
-  // if Pressure is not defined, it is the jquery.pressure library and skip the next setup
-  if (typeof Pressure !== "undefined") {
-    // this if block came from: http://ifandelse.com/its-not-hard-making-your-library-support-amd-and-commonjs/
-    if (typeof define === "function" && define.amd) {
-      // Now we're wrapping the factory and assigning the return
-      // value to the root (window) and returning it as well to
-      // the AMD loader.
-      var pressure = Pressure;
-      define(["pressure"], function (Pressure) {
-        return Pressure;
-      });
-    } else if ((typeof module === 'undefined' ? 'undefined' : _typeof(module)) === "object" && module.exports) {
-      // I've not encountered a need for this yet, since I haven't
-      // run into a scenario where plain modules depend on CommonJS
-      // *and* I happen to be loading in a CJS browser environment
-      // but I'm including it for the sake of being thorough
-      var pressure = Pressure;
-      module.exports = pressure;
-    } else {
-      window.Pressure = Pressure;
-    }
-  }
-} else {
-  throw new Error("Pressure requires a window with a document");
-}
 }(typeof window !== "undefined" ? window : false, typeof window !== "undefined" ? window.document : false));
