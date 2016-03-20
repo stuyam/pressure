@@ -30,12 +30,10 @@ and drop them into the `dist/` directory.
 
 ## Pull Requests
 
-**Make sure to send pull requests to `develop`.**
-
 Good Pull Requests include:
 
   - A clear explaination of the problem (or enhancement)
   - Clean commit history (squash where it makes sense)
-  - Relevant Tests (either updated and/or new)
+  - Relevant Explination of how to test
 
-Thanks to (Payform)[https://github.com/jondavidjohn/payform] for the contribution template.
+Thanks to [Payform](https://github.com/jondavidjohn/payform) for the contribution template.
