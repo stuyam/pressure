@@ -3,7 +3,7 @@
 // only the methods in this object can be called, making it the "public api"
 var Pressure = {
 
-  // targets any device with Force of 3D Touch
+  // targets any device with Force or 3D Touch
   set(selector, closure, options){
     loopPressureElements(selector, closure, options);
   },
