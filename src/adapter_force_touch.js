@@ -15,8 +15,8 @@ class AdapterForceTouch extends Adapter{
 
   // Support check methods
   $start(){
-    this.add('webkitmouseforcewillbegin', this.startForce);
-    this.add('mousedown', this.support);
+    this.add('webkitmouseforcewillbegin', this.startForce.bind(this));
+    this.add('mousedown', this.support.bind(this));
   }
 
   startForce(event){
@@ -26,7 +26,7 @@ class AdapterForceTouch extends Adapter{
   }
 
   support(event){
-    if(this.pressed === false && this.polyfill instanceof AdapterPolyfill === false){
+    if(this.pressed === false){
       this.failOrPolyfill(event);
     }
   }
@@ -35,22 +35,6 @@ class AdapterForceTouch extends Adapter{
     this.add('webkitmouseforcechanged', (event) => {
       if(this.pressed && event.webkitForce !== 0){
         runClosure(this.block, 'change', this.el, this.normalizeForce(event.webkitForce), event);
-      }
-    });
-  }
-
-  $end(){
-    // call 'end' when the mouse goes up or leaves the element
-    this.add('mouseup', () => {
-      if(this.pressed){
-        this.setPressed(false);
-        runClosure(this.block, 'end', this.el);
-      }
-    });
-    this.add('mouseleave', () => {
-      if(this.pressed){
-        this.setPressed(false);
-        runClosure(this.block, 'end', this.el);
       }
     });
   }
@@ -75,6 +59,22 @@ class AdapterForceTouch extends Adapter{
       if(this.pressed && this.deepPressed){
         this.setDeepPressed(false);
         runClosure(this.block, 'endDeepPress', this.el);
+      }
+    });
+  }
+
+  $end(){
+    // call 'end' when the mouse goes up or leaves the element
+    this.add('mouseup', () => {
+      if(this.pressed){
+        this.setPressed(false);
+        runClosure(this.block, 'end', this.el);
+      }
+    });
+    this.add('mouseleave', () => {
+      if(this.pressed){
+        this.setPressed(false);
+        runClosure(this.block, 'end', this.el);
       }
     });
   }

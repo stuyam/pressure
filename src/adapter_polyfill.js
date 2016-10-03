@@ -18,7 +18,7 @@ class AdapterPolyfill extends Adapter{
 
   $start(){
     // call 'start' when the touch goes down
-    this.add(Support.mobile ? 'touchstart' : 'mousedown', (event) => {
+    this.add(isMobile ? 'touchstart' : 'mousedown', (event) => {
       this.startLogic(event);
     });
   }
@@ -29,7 +29,7 @@ class AdapterPolyfill extends Adapter{
   }
 
   $change(){
-    this.add(Support.mobile ? 'touchstart' : 'mousedown', this.changeLogic.bind(this));
+    this.add(isMobile ? 'touchstart' : 'mousedown', this.changeLogic.bind(this));
   }
 
   changeLogic(event){
@@ -41,7 +41,7 @@ class AdapterPolyfill extends Adapter{
 
   $end(){
     // call 'end' when the mouse goes up or leaves the element
-    this.add(Support.mobile ? 'touchend' : 'mouseup', () => {
+    this.add(isMobile ? 'touchend' : 'mouseup', () => {
       this.endDeepPress();
       this.setPressed(false);
       runClosure(this.block, 'end', this.el);

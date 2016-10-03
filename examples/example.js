@@ -3,7 +3,7 @@
 // The failure block will return with an "error" and message showing why the device doesn't support 3D Touch and Force Touch
 
 Pressure.config({
-  polyfill: true
+  polyfill: false
 });
 
 $.pressureConfig({
