@@ -25,7 +25,6 @@ class Adapter{
   }
 
   failOrPolyfill(event){
-    Support.didFail();
     // is the polyfill option set
     if(Config.get('polyfill', this.element.options) === true){
       this.polyfill = new AdapterPolyfill(this.element, event);

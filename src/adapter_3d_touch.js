@@ -1,3 +1,7 @@
+/*
+This adapter is more iOS devices running iOS 10 or higher and support 3D touch.
+*/
+
 class Adapter3DTouch extends Adapter{
 
   constructor(element){
@@ -5,117 +9,101 @@ class Adapter3DTouch extends Adapter{
     this.$support();
     this.$start();
     this.$change();
+    this.$startDeepPress();
+    this.$endDeepPress();
     this.$end();
   }
 
+  // Support check methods
   $support(){
-    this.supportMethod = this.middleMan.bind(this);
-    this.add('touchstart', this.supportMethod);
+    this.add('touchforcechange', this.enabled);
+    this.add('touchstart', this.supportCallback.bind(this));
   }
 
-  middleMan(event){
-    this.setPressed(true);
-    this.forceValueTest = event.touches[0].force;
-    this.supportCallback(0, event);
+  enabled(event){
+    event.preventDefault();
+    Support.didSucceed('force');
   }
 
-  supportCallback(iter, event){
-    // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
-    if(Support.hasRun === false && !(this.polyfill instanceof AdapterPolyfill)){
-      // if the force value has changed it means the device supports pressure
-      // more info from this issue https://github.com/yamartino/pressure/issues/15
-      if(event.touches[0].force !== this.forceValueTest){
-        this.preventDefault(event);
-        Support.didSucceed('3d');
-        this.remove('touchstart', this.supportMethod);
-        runClosure(this.block, 'start', this.el, event);
-        this.changeLogic(event);
-      } else if(iter <= 10 && this.pressed) {
-        iter += 1;
-        setTimeout(this.supportCallback.bind(this), 10, iter, event);
-      } else if(this.pressed){
-        this.failOrPolyfill(event);
-      }
-    } else if(Support.forPressure || this.polyfill instanceof AdapterPolyfill){
-      this.remove('touchstart', this.supportMethod);
+  supportCallback(event){
+    if(Support.forPressure === true || this.polyfill instanceof AdapterPolyfill){
+      this.remove('touchforcechange', this.enabled);
+      this.preventDefault(event);
     } else {
       this.failOrPolyfill(event);
     }
   }
 
   $start(){
-    // call 'start' when the touch goes down
+    // call 'start' when the mouse goes down
     this.add('touchstart', (event) => {
       if(Support.forPressure){
         this.setPressed(true);
-        this.preventDefault(event);
         runClosure(this.block, 'start', this.el, event);
       }
     });
   }
 
   $change(){
-    this.add('touchstart', this.changeLogic.bind(this));
-  }
-
-  changeLogic(event){
-    if(Support.forPressure && this.pressed){
-      this.setPressed(true);
-      this.runForce(event);
-    }
-  }
-
-  $end(){
-    // call 'end' when the touch goes up
-    this.add('touchend', () => {
-      if(Support.forPressure){
-        this.endDeepPress();
-        this.setPressed(false);
-        runClosure(this.block, 'end', this.el);
+    this.add('touchforcechange', (event) => {
+      if(Support.forPressure && event.webkitForce !== 0 && this.pressed){
+        runClosure(this.block, 'change', this.el, this.normalizeForce(event.webkitForce), event);
       }
     });
   }
 
-  startDeepPress(event){
-    if(this.deepPressed === false){
-      runClosure(this.block, 'startDeepPress', this.el, event);
-    }
-    this.setDeepPressed(true);
-  }
-
-  endDeepPress(){
-    if(this.deepPressed === true){
-      runClosure(this.block, 'endDeepPress', this.el);
-    }
-    this.setDeepPressed(false);
-  }
-
-  runForce(event){
-    if(this.pressed) {
-      this.touch = this.selectTouch(event);
-      setTimeout(this.runForce.bind(this), 10, event);
-      runClosure(this.block, 'change', this.el, this.touch.force, event);
-    }
-  }
-
-  // link up the touch point to the correct element, this is to support multitouch
-  selectTouch(event){
-    if(event.touches.length === 1){
-      return this.returnTouch(event.touches[0], event);
-    } else {
-      for(var i = 0; i < event.touches.length; i++){
-        // if the target press is on this element
-        if(event.touches[i].target === this.el){
-          return this.returnTouch(event.touches[i], event);
-        }
+  $end(){
+    // call 'end' when the mouse goes up or leaves the element
+    this.add('touchend', () => {
+      if(Support.forPressure){
+        this.setPressed(false);
+        runClosure(this.block, 'end', this.el);
       }
-    }
+    });
+    // this.add('mouseleave', () => {
+    //   if(Support.forPressure){
+    //     if(this.pressed){
+    //       runClosure(this.block, 'end', this.el);
+    //     }
+    //     this.setPressed(false);
+    //   }
+    // });
   }
 
-  // return the touch and run a start or end for deep press
-  returnTouch(touch, event){
-    touch.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
-    return touch;
-  }
+  // $startDeepPress(){
+  //   this.add('webkitmouseforcedown', (event) => {
+  //     if(Support.forPressure){
+  //       this.setDeepPressed(true);
+  //       runClosure(this.block, 'startDeepPress', this.el, event);
+  //     }
+  //   });
+  // }
+
+  // $endDeepPress(){
+  //   this.add('webkitmouseforceup', () => {
+  //     if(Support.forPressure){
+  //       this.setDeepPressed(false);
+  //       runClosure(this.block, 'endDeepPress', this.el);
+  //     }
+  //   });
+  //   this.add('mouseleave', () => {
+  //     if(Support.forPressure){
+  //       if(this.deepPressed){
+  //         runClosure(this.block, 'endDeepPress', this.el);
+  //       }
+  //       this.setDeepPressed(false);
+  //     }
+  //   });
+  // }
+
+  // // make the force the standard 0 to 1 scale and not the 1 to 3 scale
+  // normalizeForce(force){
+  //   return this.reachOne(map(force, 1, 3, 0, 1));
+  // }
+
+  // // if the force value is above 0.999 set the force to 1
+  // reachOne(force){
+  //   return force > 0.999 ? 1 : force;
+  // }
 
 }

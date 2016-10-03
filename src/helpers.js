@@ -1,4 +1,4 @@
-//------------------- Helpers Section -------------------//
+//------------------- Helpers -------------------//
 
 // accepts jQuery object, node list, string selector, then called a setup for each element
 var loopPressureElements = function(selector, closure, options = {}){
@@ -40,3 +40,12 @@ var runClosure = function(closure, method, element){
 var map = function(x, in_min, in_max, out_min, out_max){
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+
+// check if device is desktop device
+var isDesktop = 'ontouchstart' in document === false;
+
+// check if device is regular mobile device
+var isMobile = 'ontouchstart' in document === true;
+
+// check if device is an Apple iOS 10+ device
+var supports3DTouch = 'ontouchforcechange' in document;

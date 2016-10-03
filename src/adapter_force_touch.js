@@ -1,8 +1,11 @@
+/*
+This adapter is for Macs with Force Touch trackpads.
+*/
+
 class AdapterForceTouch extends Adapter{
 
   constructor(element){
     super(element);
-    this.$support();
     this.$start();
     this.$change();
     this.$startDeepPress();
@@ -11,38 +14,26 @@ class AdapterForceTouch extends Adapter{
   }
 
   // Support check methods
-  $support(){
-    this.add('webkitmouseforcewillbegin', this.forceTouchEnabled);
-    this.add('mousedown', this.supportCallback.bind(this));
+  $start(){
+    this.add('webkitmouseforcewillbegin', this.startForce);
+    this.add('mousedown', this.support);
   }
 
-  forceTouchEnabled(event){
-    event.preventDefault();
-    Support.didSucceed('force');
+  startForce(event){
+    this.setPressed(true);
+    this.preventDefault(event);
+    runClosure(this.block, 'start', this.el, event);
   }
 
-  supportCallback(event){
-    if(Support.forPressure === true || this.polyfill instanceof AdapterPolyfill){
-      this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
-      this.preventDefault(event);
-    } else {
+  support(event){
+    if(this.pressed === false && this.polyfill instanceof AdapterPolyfill === false){
       this.failOrPolyfill(event);
     }
   }
 
-  $start(){
-    // call 'start' when the mouse goes down
-    this.add('mousedown', (event) => {
-      if(Support.forPressure){
-        this.setPressed(true);
-        runClosure(this.block, 'start', this.el, event);
-      }
-    });
-  }
-
   $change(){
     this.add('webkitmouseforcechanged', (event) => {
-      if(Support.forPressure && event.webkitForce !== 0 && this.pressed){
+      if(this.pressed && event.webkitForce !== 0){
         runClosure(this.block, 'change', this.el, this.normalizeForce(event.webkitForce), event);
       }
     });
@@ -51,24 +42,22 @@ class AdapterForceTouch extends Adapter{
   $end(){
     // call 'end' when the mouse goes up or leaves the element
     this.add('mouseup', () => {
-      if(Support.forPressure){
+      if(this.pressed){
         this.setPressed(false);
         runClosure(this.block, 'end', this.el);
       }
     });
     this.add('mouseleave', () => {
-      if(Support.forPressure){
-        if(this.pressed){
-          runClosure(this.block, 'end', this.el);
-        }
+      if(this.pressed){
         this.setPressed(false);
+        runClosure(this.block, 'end', this.el);
       }
     });
   }
 
   $startDeepPress(){
     this.add('webkitmouseforcedown', (event) => {
-      if(Support.forPressure){
+      if(this.pressed){
         this.setDeepPressed(true);
         runClosure(this.block, 'startDeepPress', this.el, event);
       }
@@ -77,17 +66,15 @@ class AdapterForceTouch extends Adapter{
 
   $endDeepPress(){
     this.add('webkitmouseforceup', () => {
-      if(Support.forPressure){
+      if(this.pressed && this.deepPressed){
         this.setDeepPressed(false);
         runClosure(this.block, 'endDeepPress', this.el);
       }
     });
     this.add('mouseleave', () => {
-      if(Support.forPressure){
-        if(this.deepPressed){
-          runClosure(this.block, 'endDeepPress', this.el);
-        }
+      if(this.pressed && this.deepPressed){
         this.setDeepPressed(false);
+        runClosure(this.block, 'endDeepPress', this.el);
       }
     });
   }

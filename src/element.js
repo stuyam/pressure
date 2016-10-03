@@ -10,12 +10,16 @@ class Element{
 
   routeEvents(){
     // if on desktop and requesting Force Touch or not requesting 3D Touch
-    if(Support.mobile === false && (this.type === 'force' || this.type !== '3d')){
+    if(isDesktop && (this.type === 'desktop' || this.type !== 'mobile')){
       new AdapterForceTouch(this);
     }
     // if on mobile and requesting 3D Touch or not requestion Force Touch
-    else if(Support.mobile === true && (this.type === '3d' || this.type !== 'force')){
+    else if(isMobile && supports3DTouch && (this.type === 'mobile' || this.type !== 'desktop')){
       new Adapter3DTouch(this);
+    }
+    // if on mobile and requesting 3D Touch or not requestion Force Touch
+    else if(isMobile && (this.type === 'mobile' || this.type !== 'desktop')){
+      new AdapterMobile(this);
     }
     // if it is requesting a type and your browser is of other type
     else{
@@ -24,7 +28,7 @@ class Element{
   }
 
   instantFail(){
-    this.element.addEventListener(Support.mobile ? 'touchstart' : 'mousedown', () => runClosure(this.block, 'unsupported', this.element), false);
+    this.element.addEventListener(isMobile ? 'touchstart' : 'mousedown', () => runClosure(this.block, 'unsupported', this.element), false);
   }
 
 }
