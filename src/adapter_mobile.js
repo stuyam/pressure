@@ -8,32 +8,29 @@ class AdapterMobile extends Adapter{
 
   constructor(element){
     super(element);
-    this.$support();
     this.$start();
     this.$change();
     this.$end();
   }
 
-  $support(){
-    this.supportMethod = this.middleMan.bind(this);
-    this.add('touchstart', this.supportMethod);
+  $start(){
+    this.add('touchstart', this.passToSupport.bind(this));
   }
 
-  middleMan(event){
+  passToSupport(event){
     this.setPressed(true);
     this.forceValueTest = event.touches[0].force;
     this.supportCallback(0, event);
   }
 
-  supportCallback(iter, event){
+  support(iter, event){
     // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
-    if(Support.hasRun === false && !(this.polyfill instanceof AdapterPolyfill)){
+    if(this.pressed === false){
       // if the force value has changed it means the device supports pressure
       // more info from this issue https://github.com/yamartino/pressure/issues/15
       if(event.touches[0].force !== this.forceValueTest){
         this.preventDefault(event);
-        Support.didSucceed('3d');
-        this.remove('touchstart', this.supportMethod);
+        this.setPressed(true);
         runClosure(this.block, 'start', this.el, event);
         this.changeLogic(event);
       } else if(iter <= 10 && this.pressed) {
@@ -42,22 +39,12 @@ class AdapterMobile extends Adapter{
       } else if(this.pressed){
         this.failOrPolyfill(event);
       }
-    } else if(Support.forPressure || this.polyfill instanceof AdapterPolyfill){
-      this.remove('touchstart', this.supportMethod);
     } else {
-      this.failOrPolyfill(event);
+      this.preventDefault(event);
+      this.setPressed(true);
+      runClosure(this.block, 'start', this.el, event);
+      this.changeLogic(event);
     }
-  }
-
-  $start(){
-    // call 'start' when the touch goes down
-    this.add('touchstart', (event) => {
-      if(Support.forPressure){
-        this.setPressed(true);
-        this.preventDefault(event);
-        runClosure(this.block, 'start', this.el, event);
-      }
-    });
   }
 
   $change(){
@@ -65,16 +52,24 @@ class AdapterMobile extends Adapter{
   }
 
   changeLogic(event){
-    if(Support.forPressure && this.pressed){
+    if(this.pressed){
       this.setPressed(true);
       this.runForce(event);
+    }
+  }
+
+  runForce(event){
+    if(this.pressed) {
+      this.touch = this.selectTouch(event);
+      setTimeout(this.runForce.bind(this), 10, event);
+      runClosure(this.block, 'change', this.el, this.touch.force, event);
     }
   }
 
   $end(){
     // call 'end' when the touch goes up
     this.add('touchend', () => {
-      if(Support.forPressure){
+      if(this.pressed){
         this.endDeepPress();
         this.setPressed(false);
         runClosure(this.block, 'end', this.el);
@@ -94,14 +89,6 @@ class AdapterMobile extends Adapter{
       runClosure(this.block, 'endDeepPress', this.el);
     }
     this.setDeepPressed(false);
-  }
-
-  runForce(event){
-    if(this.pressed) {
-      this.touch = this.selectTouch(event);
-      setTimeout(this.runForce.bind(this), 10, event);
-      runClosure(this.block, 'change', this.el, this.touch.force, event);
-    }
   }
 
   // link up the touch point to the correct element, this is to support multitouch
