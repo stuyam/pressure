@@ -88,17 +88,13 @@ var Element = function () {
         new AdapterForceTouch(this);
       }
       // if on mobile and requesting 3D Touch or not requestion Force Touch
-      else if (isMobile && supports3DTouch && (this.type === 'mobile' || this.type !== 'desktop')) {
+      else if (isMobile && (this.type === 'mobile' || this.type !== 'desktop')) {
           new Adapter3DTouch(this);
         }
-        // if on mobile and requesting 3D Touch or not requestion Force Touch
-        else if (isMobile && (this.type === 'mobile' || this.type !== 'desktop')) {
-            new AdapterMobile(this);
+        // if it is requesting a type and your browser is of other type
+        else {
+            this.instantFail();
           }
-          // if it is requesting a type and your browser is of other type
-          else {
-              this.instantFail();
-            }
     }
   }, {
     key: "instantFail",
@@ -185,26 +181,231 @@ var BaseAdapter = function () {
   return BaseAdapter;
 }();
 
-var BaseMobileAdapter = function (_BaseAdapter) {
-  _inherits(BaseMobileAdapter, _BaseAdapter);
+/*
+This adapter is for Macs with Force Touch trackpads.
+*/
 
-  function BaseMobileAdapter(element) {
-    _classCallCheck(this, BaseMobileAdapter);
+var AdapterForceTouch = function (_BaseAdapter) {
+  _inherits(AdapterForceTouch, _BaseAdapter);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(BaseMobileAdapter).call(this, element));
+  function AdapterForceTouch(element) {
+    _classCallCheck(this, AdapterForceTouch);
+
+    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterForceTouch).call(this, element));
+
+    _this2.$start();
+    _this2.$change();
+    _this2.$startDeepPress();
+    _this2.$endDeepPress();
+    _this2.$end();
+    return _this2;
   }
 
-  _createClass(BaseMobileAdapter, [{
+  // Support check methods
+
+
+  _createClass(AdapterForceTouch, [{
+    key: "$start",
+    value: function $start() {
+      this.add('webkitmouseforcewillbegin', this.startForce.bind(this));
+      this.add('mousedown', this.support.bind(this));
+    }
+  }, {
+    key: "startForce",
+    value: function startForce(event) {
+      this.setPressed(true);
+      this.preventDefault(event);
+      this.runClosure('start', event);
+    }
+  }, {
+    key: "support",
+    value: function support(event) {
+      if (this.pressed === false) {
+        this.failOrPolyfill(event);
+      }
+    }
+  }, {
+    key: "$change",
+    value: function $change() {
+      var _this3 = this;
+
+      this.add('webkitmouseforcechanged', function (event) {
+        if (_this3.pressed && event.webkitForce !== 0) {
+          _this3.runClosure('change', _this3.normalizeForce(event.webkitForce), event);
+        }
+      });
+    }
+  }, {
+    key: "$startDeepPress",
+    value: function $startDeepPress() {
+      var _this4 = this;
+
+      this.add('webkitmouseforcedown', function (event) {
+        if (_this4.pressed) {
+          _this4.setDeepPressed(true);
+          _this4.runClosure('startDeepPress', event);
+        }
+      });
+    }
+  }, {
+    key: "$endDeepPress",
+    value: function $endDeepPress() {
+      var _this5 = this;
+
+      this.add('webkitmouseforceup', function () {
+        if (_this5.pressed && _this5.deepPressed) {
+          _this5.runClosure('endDeepPress');
+        }
+        _this5.setDeepPressed(false);
+      });
+      this.add('mouseleave', function () {
+        if (_this5.pressed && _this5.deepPressed) {
+          _this5.runClosure('endDeepPress');
+        }
+        _this5.setDeepPressed(false);
+      });
+    }
+  }, {
     key: "$end",
     value: function $end() {
-      var _this3 = this;
+      var _this6 = this;
+
+      // call 'end' when the mouse goes up or leaves the element
+      this.add('mouseup', function () {
+        if (_this6.pressed) {
+          _this6.runClosure('end');
+        }
+        _this6.setPressed(false);
+      });
+
+      this.add('mouseleave', function () {
+        if (_this6.pressed) {
+          _this6.runClosure('end');
+        }
+        _this6.setPressed(false);
+      });
+    }
+
+    // make the force the standard 0 to 1 scale and not the 1 to 3 scale
+
+  }, {
+    key: "normalizeForce",
+    value: function normalizeForce(force) {
+      return this.reachOne(_map(force, 1, 3, 0, 1));
+    }
+
+    // if the force value is above 0.999 set the force to 1
+
+  }, {
+    key: "reachOne",
+    value: function reachOne(force) {
+      return force > 0.999 ? 1 : force;
+    }
+  }]);
+
+  return AdapterForceTouch;
+}(BaseAdapter);
+
+/*
+This adapter is more iOS devices running iOS 10 or higher and support 3D touch.
+*/
+
+var Adapter3DTouch = function (_BaseAdapter2) {
+  _inherits(Adapter3DTouch, _BaseAdapter2);
+
+  function Adapter3DTouch(element) {
+    _classCallCheck(this, Adapter3DTouch);
+
+    var _this7 = _possibleConstructorReturn(this, Object.getPrototypeOf(Adapter3DTouch).call(this, element));
+
+    if (supportsTouchForceChange) {
+      _this7.$start();
+    } else {
+      _this7.$start_legacy();
+    }
+    _this7.$end();
+    return _this7;
+  }
+
+  // Support check methods
+
+
+  _createClass(Adapter3DTouch, [{
+    key: "$start",
+    value: function $start() {
+      var _this8 = this;
+
+      this.add('touchforcechange', function (event) {
+        _this8.setPressed(true);
+        _this8.runClosure('change', _this8.selectTouch(event).force, event);
+      });
+      this.add('touchstart', this.support.bind(this, 0));
+    }
+  }, {
+    key: "support",
+    value: function support(iter, event) {
+      if (this.pressed === false && iter > 10) {
+        this.failOrPolyfill(event);
+      } else if (this.pressed === false) {
+        setTimeout(this.support.bind(this), 10, iter++, event);
+      } else {
+        this.preventDefault(event);
+        this.runClosure('start', event);
+      }
+    }
+  }, {
+    key: "$start_legacy",
+    value: function $start_legacy() {
+      var _this9 = this;
+
+      this.add('touchstart', function (event) {
+        _this9.forceValueTest = event.touches[0].force;
+        _this9.support_legacy(0, event);
+      });
+    }
+  }, {
+    key: "support_legacy",
+    value: function support_legacy(iter, event) {
+      // this checks up to 10 times on a touch to see if the touch can read a force value
+      // if the force value has changed it means the device supports pressure
+      // more info from this issue https://github.com/yamartino/pressure/issues/15
+      if (event.touches[0].force !== this.forceValueTest) {
+        this.started(event);
+      } else if (iter <= 10) {
+        setTimeout(this.support_legacy.bind(this), 10, iter++, event);
+      } else {
+        this.failOrPolyfill(event);
+      }
+    }
+  }, {
+    key: "started",
+    value: function started(event) {
+      this.setPressed(true);
+      this.preventDefault(event);
+      this.runClosure('start', event);
+      this.runForce(event);
+    }
+  }, {
+    key: "runForce",
+    value: function runForce(event) {
+      if (this.pressed) {
+        this.setPressed(true);
+        this.touch = this.selectTouch(event);
+        setTimeout(this.runForce.bind(this), 10, event);
+        this.runClosure('change', this.touch.force, event);
+      }
+    }
+  }, {
+    key: "$end",
+    value: function $end() {
+      var _this10 = this;
 
       // call 'end' when the touch goes up
       this.add('touchend', function () {
-        if (_this3.pressed) {
-          _this3.endDeepPress();
-          _this3.setPressed(false);
-          _this3.runClosure('end');
+        if (_this10.pressed) {
+          _this10.endDeepPress();
+          _this10.setPressed(false);
+          _this10.runClosure('end');
         }
       });
     }
@@ -252,249 +453,8 @@ var BaseMobileAdapter = function (_BaseAdapter) {
     }
   }]);
 
-  return BaseMobileAdapter;
-}(BaseAdapter);
-
-/*
-This adapter is for Macs with Force Touch trackpads.
-*/
-
-var AdapterForceTouch = function (_BaseAdapter2) {
-  _inherits(AdapterForceTouch, _BaseAdapter2);
-
-  function AdapterForceTouch(element) {
-    _classCallCheck(this, AdapterForceTouch);
-
-    var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterForceTouch).call(this, element));
-
-    _this4.$start();
-    _this4.$change();
-    _this4.$startDeepPress();
-    _this4.$endDeepPress();
-    _this4.$end();
-    return _this4;
-  }
-
-  // Support check methods
-
-
-  _createClass(AdapterForceTouch, [{
-    key: "$start",
-    value: function $start() {
-      this.add('webkitmouseforcewillbegin', this.startForce.bind(this));
-      this.add('mousedown', this.support.bind(this));
-    }
-  }, {
-    key: "startForce",
-    value: function startForce(event) {
-      this.setPressed(true);
-      this.preventDefault(event);
-      this.runClosure('start', event);
-    }
-  }, {
-    key: "support",
-    value: function support(event) {
-      if (this.pressed === false) {
-        this.failOrPolyfill(event);
-      }
-    }
-  }, {
-    key: "$change",
-    value: function $change() {
-      var _this5 = this;
-
-      this.add('webkitmouseforcechanged', function (event) {
-        if (_this5.pressed && event.webkitForce !== 0) {
-          _this5.runClosure('change', _this5.normalizeForce(event.webkitForce), event);
-        }
-      });
-    }
-  }, {
-    key: "$startDeepPress",
-    value: function $startDeepPress() {
-      var _this6 = this;
-
-      this.add('webkitmouseforcedown', function (event) {
-        if (_this6.pressed) {
-          _this6.setDeepPressed(true);
-          _this6.runClosure('startDeepPress', event);
-        }
-      });
-    }
-  }, {
-    key: "$endDeepPress",
-    value: function $endDeepPress() {
-      var _this7 = this;
-
-      this.add('webkitmouseforceup', function () {
-        if (_this7.pressed && _this7.deepPressed) {
-          _this7.runClosure('endDeepPress');
-        }
-        _this7.setDeepPressed(false);
-      });
-      this.add('mouseleave', function () {
-        if (_this7.pressed && _this7.deepPressed) {
-          _this7.runClosure('endDeepPress');
-        }
-        _this7.setDeepPressed(false);
-      });
-    }
-  }, {
-    key: "$end",
-    value: function $end() {
-      var _this8 = this;
-
-      // call 'end' when the mouse goes up or leaves the element
-      this.add('mouseup', function () {
-        if (_this8.pressed) {
-          _this8.runClosure('end');
-        }
-        _this8.setPressed(false);
-      });
-
-      this.add('mouseleave', function () {
-        if (_this8.pressed) {
-          _this8.runClosure('end');
-        }
-        _this8.setPressed(false);
-      });
-    }
-
-    // make the force the standard 0 to 1 scale and not the 1 to 3 scale
-
-  }, {
-    key: "normalizeForce",
-    value: function normalizeForce(force) {
-      return this.reachOne(_map(force, 1, 3, 0, 1));
-    }
-
-    // if the force value is above 0.999 set the force to 1
-
-  }, {
-    key: "reachOne",
-    value: function reachOne(force) {
-      return force > 0.999 ? 1 : force;
-    }
-  }]);
-
-  return AdapterForceTouch;
-}(BaseAdapter);
-
-/*
-This adapter is more iOS devices running iOS 10 or higher and support 3D touch.
-*/
-
-var Adapter3DTouch = function (_BaseMobileAdapter) {
-  _inherits(Adapter3DTouch, _BaseMobileAdapter);
-
-  function Adapter3DTouch(element) {
-    _classCallCheck(this, Adapter3DTouch);
-
-    var _this9 = _possibleConstructorReturn(this, Object.getPrototypeOf(Adapter3DTouch).call(this, element));
-
-    _this9.$start();
-    _this9.$end();
-    return _this9;
-  }
-
-  // Support check methods
-
-
-  _createClass(Adapter3DTouch, [{
-    key: "$start",
-    value: function $start() {
-      var _this10 = this;
-
-      this.add('touchforcechange', function (event) {
-        _this10.setPressed(true);
-        _this10.preventDefault(event);
-        _this10.runClosure('change', _this10.selectTouch(event).force, event);
-      });
-      this.add('touchstart', this.support.bind(this, 0));
-    }
-  }, {
-    key: "support",
-    value: function support(iter, event) {
-      if (this.pressed === false && iter > 10) {
-        this.failOrPolyfill(event);
-      } else if (this.pressed === false) {
-        iter += 1;
-        setTimeout(this.support.bind(this), 10, iter, event);
-      } else {
-        this.runClosure('start', event);
-      }
-    }
-  }]);
-
   return Adapter3DTouch;
-}(BaseMobileAdapter);
-
-/*
-This adapter is more iOS devices running iOS 9 or lower and support 3D Touch
-This also conforms to the W3C spec fo any future devices will support force
-sensitive screans.
-*/
-
-var AdapterMobile = function (_BaseMobileAdapter2) {
-  _inherits(AdapterMobile, _BaseMobileAdapter2);
-
-  function AdapterMobile(element) {
-    _classCallCheck(this, AdapterMobile);
-
-    var _this11 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterMobile).call(this, element));
-
-    _this11.$start();
-    _this11.$end();
-    return _this11;
-  }
-
-  _createClass(AdapterMobile, [{
-    key: "$start",
-    value: function $start() {
-      var _this12 = this;
-
-      this.add('touchstart', function (event) {
-        console.log('3');
-        _this12.forceValueTest = event.touches[0].force;
-        _this12.support(0, event);
-      });
-    }
-  }, {
-    key: "support",
-    value: function support(iter, event) {
-      // this checks up to 10 times on a touch to see if the touch can read a force value
-      // if the force value has changed it means the device supports pressure
-      // more info from this issue https://github.com/yamartino/pressure/issues/15
-      if (event.touches[0].force !== this.forceValueTest) {
-        this.started(event);
-      } else if (iter <= 10) {
-        setTimeout(this.support.bind(this), 10, iter++, event);
-      } else {
-        this.failOrPolyfill(event);
-      }
-    }
-  }, {
-    key: "started",
-    value: function started(event) {
-      this.setPressed(true);
-      this.preventDefault(event);
-      this.runClosure('start', event);
-      this.runForce(event);
-    }
-  }, {
-    key: "runForce",
-    value: function runForce(event) {
-      if (this.pressed) {
-        this.setPressed(true);
-        this.touch = this.selectTouch(event);
-        setTimeout(this.runForce.bind(this), 10, event);
-        this.runClosure('change', this.touch.force, event);
-      }
-    }
-  }]);
-
-  return AdapterMobile;
-}(BaseMobileAdapter);
+}(BaseAdapter);
 
 var AdapterPolyfill = function (_BaseAdapter3) {
   _inherits(AdapterPolyfill, _BaseAdapter3);
@@ -502,15 +462,15 @@ var AdapterPolyfill = function (_BaseAdapter3) {
   function AdapterPolyfill(element, firstEvent) {
     _classCallCheck(this, AdapterPolyfill);
 
-    var _this13 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterPolyfill).call(this, element));
+    var _this11 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterPolyfill).call(this, element));
 
-    _this13.$start();
-    _this13.$change();
-    _this13.$end();
-    _this13.force = 0;
-    _this13.increment = 0.01;
-    _this13.firstRun(firstEvent);
-    return _this13;
+    _this11.$start();
+    _this11.$change();
+    _this11.$end();
+    _this11.force = 0;
+    _this11.increment = 0.01;
+    _this11.firstRun(firstEvent);
+    return _this11;
   }
 
   _createClass(AdapterPolyfill, [{
@@ -523,11 +483,11 @@ var AdapterPolyfill = function (_BaseAdapter3) {
   }, {
     key: "$start",
     value: function $start() {
-      var _this14 = this;
+      var _this12 = this;
 
       // call 'start' when the touch goes down
       this.add(isMobile ? 'touchstart' : 'mousedown', function (event) {
-        _this14.startLogic(event);
+        _this12.startLogic(event);
       });
     }
   }, {
@@ -552,22 +512,22 @@ var AdapterPolyfill = function (_BaseAdapter3) {
   }, {
     key: "$end",
     value: function $end() {
-      var _this15 = this;
+      var _this13 = this;
 
       // call 'end' when the mouse goes up or leaves the element
       this.add(isMobile ? 'touchend' : 'mouseup', function () {
-        _this15.endDeepPress();
-        _this15.setPressed(false);
-        _this15.runClosure('end');
-        _this15.force = 0;
+        _this13.endDeepPress();
+        _this13.setPressed(false);
+        _this13.runClosure('end');
+        _this13.force = 0;
       });
       this.add('mouseleave', function () {
-        _this15.endDeepPress();
-        if (_this15.pressed) {
-          _this15.runClosure('end');
+        _this13.endDeepPress();
+        if (_this13.pressed) {
+          _this13.runClosure('end');
         }
-        _this15.setPressed(false);
-        _this15.force = 0;
+        _this13.setPressed(false);
+        _this13.force = 0;
       });
     }
   }, {
@@ -670,5 +630,5 @@ var isDesktop = 'ontouchstart' in document === false;
 var isMobile = 'ontouchstart' in document === true;
 
 // check if device is an Apple iOS 10+ device
-var supports3DTouch = 'ontouchforcechange' in document;
+var supportsTouchForceChange = 'ontouchforcechange' in document;
 }(typeof window !== "undefined" ? window : false, typeof window !== "undefined" ? window.document : false));

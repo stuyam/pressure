@@ -40,4 +40,4 @@ var isDesktop = 'ontouchstart' in document === false;
 var isMobile = 'ontouchstart' in document === true;
 
 // check if device is an Apple iOS 10+ device
-var supports3DTouch = 'ontouchforcechange' in document;
+var supportsTouchForceChange = 'ontouchforcechange' in document;

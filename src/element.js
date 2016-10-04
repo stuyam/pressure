@@ -14,12 +14,8 @@ class Element{
       new AdapterForceTouch(this);
     }
     // if on mobile and requesting 3D Touch or not requestion Force Touch
-    else if(isMobile && supports3DTouch && (this.type === 'mobile' || this.type !== 'desktop')){
-      new Adapter3DTouch(this);
-    }
-    // if on mobile and requesting 3D Touch or not requestion Force Touch
     else if(isMobile && (this.type === 'mobile' || this.type !== 'desktop')){
-      new AdapterMobile(this);
+      new Adapter3DTouch(this);
     }
     // if it is requesting a type and your browser is of other type
     else{
