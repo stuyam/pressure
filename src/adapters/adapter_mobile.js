@@ -36,7 +36,7 @@ class AdapterMobile extends BaseMobileAdapter{
     }
   }
 
-  started(this){
+  started(event){
     this.setPressed(true);
     this.preventDefault(event);
     this.runClosure('start', event);

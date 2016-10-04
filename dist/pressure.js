@@ -402,15 +402,14 @@ var Adapter3DTouch = function (_BaseMobileAdapter) {
   _createClass(Adapter3DTouch, [{
     key: "$start",
     value: function $start() {
-      this.add('touchforcechange', this.startForce.bind(this));
+      var _this10 = this;
+
+      this.add('touchforcechange', function (event) {
+        _this10.setPressed(true);
+        _this10.preventDefault(event);
+        _this10.runClosure('change', _this10.selectTouch(event).force, event);
+      });
       this.add('touchstart', this.support.bind(this, 0));
-    }
-  }, {
-    key: "startForce",
-    value: function startForce(event) {
-      this.setPressed(true);
-      this.preventDefault(event);
-      this.runClosure('change', this.selectTouch(event).force, event);
     }
   }, {
     key: "support",
@@ -441,22 +440,21 @@ var AdapterMobile = function (_BaseMobileAdapter2) {
   function AdapterMobile(element) {
     _classCallCheck(this, AdapterMobile);
 
-    var _this10 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterMobile).call(this, element));
+    var _this11 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterMobile).call(this, element));
 
-    _this10.$start();
-    _this10.$end();
-    return _this10;
+    _this11.$start();
+    _this11.$end();
+    return _this11;
   }
 
   _createClass(AdapterMobile, [{
     key: "$start",
     value: function $start() {
-      var _this11 = this;
+      var _this12 = this;
 
       this.add('touchstart', function (event) {
-        _this11.setPressed(true);
-        _this11.forceValueTest = event.touches[0].force;
-        _this11.support(0, event);
+        _this12.forceValueTest = event.touches[0].force;
+        _this12.support(0, event);
       });
     }
   }, {
@@ -467,22 +465,23 @@ var AdapterMobile = function (_BaseMobileAdapter2) {
         // if the force value has changed it means the device supports pressure
         // more info from this issue https://github.com/yamartino/pressure/issues/15
         if (event.touches[0].force !== this.forceValueTest) {
-          this.preventDefault(event);
-          this.setPressed(true);
-          this.runClosure('start', event);
-          this.runForce(event);
+          this.started(event);
         } else if (iter <= 10 && this.pressed) {
-          iter += 1;
-          setTimeout(this.supportCallback.bind(this), 10, iter, event);
+          setTimeout(this.supportCallback.bind(this), 10, iter++, event);
         } else if (this.pressed) {
           this.failOrPolyfill(event);
         }
       } else {
-        this.preventDefault(event);
-        this.setPressed(true);
-        this.runClosure('start', event);
-        this.runForce(event);
+        this.started(event);
       }
+    }
+  }, {
+    key: "started",
+    value: function started(event) {
+      this.setPressed(true);
+      this.preventDefault(event);
+      this.runClosure('start', event);
+      this.runForce(event);
     }
   }, {
     key: "runForce",
@@ -505,15 +504,15 @@ var AdapterPolyfill = function (_BaseAdapter3) {
   function AdapterPolyfill(element, firstEvent) {
     _classCallCheck(this, AdapterPolyfill);
 
-    var _this12 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterPolyfill).call(this, element));
+    var _this13 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterPolyfill).call(this, element));
 
-    _this12.$start();
-    _this12.$change();
-    _this12.$end();
-    _this12.force = 0;
-    _this12.increment = 0.01;
-    _this12.firstRun(firstEvent);
-    return _this12;
+    _this13.$start();
+    _this13.$change();
+    _this13.$end();
+    _this13.force = 0;
+    _this13.increment = 0.01;
+    _this13.firstRun(firstEvent);
+    return _this13;
   }
 
   _createClass(AdapterPolyfill, [{
@@ -526,11 +525,11 @@ var AdapterPolyfill = function (_BaseAdapter3) {
   }, {
     key: "$start",
     value: function $start() {
-      var _this13 = this;
+      var _this14 = this;
 
       // call 'start' when the touch goes down
       this.add(isMobile ? 'touchstart' : 'mousedown', function (event) {
-        _this13.startLogic(event);
+        _this14.startLogic(event);
       });
     }
   }, {
@@ -555,22 +554,22 @@ var AdapterPolyfill = function (_BaseAdapter3) {
   }, {
     key: "$end",
     value: function $end() {
-      var _this14 = this;
+      var _this15 = this;
 
       // call 'end' when the mouse goes up or leaves the element
       this.add(isMobile ? 'touchend' : 'mouseup', function () {
-        _this14.endDeepPress();
-        _this14.setPressed(false);
-        runClosure(_this14.block, 'end', _this14.el);
-        _this14.force = 0;
+        _this15.endDeepPress();
+        _this15.setPressed(false);
+        runClosure(_this15.block, 'end', _this15.el);
+        _this15.force = 0;
       });
       this.add('mouseleave', function () {
-        _this14.endDeepPress();
-        if (_this14.pressed) {
-          runClosure(_this14.block, 'end', _this14.el);
+        _this15.endDeepPress();
+        if (_this15.pressed) {
+          runClosure(_this15.block, 'end', _this15.el);
         }
-        _this14.setPressed(false);
-        _this14.force = 0;
+        _this15.setPressed(false);
+        _this15.force = 0;
       });
     }
   }, {
