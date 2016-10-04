@@ -25,7 +25,7 @@ class AdapterPolyfill extends BaseAdapter{
 
   startLogic(event){
     this.setPressed(true);
-    runClosure(this.block, 'start', this.el, event);
+    this.runClosure('start', event);
   }
 
   $change(){
@@ -44,13 +44,13 @@ class AdapterPolyfill extends BaseAdapter{
     this.add(isMobile ? 'touchend' : 'mouseup', () => {
       this.endDeepPress();
       this.setPressed(false);
-      runClosure(this.block, 'end', this.el);
+      this.runClosure('end');
       this.force = 0;
     });
     this.add('mouseleave', () => {
       this.endDeepPress();
       if(this.pressed){
-        runClosure(this.block, 'end', this.el);
+        this.runClosure('end');
       }
       this.setPressed(false);
       this.force = 0;
@@ -59,21 +59,21 @@ class AdapterPolyfill extends BaseAdapter{
 
   startDeepPress(event){
     if(this.deepPressed === false){
-      runClosure(this.block, 'startDeepPress', this.el, event);
+      this.runClosure('startDeepPress', event);
     }
     this.setDeepPressed(true);
   }
 
   endDeepPress(){
     if(this.deepPressed === true){
-      runClosure(this.block, 'endDeepPress', this.el);
+      this.runClosure('endDeepPress');
     }
     this.setDeepPressed(false);
   }
 
   runForce(event){
     if(this.pressed) {
-      runClosure(this.block, 'change', this.el, this.force, event);
+      this.runClosure('change', this.force, event);
       this.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
       this.force = this.force + this.increment > 1 ? 1 : this.force + this.increment;
       setTimeout(this.runForce.bind(this), 10, event);

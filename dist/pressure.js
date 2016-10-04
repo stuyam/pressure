@@ -536,7 +536,7 @@ var AdapterPolyfill = function (_BaseAdapter3) {
     key: "startLogic",
     value: function startLogic(event) {
       this.setPressed(true);
-      runClosure(this.block, 'start', this.el, event);
+      this.runClosure('start', event);
     }
   }, {
     key: "$change",
@@ -560,13 +560,13 @@ var AdapterPolyfill = function (_BaseAdapter3) {
       this.add(isMobile ? 'touchend' : 'mouseup', function () {
         _this15.endDeepPress();
         _this15.setPressed(false);
-        runClosure(_this15.block, 'end', _this15.el);
+        _this15.runClosure('end');
         _this15.force = 0;
       });
       this.add('mouseleave', function () {
         _this15.endDeepPress();
         if (_this15.pressed) {
-          runClosure(_this15.block, 'end', _this15.el);
+          _this15.runClosure('end');
         }
         _this15.setPressed(false);
         _this15.force = 0;
@@ -576,7 +576,7 @@ var AdapterPolyfill = function (_BaseAdapter3) {
     key: "startDeepPress",
     value: function startDeepPress(event) {
       if (this.deepPressed === false) {
-        runClosure(this.block, 'startDeepPress', this.el, event);
+        this.runClosure('startDeepPress', event);
       }
       this.setDeepPressed(true);
     }
@@ -584,7 +584,7 @@ var AdapterPolyfill = function (_BaseAdapter3) {
     key: "endDeepPress",
     value: function endDeepPress() {
       if (this.deepPressed === true) {
-        runClosure(this.block, 'endDeepPress', this.el);
+        this.runClosure('endDeepPress');
       }
       this.setDeepPressed(false);
     }
@@ -592,7 +592,7 @@ var AdapterPolyfill = function (_BaseAdapter3) {
     key: "runForce",
     value: function runForce(event) {
       if (this.pressed) {
-        runClosure(this.block, 'change', this.el, this.force, event);
+        this.runClosure('change', this.force, event);
         this.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
         this.force = this.force + this.increment > 1 ? 1 : this.force + this.increment;
         setTimeout(this.runForce.bind(this), 10, event);
