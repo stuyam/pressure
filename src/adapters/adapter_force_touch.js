@@ -51,15 +51,15 @@ class AdapterForceTouch extends BaseAdapter{
   $endDeepPress(){
     this.add('webkitmouseforceup', () => {
       if(this.pressed && this.deepPressed){
-        this.setDeepPressed(false);
         this.runClosure('endDeepPress');
       }
+      this.setDeepPressed(false);
     });
     this.add('mouseleave', () => {
       if(this.pressed && this.deepPressed){
-        this.setDeepPressed(false);
         this.runClosure('endDeepPress');
       }
+      this.setDeepPressed(false);
     });
   }
 
@@ -67,15 +67,16 @@ class AdapterForceTouch extends BaseAdapter{
     // call 'end' when the mouse goes up or leaves the element
     this.add('mouseup', () => {
       if(this.pressed){
-        this.setPressed(false);
         this.runClosure('end');
       }
+      this.setPressed(false);
     });
+
     this.add('mouseleave', () => {
       if(this.pressed){
-        this.setPressed(false);
         this.runClosure('end');
       }
+      this.setPressed(false);
     });
   }
 

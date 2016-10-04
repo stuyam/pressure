@@ -321,15 +321,15 @@ var AdapterForceTouch = function (_BaseAdapter2) {
 
       this.add('webkitmouseforceup', function () {
         if (_this7.pressed && _this7.deepPressed) {
-          _this7.setDeepPressed(false);
           _this7.runClosure('endDeepPress');
         }
+        _this7.setDeepPressed(false);
       });
       this.add('mouseleave', function () {
         if (_this7.pressed && _this7.deepPressed) {
-          _this7.setDeepPressed(false);
           _this7.runClosure('endDeepPress');
         }
+        _this7.setDeepPressed(false);
       });
     }
   }, {
@@ -340,15 +340,16 @@ var AdapterForceTouch = function (_BaseAdapter2) {
       // call 'end' when the mouse goes up or leaves the element
       this.add('mouseup', function () {
         if (_this8.pressed) {
-          _this8.setPressed(false);
           _this8.runClosure('end');
         }
+        _this8.setPressed(false);
       });
+
       this.add('mouseleave', function () {
         if (_this8.pressed) {
-          _this8.setPressed(false);
           _this8.runClosure('end');
         }
+        _this8.setPressed(false);
       });
     }
 
@@ -446,6 +447,7 @@ var AdapterMobile = function (_BaseMobileAdapter2) {
       var _this12 = this;
 
       this.add('touchstart', function (event) {
+        console.log('3');
         _this12.forceValueTest = event.touches[0].force;
         _this12.support(0, event);
       });
@@ -453,19 +455,15 @@ var AdapterMobile = function (_BaseMobileAdapter2) {
   }, {
     key: "support",
     value: function support(iter, event) {
-      // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
-      if (this.pressed === false) {
-        // if the force value has changed it means the device supports pressure
-        // more info from this issue https://github.com/yamartino/pressure/issues/15
-        if (event.touches[0].force !== this.forceValueTest) {
-          this.started(event);
-        } else if (iter <= 10 && this.pressed) {
-          setTimeout(this.supportCallback.bind(this), 10, iter++, event);
-        } else if (this.pressed) {
-          this.failOrPolyfill(event);
-        }
-      } else {
+      // this checks up to 10 times on a touch to see if the touch can read a force value
+      // if the force value has changed it means the device supports pressure
+      // more info from this issue https://github.com/yamartino/pressure/issues/15
+      if (event.touches[0].force !== this.forceValueTest) {
         this.started(event);
+      } else if (iter <= 10) {
+        setTimeout(this.support.bind(this), 10, iter++, event);
+      } else {
+        this.failOrPolyfill(event);
       }
     }
   }, {
