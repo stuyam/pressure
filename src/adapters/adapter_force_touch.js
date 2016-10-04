@@ -2,7 +2,7 @@
 This adapter is for Macs with Force Touch trackpads.
 */
 
-class AdapterForceTouch extends Adapter{
+class AdapterForceTouch extends BaseAdapter{
 
   constructor(element){
     super(element);
@@ -22,7 +22,7 @@ class AdapterForceTouch extends Adapter{
   startForce(event){
     this.setPressed(true);
     this.preventDefault(event);
-    runClosure(this.block, 'start', this.el, event);
+    this.runClosure('start', event);
   }
 
   support(event){
@@ -34,7 +34,7 @@ class AdapterForceTouch extends Adapter{
   $change(){
     this.add('webkitmouseforcechanged', (event) => {
       if(this.pressed && event.webkitForce !== 0){
-        runClosure(this.block, 'change', this.el, this.normalizeForce(event.webkitForce), event);
+        this.runClosure('change', this.normalizeForce(event.webkitForce), event);
       }
     });
   }
@@ -43,7 +43,7 @@ class AdapterForceTouch extends Adapter{
     this.add('webkitmouseforcedown', (event) => {
       if(this.pressed){
         this.setDeepPressed(true);
-        runClosure(this.block, 'startDeepPress', this.el, event);
+        this.runClosure('startDeepPress', event);
       }
     });
   }
@@ -52,13 +52,13 @@ class AdapterForceTouch extends Adapter{
     this.add('webkitmouseforceup', () => {
       if(this.pressed && this.deepPressed){
         this.setDeepPressed(false);
-        runClosure(this.block, 'endDeepPress', this.el);
+        this.runClosure('endDeepPress');
       }
     });
     this.add('mouseleave', () => {
       if(this.pressed && this.deepPressed){
         this.setDeepPressed(false);
-        runClosure(this.block, 'endDeepPress', this.el);
+        this.runClosure('endDeepPress');
       }
     });
   }
@@ -68,13 +68,13 @@ class AdapterForceTouch extends Adapter{
     this.add('mouseup', () => {
       if(this.pressed){
         this.setPressed(false);
-        runClosure(this.block, 'end', this.el);
+        this.runClosure('end');
       }
     });
     this.add('mouseleave', () => {
       if(this.pressed){
         this.setPressed(false);
-        runClosure(this.block, 'end', this.el);
+        this.runClosure('end');
       }
     });
   }

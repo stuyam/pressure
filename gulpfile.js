@@ -16,14 +16,14 @@ gulp.task('pressure', function() {
     './src/pressure.js',
     './src/globalize.js',
     './src/element.js',
-    './src/adapter.js',
-    './src/adapter_force_touch.js',
-    './src/adapter_3d_touch.js',
-    './src/adapter_mobile.js',
-    './src/adapter_force_touch.js',
-    './src/adapter_polyfill.js',
+    './src/adapters/base_adapter.js',
+    './src/adapters/base_mobile_adapter.js',
+    './src/adapters/adapter_force_touch.js',
+    './src/adapters/adapter_3d_touch.js',
+    './src/adapters/adapter_mobile.js',
+    './src/adapters/adapter_force_touch.js',
+    './src/adapters/adapter_polyfill.js',
     './src/config.js',
-    './src/support.js',
     './src/helpers.js',
   ])
   .pipe(concat('dist/pressure.js'))
@@ -52,13 +52,14 @@ gulp.task('jquery-pressure', function() {
     './src/jquery_pressure.js',
     './src/globalize.js',
     './src/element.js',
-    './src/adapter.js',
-    './src/adapter_force_touch.js',
-    './src/adapter_3d_touch.js',
-    './src/adapter_mobile.js',
-    './src/adapter_polyfill.js',
+    './src/adapters/base_adapter.js',
+    './src/adapters/base_mobile_adapter.js',
+    './src/adapters/adapter_force_touch.js',
+    './src/adapters/adapter_3d_touch.js',
+    './src/adapters/adapter_mobile.js',
+    './src/adapters/adapter_force_touch.js',
+    './src/adapters/adapter_polyfill.js',
     './src/config.js',
-    './src/support.js',
     './src/helpers.js',
   ])
   .pipe(concat('dist/jquery.pressure.js'))
@@ -83,5 +84,5 @@ gulp.task('jquery-pressure', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('src/*', ['pressure', 'jquery-pressure']);
+  gulp.watch(['src/*', 'src/adapters/*'], ['pressure', 'jquery-pressure']);
 });

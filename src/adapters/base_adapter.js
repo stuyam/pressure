@@ -1,4 +1,4 @@
-class Adapter{
+class BaseAdapter{
 
   constructor(element){
     this.element = element;
@@ -30,6 +30,14 @@ class Adapter{
       this.polyfill = new AdapterPolyfill(this.element, event);
     } else {
       runClosure(this.block, 'unsupported', this.el);
+    }
+  }
+
+  // run the closure if the property exists in the object
+  runClosure(method){
+    if(this.block.hasOwnProperty(method)){
+      // call the closure method and apply nth arguments if they exist
+      closure[method].apply(this.el || this, Array.prototype.slice.call(arguments, 1));
     }
   }
 

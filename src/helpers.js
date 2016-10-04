@@ -27,14 +27,6 @@ var isElement = function(o){
   );
 }
 
-// run the closure if the property exists in the object
-var runClosure = function(closure, method, element){
-  if(closure.hasOwnProperty(method)){
-    // call the closure method and apply nth arguments if they exist
-    closure[method].apply(element || this, Array.prototype.slice.call(arguments, 3));
-  }
-}
-
 // the map method allows for interpolating a value from one range of values to another
 // example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
 var map = function(x, in_min, in_max, out_min, out_max){
