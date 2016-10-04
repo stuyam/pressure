@@ -1,4 +1,4 @@
-class AdapterPolyfill extends Adapter{
+class AdapterPolyfill extends BaseAdapter{
 
   constructor(element, firstEvent){
     super(element);

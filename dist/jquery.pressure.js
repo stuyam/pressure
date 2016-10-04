@@ -156,7 +156,7 @@ var BaseAdapter = function () {
     value: function runClosure(method) {
       if (this.block.hasOwnProperty(method)) {
         // call the closure method and apply nth arguments if they exist
-        closure[method].apply(this.el || this, Array.prototype.slice.call(arguments, 1));
+        this.block[method].apply(this.el || this, Array.prototype.slice.call(arguments, 1));
       }
     }
 
@@ -492,8 +492,8 @@ var AdapterMobile = function (_BaseMobileAdapter2) {
   return AdapterMobile;
 }(BaseMobileAdapter);
 
-var AdapterPolyfill = function (_Adapter) {
-  _inherits(AdapterPolyfill, _Adapter);
+var AdapterPolyfill = function (_BaseAdapter3) {
+  _inherits(AdapterPolyfill, _BaseAdapter3);
 
   function AdapterPolyfill(element, firstEvent) {
     _classCallCheck(this, AdapterPolyfill);
@@ -595,7 +595,7 @@ var AdapterPolyfill = function (_Adapter) {
   }]);
 
   return AdapterPolyfill;
-}(Adapter);
+}(BaseAdapter);
 
 // This class holds the states of the the Pressure config
 

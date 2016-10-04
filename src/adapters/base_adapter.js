@@ -37,7 +37,7 @@ class BaseAdapter{
   runClosure(method){
     if(this.block.hasOwnProperty(method)){
       // call the closure method and apply nth arguments if they exist
-      closure[method].apply(this.el || this, Array.prototype.slice.call(arguments, 1));
+      this.block[method].apply(this.el || this, Array.prototype.slice.call(arguments, 1));
     }
   }
 
