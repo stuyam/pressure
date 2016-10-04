@@ -12,14 +12,12 @@ class Adapter3DTouch extends BaseMobileAdapter{
 
   // Support check methods
   $start(){
-    this.add('touchforcechange', this.startForce.bind(this));
+    this.add('touchforcechange', (event) => {
+      this.setPressed(true);
+      this.preventDefault(event);
+      this.runClosure('change', this.selectTouch(event).force, event);
+    });
     this.add('touchstart', this.support.bind(this, 0));
-  }
-
-  startForce(event){
-    this.setPressed(true);
-    this.preventDefault(event);
-    this.runClosure('change', this.selectTouch(event).force, event);
   }
 
   support(iter, event){
