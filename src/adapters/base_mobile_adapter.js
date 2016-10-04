@@ -10,21 +10,21 @@ class BaseMobileAdapter extends BaseAdapter{
       if(this.pressed){
         this.endDeepPress();
         this.setPressed(false);
-        runClosure(this.block, 'end', this.el);
+        this.runClosure('end');
       }
     });
   }
 
   startDeepPress(event){
     if(this.deepPressed === false){
-      runClosure(this.block, 'startDeepPress', this.el, event);
+      this.runClosure('startDeepPress', event);
     }
     this.setDeepPressed(true);
   }
 
   endDeepPress(){
     if(this.deepPressed === true){
-      runClosure(this.block, 'endDeepPress', this.el);
+      this.runClosure('endDeepPress');
     }
     this.setDeepPressed(false);
   }

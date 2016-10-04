@@ -204,7 +204,7 @@ var BaseMobileAdapter = function (_BaseAdapter) {
         if (_this3.pressed) {
           _this3.endDeepPress();
           _this3.setPressed(false);
-          runClosure(_this3.block, 'end', _this3.el);
+          _this3.runClosure('end');
         }
       });
     }
@@ -212,7 +212,7 @@ var BaseMobileAdapter = function (_BaseAdapter) {
     key: "startDeepPress",
     value: function startDeepPress(event) {
       if (this.deepPressed === false) {
-        runClosure(this.block, 'startDeepPress', this.el, event);
+        this.runClosure('startDeepPress', event);
       }
       this.setDeepPressed(true);
     }
@@ -220,7 +220,7 @@ var BaseMobileAdapter = function (_BaseAdapter) {
     key: "endDeepPress",
     value: function endDeepPress() {
       if (this.deepPressed === true) {
-        runClosure(this.block, 'endDeepPress', this.el);
+        this.runClosure('endDeepPress');
       }
       this.setDeepPressed(false);
     }
