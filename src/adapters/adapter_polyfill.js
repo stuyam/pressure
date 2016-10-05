@@ -6,7 +6,7 @@ class AdapterPolyfill extends BaseAdapter{
     this.$change();
     this.$end();
     this.force = 0;
-    this.increment = 0.01;
+    this.increment = 10/Config.get('polyfillSpeed', this.element.options);
     this.firstRun(firstEvent)
   }
 

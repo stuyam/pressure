@@ -461,7 +461,7 @@ var AdapterPolyfill = function (_BaseAdapter3) {
     _this11.$change();
     _this11.$end();
     _this11.force = 0;
-    _this11.increment = 0.01;
+    _this11.increment = 10 / Config.get('polyfillSpeed', _this11.element.options);
     _this11.firstRun(firstEvent);
     return _this11;
   }
@@ -559,11 +559,17 @@ var AdapterPolyfill = function (_BaseAdapter3) {
 
 var Config = {
 
+  // 'true' prevents the default actions of an element that is pressed
   preventDefault: true,
 
+  // 'mobile' or 'desktop' will make it run only on that type of device
   only: null,
 
+  // 'true' will make polyfill run when pressure is not supported
   polyfill: false,
+
+  // milliseconds it takes to go from 0 to 1 for the polyfill
+  polyfillSpeed: 1000,
 
   // this will get the correct config / option settings for the current pressure check
   get: function get(option, options) {
