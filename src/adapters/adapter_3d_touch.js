@@ -24,7 +24,7 @@ class Adapter3DTouch extends BaseAdapter{
   }
 
   support(iter, event){
-    event.preventDefault();
+    this.preventDefault(event);
     if(this.pressed === false && iter > 10){
       this.failOrPolyfill(event);
     } else if(this.pressed === false){
@@ -36,7 +36,7 @@ class Adapter3DTouch extends BaseAdapter{
 
   $start_legacy(){
     this.add('touchstart', (event) => {
-      event.preventDefault();
+      this.preventDefault(event);
       this.forceValueTest = event.touches[0].force;
       this.support_legacy(0, event);
     });

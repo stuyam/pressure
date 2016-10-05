@@ -6,7 +6,7 @@ class BaseAdapter{
     this.block = element.block;
     this.pressed = false;
     this.deepPressed = false;
-    this.preventDefault();
+    this.preventSelect();
   }
 
   add(event, set){
@@ -43,12 +43,20 @@ class BaseAdapter{
   }
 
   // prevent the default action of text selection, "peak & pop", and force touch special feature
-  preventDefault(){
+  preventDefault(event){
     if(Config.get('preventDefault', this.element.options)){
+      event.preventDefault();
+    }
+  }
+
+  preventSelect(){
+    if(Config.get('preventSelect', this.element.options)){
       this.el.style.webkitTouchCallout = "none";
-      this.el.style.userSelect = "none";
       this.el.style.webkitUserSelect = "none";
+      this.el.style.khtmlUserSelect = "none";
       this.el.style.MozUserSelect = "none";
+      this.el.style.msUserSelect = "none";
+      this.el.style.userSelect = "none";
     }
   }
 

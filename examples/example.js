@@ -6,9 +6,10 @@ Pressure.config({
   polyfill: true
 });
 
-$.pressureConfig({
-  preventDefault: false
-});
+// $.pressureConfig({
+//   preventDefault: false,
+//   prevetSelect: false
+// });
 
 var block = {
   start: function(event){
@@ -48,5 +49,11 @@ Pressure.set($('#el2'), block, {only: 'desktop', polyfill: true, polyfillSpeed: 
 Pressure.set('#el3', block, {only: 'mobile'});
 
 $('#el1-jquery').pressure(block);
-$('#el2-jquery').pressure(block, {only: 'desktop', preventDefault: false});
+$('#el2-jquery').pressure(block, {only: 'desktop'});
 $('#el3-jquery').pressure(block, {only: 'mobile'});
+
+$('img').pressure({
+  change: function(force, event){
+    console.log(force);
+  }
+});

@@ -88,8 +88,10 @@ var Element = function () {
         }
         // unsupported if it is requesting a type and your browser is of other type
         else {
-            this.element.addEventListener(isMobile ? 'touchstart' : 'mousedown', function () {
-              return new BaseAdapter(_this).runClosure('unsupported');
+            this.element.addEventListener(isMobile ? 'touchstart' : 'mousedown', function (event) {
+              var adapter = new BaseAdapter(_this);
+              adapter.preventDefault(event);
+              adapter.runClosure('unsupported');
             }, false);
           }
     }
@@ -107,7 +109,7 @@ var BaseAdapter = function () {
     this.block = element.block;
     this.pressed = false;
     this.deepPressed = false;
-    this.preventDefault();
+    this.preventSelect();
   }
 
   _createClass(BaseAdapter, [{
@@ -156,12 +158,21 @@ var BaseAdapter = function () {
 
   }, {
     key: "preventDefault",
-    value: function preventDefault() {
+    value: function preventDefault(event) {
       if (Config.get('preventDefault', this.element.options)) {
+        event.preventDefault();
+      }
+    }
+  }, {
+    key: "preventSelect",
+    value: function preventSelect() {
+      if (Config.get('preventSelect', this.element.options)) {
         this.el.style.webkitTouchCallout = "none";
-        this.el.style.userSelect = "none";
         this.el.style.webkitUserSelect = "none";
+        this.el.style.khtmlUserSelect = "none";
         this.el.style.MozUserSelect = "none";
+        this.el.style.msUserSelect = "none";
+        this.el.style.userSelect = "none";
       }
     }
   }]);
@@ -201,7 +212,7 @@ var AdapterForceTouch = function (_BaseAdapter) {
   }, {
     key: "startForce",
     value: function startForce(event) {
-      event.preventDefault();
+      this.preventDefault(event);
       this.setPressed(true);
       this.runClosure('start', event);
     }
@@ -332,7 +343,7 @@ var Adapter3DTouch = function (_BaseAdapter2) {
   }, {
     key: "support",
     value: function support(iter, event) {
-      event.preventDefault();
+      this.preventDefault(event);
       if (this.pressed === false && iter > 10) {
         this.failOrPolyfill(event);
       } else if (this.pressed === false) {
@@ -347,7 +358,7 @@ var Adapter3DTouch = function (_BaseAdapter2) {
       var _this9 = this;
 
       this.add('touchstart', function (event) {
-        event.preventDefault();
+        _this9.preventDefault(event);
         _this9.forceValueTest = event.touches[0].force;
         _this9.support_legacy(0, event);
       });
@@ -554,7 +565,10 @@ var AdapterPolyfill = function (_BaseAdapter3) {
 var Config = {
 
   // 'true' prevents the default actions of an element that is pressed
-  preventDefault: true,
+  preventDefault: false,
+
+  // 'true' prevents the selecting of text and images via css properties
+  preventSelect: true,
 
   // 'mobile' or 'desktop' will make it run only on that type of device
   only: null,

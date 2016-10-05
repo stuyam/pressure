@@ -2,7 +2,10 @@
 var Config = {
 
   // 'true' prevents the default actions of an element that is pressed
-  preventDefault: true,
+  preventDefault: false,
+
+  // 'true' prevents the selecting of text and images via css properties
+  preventSelect: true,
 
   // 'mobile' or 'desktop' will make it run only on that type of device
   only: null,
