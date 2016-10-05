@@ -7,8 +7,7 @@ Pressure.config({
 });
 
 // $.pressureConfig({
-//   preventDefault: false,
-//   prevetSelect: false
+//   preventSelect: false
 // });
 
 var block = {
@@ -17,6 +16,7 @@ var block = {
   },
 
   change: function(force, event){
+    // event.preventDefault();
     this.style.width = Pressure.map(force, 0, 1, 200, 300) + 'px';
     this.innerHTML = force;
     console.log('change', force);

@@ -20,7 +20,6 @@ class AdapterForceTouch extends BaseAdapter{
   }
 
   startForce(event){
-    this.preventDefault(event);
     this.setPressed(true);
     this.runClosure('start', event);
   }

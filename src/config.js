@@ -1,9 +1,6 @@
 // This class holds the states of the the Pressure config
 var Config = {
 
-  // 'true' prevents the default actions of an element that is pressed
-  preventDefault: false,
-
   // 'true' prevents the selecting of text and images via css properties
   preventSelect: true,
 

@@ -30,7 +30,7 @@ class BaseAdapter{
     if(Config.get('polyfill', this.element.options)){
       this.polyfill = new AdapterPolyfill(this.element, event);
     } else {
-      this.runClosure('unsupported');
+      this.runClosure('unsupported', event);
     }
   }
 
@@ -43,12 +43,6 @@ class BaseAdapter{
   }
 
   // prevent the default action of text selection, "peak & pop", and force touch special feature
-  preventDefault(event){
-    if(Config.get('preventDefault', this.element.options)){
-      event.preventDefault();
-    }
-  }
-
   preventSelect(){
     if(Config.get('preventSelect', this.element.options)){
       this.el.style.webkitTouchCallout = "none";

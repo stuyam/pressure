@@ -96,9 +96,7 @@ var Element = function () {
         // unsupported if it is requesting a type and your browser is of other type
         else {
             this.element.addEventListener(isMobile ? 'touchstart' : 'mousedown', function (event) {
-              var adapter = new BaseAdapter(_this);
-              adapter.preventDefault(event);
-              adapter.runClosure('unsupported');
+              return new BaseAdapter(_this).runClosure('unsupported', event);
             }, false);
           }
     }
@@ -146,7 +144,7 @@ var BaseAdapter = function () {
       if (Config.get('polyfill', this.element.options)) {
         this.polyfill = new AdapterPolyfill(this.element, event);
       } else {
-        this.runClosure('unsupported');
+        this.runClosure('unsupported', event);
       }
     }
 
@@ -163,13 +161,6 @@ var BaseAdapter = function () {
 
     // prevent the default action of text selection, "peak & pop", and force touch special feature
 
-  }, {
-    key: "preventDefault",
-    value: function preventDefault(event) {
-      if (Config.get('preventDefault', this.element.options)) {
-        event.preventDefault();
-      }
-    }
   }, {
     key: "preventSelect",
     value: function preventSelect() {
@@ -219,7 +210,6 @@ var AdapterForceTouch = function (_BaseAdapter) {
   }, {
     key: "startForce",
     value: function startForce(event) {
-      this.preventDefault(event);
       this.setPressed(true);
       this.runClosure('start', event);
     }
@@ -350,7 +340,6 @@ var Adapter3DTouch = function (_BaseAdapter2) {
   }, {
     key: "support",
     value: function support(iter, event) {
-      this.preventDefault(event);
       if (this.pressed === false && iter > 10) {
         this.failOrPolyfill(event);
       } else if (this.pressed === false) {
@@ -365,7 +354,6 @@ var Adapter3DTouch = function (_BaseAdapter2) {
       var _this9 = this;
 
       this.add('touchstart', function (event) {
-        _this9.preventDefault(event);
         _this9.forceValueTest = event.touches[0].force;
         _this9.support_legacy(0, event);
       });
@@ -570,9 +558,6 @@ var AdapterPolyfill = function (_BaseAdapter3) {
 
 
 var Config = {
-
-  // 'true' prevents the default actions of an element that is pressed
-  preventDefault: false,
 
   // 'true' prevents the selecting of text and images via css properties
   preventSelect: true,
