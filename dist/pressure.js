@@ -1,4 +1,4 @@
-// Pressure v1.0.1 | Created By Stuart Yamartino | MIT License | 2015-Present
+// Pressure v2.0.0 | Created By Stuart Yamartino | MIT License | 2015 - Present
 ;(function(window, document) {
 "use strict";
 
@@ -102,7 +102,7 @@ var Element = function () {
       var _this = this;
 
       this.element.addEventListener(isMobile ? 'touchstart' : 'mousedown', function () {
-        return runClosure(_this.block, 'unsupported', _this.element);
+        return new BaseAdapter(_this).runClosure('unsupported');
       }, false);
     }
   }]);
@@ -148,7 +148,7 @@ var BaseAdapter = function () {
       if (Config.get('polyfill', this.element.options) === true) {
         this.polyfill = new AdapterPolyfill(this.element, event);
       } else {
-        runClosure(this.block, 'unsupported', this.el);
+        this.runClosure('unsupported');
       }
     }
 

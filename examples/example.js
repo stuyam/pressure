@@ -3,7 +3,7 @@
 // The failure block will return with an "error" and message showing why the device doesn't support 3D Touch and Force Touch
 
 Pressure.config({
-  polyfill: false
+  polyfill: true
 });
 
 $.pressureConfig({
@@ -16,7 +16,7 @@ var block = {
   },
 
   change: function(force, event){
-    this.style.width = $.pressureMap(force, 0, 1, 200, 300) + 'px';
+    this.style.width = Pressure.map(force, 0, 1, 200, 300) + 'px';
     this.innerHTML = force;
     console.log('change', force);
   },
@@ -41,16 +41,10 @@ var block = {
   }
 }
 
-Pressure.set(document.querySelectorAll('#el1'), block, {polyfill: true});
-Pressure.set($('#el2'), block, {only: 'force'});
-Pressure.set('#el3', block, {only: '3d', polyfill: true});
+Pressure.set(document.querySelectorAll('#el1'), block);
+Pressure.set($('#el2'), block, {only: 'desktop', polyfill: true, polyfillSpeed: 5000});
+Pressure.set('#el3', block, {only: 'mobile'});
 
 $('#el1-jquery').pressure(block);
-$('#el2-jquery').pressure(block, {only: 'force', preventDefault: false});
-$('#el3-jquery').pressure(block, {only: '3d'});
-
-// $('h3').pressure({
-//   start: function(){
-//     console.log('preventDefault text');
-//   }
-// }, {preventDefault: false});
+$('#el2-jquery').pressure(block, {only: 'desktop', preventDefault: false});
+$('#el3-jquery').pressure(block, {only: 'mobile'});

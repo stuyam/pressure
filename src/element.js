@@ -24,7 +24,7 @@ class Element{
   }
 
   instantFail(){
-    this.element.addEventListener(isMobile ? 'touchstart' : 'mousedown', () => runClosure(this.block, 'unsupported', this.element), false);
+    this.element.addEventListener(isMobile ? 'touchstart' : 'mousedown', () => new BaseAdapter(this).runClosure('unsupported'), false);
   }
 
 }

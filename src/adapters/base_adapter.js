@@ -29,7 +29,7 @@ class BaseAdapter{
     if(Config.get('polyfill', this.element.options) === true){
       this.polyfill = new AdapterPolyfill(this.element, event);
     } else {
-      runClosure(this.block, 'unsupported', this.el);
+      this.runClosure('unsupported');
     }
   }
 
