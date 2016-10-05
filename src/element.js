@@ -17,14 +17,10 @@ class Element{
     else if(isMobile && (this.type === 'mobile' || this.type !== 'desktop')){
       new Adapter3DTouch(this);
     }
-    // if it is requesting a type and your browser is of other type
+    // unsupported if it is requesting a type and your browser is of other type
     else{
-      this.instantFail();
+      this.element.addEventListener(isMobile ? 'touchstart' : 'mousedown', () => new BaseAdapter(this).runClosure('unsupported'), false);
     }
-  }
-
-  instantFail(){
-    this.element.addEventListener(isMobile ? 'touchstart' : 'mousedown', () => new BaseAdapter(this).runClosure('unsupported'), false);
   }
 
 }

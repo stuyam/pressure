@@ -76,6 +76,8 @@ var Element = function () {
   _createClass(Element, [{
     key: "routeEvents",
     value: function routeEvents() {
+      var _this = this;
+
       // if on desktop and requesting Force Touch or not requesting 3D Touch
       if (isDesktop && (this.type === 'desktop' || this.type !== 'mobile')) {
         new AdapterForceTouch(this);
@@ -84,19 +86,12 @@ var Element = function () {
       else if (isMobile && (this.type === 'mobile' || this.type !== 'desktop')) {
           new Adapter3DTouch(this);
         }
-        // if it is requesting a type and your browser is of other type
+        // unsupported if it is requesting a type and your browser is of other type
         else {
-            this.instantFail();
+            this.element.addEventListener(isMobile ? 'touchstart' : 'mousedown', function () {
+              return new BaseAdapter(_this).runClosure('unsupported');
+            }, false);
           }
-    }
-  }, {
-    key: "instantFail",
-    value: function instantFail() {
-      var _this = this;
-
-      this.element.addEventListener(isMobile ? 'touchstart' : 'mousedown', function () {
-        return new BaseAdapter(_this).runClosure('unsupported');
-      }, false);
     }
   }]);
 
