@@ -20,8 +20,8 @@ class AdapterForceTouch extends BaseAdapter{
   }
 
   startForce(event){
+    event.preventDefault();
     this.setPressed(true);
-    this.preventDefault(event);
     this.runClosure('start', event);
   }
 
@@ -33,7 +33,7 @@ class AdapterForceTouch extends BaseAdapter{
 
   $change(){
     this.add('webkitmouseforcechanged', (event) => {
-      if(this.pressed && event.webkitForce !== 0){
+      if(this.pressed && event.webkitForce > 0){
         this.runClosure('change', this.normalizeForce(event.webkitForce), event);
       }
     });

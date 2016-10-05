@@ -11,7 +11,6 @@ class AdapterPolyfill extends BaseAdapter{
   }
 
   firstRun(event){
-    this.preventDefault(event);
     this.startLogic(event);
     this.changeLogic(event);
   }

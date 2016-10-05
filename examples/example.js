@@ -23,10 +23,12 @@ var block = {
 
   startDeepPress: function(event){
     console.log('start deep press', event);
+    this.style.backgroundColor = '#FF0040';
   },
 
   endDeepPress: function(){
     console.log('end deep press');
+    this.style.backgroundColor = '#0080FF';
   },
 
   end: function(){

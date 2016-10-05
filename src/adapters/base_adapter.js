@@ -6,6 +6,7 @@ class BaseAdapter{
     this.block = element.block;
     this.pressed = false;
     this.deepPressed = false;
+    this.preventDefault();
   }
 
   add(event, set){
@@ -26,7 +27,7 @@ class BaseAdapter{
 
   failOrPolyfill(event){
     // is the polyfill option set
-    if(Config.get('polyfill', this.element.options) === true){
+    if(Config.get('polyfill', this.element.options)){
       this.polyfill = new AdapterPolyfill(this.element, event);
     } else {
       this.runClosure('unsupported');
@@ -42,9 +43,8 @@ class BaseAdapter{
   }
 
   // prevent the default action of text selection, "peak & pop", and force touch special feature
-  preventDefault(event){
-    if(Config.get('preventDefault', this.element.options) === true){
-      event.preventDefault();
+  preventDefault(){
+    if(Config.get('preventDefault', this.element.options)){
       this.el.style.webkitTouchCallout = "none";
       this.el.style.userSelect = "none";
       this.el.style.webkitUserSelect = "none";

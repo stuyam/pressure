@@ -24,18 +24,19 @@ class Adapter3DTouch extends BaseAdapter{
   }
 
   support(iter, event){
+    event.preventDefault();
     if(this.pressed === false && iter > 10){
       this.failOrPolyfill(event);
     } else if(this.pressed === false){
       setTimeout(this.support.bind(this), 10, iter++, event);
     } else {
-      this.preventDefault(event);
       this.runClosure('start', event);
     }
   }
 
   $start_legacy(){
     this.add('touchstart', (event) => {
+      event.preventDefault();
       this.forceValueTest = event.touches[0].force;
       this.support_legacy(0, event);
     });
@@ -56,7 +57,6 @@ class Adapter3DTouch extends BaseAdapter{
 
   started(event){
     this.setPressed(true);
-    this.preventDefault(event);
     this.runClosure('start', event);
     this.runForce(event);
   }

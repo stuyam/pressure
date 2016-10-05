@@ -107,6 +107,7 @@ var BaseAdapter = function () {
     this.block = element.block;
     this.pressed = false;
     this.deepPressed = false;
+    this.preventDefault();
   }
 
   _createClass(BaseAdapter, [{
@@ -133,7 +134,7 @@ var BaseAdapter = function () {
     key: "failOrPolyfill",
     value: function failOrPolyfill(event) {
       // is the polyfill option set
-      if (Config.get('polyfill', this.element.options) === true) {
+      if (Config.get('polyfill', this.element.options)) {
         this.polyfill = new AdapterPolyfill(this.element, event);
       } else {
         this.runClosure('unsupported');
@@ -155,9 +156,8 @@ var BaseAdapter = function () {
 
   }, {
     key: "preventDefault",
-    value: function preventDefault(event) {
-      if (Config.get('preventDefault', this.element.options) === true) {
-        event.preventDefault();
+    value: function preventDefault() {
+      if (Config.get('preventDefault', this.element.options)) {
         this.el.style.webkitTouchCallout = "none";
         this.el.style.userSelect = "none";
         this.el.style.webkitUserSelect = "none";
@@ -201,8 +201,8 @@ var AdapterForceTouch = function (_BaseAdapter) {
   }, {
     key: "startForce",
     value: function startForce(event) {
+      event.preventDefault();
       this.setPressed(true);
-      this.preventDefault(event);
       this.runClosure('start', event);
     }
   }, {
@@ -218,7 +218,7 @@ var AdapterForceTouch = function (_BaseAdapter) {
       var _this3 = this;
 
       this.add('webkitmouseforcechanged', function (event) {
-        if (_this3.pressed && event.webkitForce !== 0) {
+        if (_this3.pressed && event.webkitForce > 0) {
           _this3.runClosure('change', _this3.normalizeForce(event.webkitForce), event);
         }
       });
@@ -332,12 +332,12 @@ var Adapter3DTouch = function (_BaseAdapter2) {
   }, {
     key: "support",
     value: function support(iter, event) {
+      event.preventDefault();
       if (this.pressed === false && iter > 10) {
         this.failOrPolyfill(event);
       } else if (this.pressed === false) {
         setTimeout(this.support.bind(this), 10, iter++, event);
       } else {
-        this.preventDefault(event);
         this.runClosure('start', event);
       }
     }
@@ -347,6 +347,7 @@ var Adapter3DTouch = function (_BaseAdapter2) {
       var _this9 = this;
 
       this.add('touchstart', function (event) {
+        event.preventDefault();
         _this9.forceValueTest = event.touches[0].force;
         _this9.support_legacy(0, event);
       });
@@ -369,7 +370,6 @@ var Adapter3DTouch = function (_BaseAdapter2) {
     key: "started",
     value: function started(event) {
       this.setPressed(true);
-      this.preventDefault(event);
       this.runClosure('start', event);
       this.runForce(event);
     }
@@ -464,7 +464,6 @@ var AdapterPolyfill = function (_BaseAdapter3) {
   _createClass(AdapterPolyfill, [{
     key: "firstRun",
     value: function firstRun(event) {
-      this.preventDefault(event);
       this.startLogic(event);
       this.changeLogic(event);
     }
