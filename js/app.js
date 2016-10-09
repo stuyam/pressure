@@ -1,14 +1,34 @@
-// if(window.location.href !== 'http://pressurejs.com/'){
-//   window.location.href = "http://pressurejs.com";
-// }
-
 $(function () {
   $('[data-toggle="popover"]').popover({trigger: 'manual'});
 });
 
-// Pressure.config({
-//   polyfill: true
-// });
+Pressure.set('.device-circle', {
+  start: function(){
+    this.style.width = '10em';
+    this.style.height = '10em';
+  },
+  change: function(force){
+    console.log(force);
+    this.style.width = Pressure.map(force, 0, 1, 10, $(this).data('size')) + 'em';
+    this.style.height = Pressure.map(force, 0, 1, 10, $(this).data('size')) + 'em';
+  },
+  startDeepPress: function(){
+    this.style.backgroundColor = '#5bc0de';
+  },
+  endDeepPress: function(){
+    this.style.backgroundColor = '#d9534f';
+  },
+  end: function(){
+    this.style.width = '10em';
+    this.style.height = '10em';
+  }
+}, {polyfill: true});
+
+Pressure.set('.device-circle', {
+  unsupported: function(){
+    $(this).closest('.pressure-failed').show();
+  }
+});
 
 var block = {
   start: function(){

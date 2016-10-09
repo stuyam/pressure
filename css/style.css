@@ -3,42 +3,47 @@
 }
 
 html, body{
-  font-family: "myriad-pro", sans-serif;
+  /*font-family: "myriad-pro", sans-serif;*/
+  font-family: 'Open Sans', sans-serif;
 }
 
 header{
-  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#0081af+0,72238e+100 */
-  background: #0081af; /* Old browsers */
-  background: -moz-linear-gradient(left,  #0081af 0%, #72238e 100%); /* FF3.6-15 */
-  background: -webkit-linear-gradient(left,  #0081af 0%,#72238e 100%); /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to right,  #0081af 0%,#72238e 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0081af', endColorstr='#72238e',GradientType=1 ); /* IE6-9 */
-
   color: white;
   padding: 20px;
   margin-bottom: 40px;
 }
 
-.container{
-  display: block;
-  width: 100%;
-  max-width: 900px;
-  position: relative;
-  margin: auto;
-  padding: 0 20px;
+.device-container{
+  background: white;
 }
 
-.download{
-  border-radius: 5px;
-  padding: 10px;
-  background: #FFC800;
-  color: black !important;
+.align-center-center{
   width: 100%;
-  max-width: 300px;
-  margin: 5px auto 10px auto;
-  font-weight: 400;
-  border: 0;
-  cursor: pointer;
+  height: 100%;
+}
+
+.device-circle{
+  width: 10em;
+  height: 10em;
+  border-radius: 50%;
+  background: #d9534f;
+}
+
+.pressure-failed{
+  display: none;
+  font-size: 14px;
+  color: black;
+  position: absolute;
+  bottom: 0;
+  padding: 5px;
+}
+
+.mighty-2{
+  margin: 0;
+}
+
+.container{
+  max-width: 900px;
 }
 
 .doc-section{
@@ -61,12 +66,6 @@ header{
 .doc-title{
   font-weight: 400 !important;
   margin-bottom: 0.6rem;
-}
-
-#pressure-test{
-  background: #EF2155;
-  color: white !important;
-  font-weight: bold;
 }
 
 pre{

@@ -1,0 +1,114 @@
+/****** TEXT & INLINE******/
+.align-text-left,
+.align-inline-left {
+  text-align: left;
+}
+
+.align-text-center,
+.align-inline-center {
+  text-align: center;
+}
+
+.align-text-right,
+.align-inline-right {
+  text-align: right;
+}
+
+/****** INLINE ******/
+.align-inline-left,
+.align-inline-center,
+.align-inline-right{
+  width: 100%;
+  display: inline-block;
+}
+
+/****** BLOCK ******/
+.align-block-left {
+  position: relative;
+  display: block;
+  float: left;
+}
+
+.align-block-center {
+  position: relative;
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-block-right {
+  position: relative;
+  display: block;
+  float: right;
+}
+
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/****** FLEX ALIGN ******/
+.align-top-left,
+.align-top-center,
+.align-top-right,
+.align-center-left,
+.align-center-center,
+.align-center-right,
+.align-bottom-left,
+.align-bottom-center,
+.align-bottom-right{
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+/* Vertical Alignment */
+.align-top-left,
+.align-top-center,
+.align-top-right{
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+}
+
+.align-center-left,
+.align-center-center,
+.align-center-right{
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.align-bottom-left,
+.align-bottom-center,
+.align-bottom-right{
+  -webkit-box-align: end;
+  -ms-flex-align: end;
+  align-items: flex-end;
+}
+
+/* Horizontal Alignment */
+.align-top-left,
+.align-center-left,
+.align-bottom-left{
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+}
+
+.align-top-center,
+.align-center-center,
+.align-bottom-center{
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.align-top-right,
+.align-center-right,
+.align-bottom-right{
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+}
