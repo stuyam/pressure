@@ -41,8 +41,30 @@
     </nav>
     <div class="container">
 
+      <ul class="nav nav-pills m-b-2">
+        <li class="nav-item">
+          <a class="nav-link active" href="#installation">Installation</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#setup">Setup</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#usage">Usage</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#jquery-usage">jQuery Usage</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#options">Options</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#helpers">Helpers</a>
+        </li>
+      </ul>
+
         <!-- DOCUMENTATION ----------------------------------------------------------------------- -->
         <div role="tabpanel" class="tab-pane" id="documentation">
+          <a name="installation"></a>
           <div class="h4 doc-title">1. Installation</div>
           <p>Pressure is really simple to install, you can use npm or bower, or head over to the github and download the repo itself. All you need is the <code>pressure.min.js</code> or the <code>pressure.js</code> file.</p>
           <div class="doc-section">
@@ -62,6 +84,7 @@
             </div>
           </div>
 
+          <a name="setup"></a>
           <div class="h4 doc-title">2. Setup</div>
           <p>You can use pressure with browserify, debowerify, or anything that uses CommonJS to include packages. Pressure can be used normally if no module object exists.</p>
           <div class="doc-section">
@@ -103,6 +126,7 @@ requirejs(['pressure'], function( Pressure ) {
           </div>
 
 
+          <a name="usage"></a>
           <div class="h4 doc-title">3. Usage</div>
           <p>Pressure has a really simple method signature. The first argument is the element(s) you are targeting and the second argument is an object with optional callback functions. This lists all the element types that can be passed into Pressure, anything from a string selector, to a DOM node object.</p>
           <div class="doc-section">
@@ -161,6 +185,8 @@ Pressure.set('#stuart', {
             </div>
           </div>
 
+
+          <a name="jquery-usage"></a>
           <div class="h4 doc-title">4. jQuery Usage</div>
           <p>Use the <code>jquery.pressure.min.js</code> file if you are using jQuery in your project. Using the Pressure jQuery library makes it simple to attach pressure events to jQuery elements.</p>
           <div class="doc-section">
@@ -190,6 +216,7 @@ Pressure.set('#stuart', {
           </div>
 
 
+          <a name="options"></a>
           <div class="h4 doc-title">5. Options</div>
           <h4><b>Polyfill Support</b></h4>
           <p>With Pressure, the third paramater is an optional object of options that can be passed in. Using the "polyfill" keyword, you can enable polyfill support for the element. What this means is that if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support force or 3D touch and see for yourself how it works.</p>
@@ -265,6 +292,7 @@ Pressure.set('#stuart', {
           </div>
 
 
+          <a name="helpers"></a>
           <div class="h4 doc-title">6. Helpers</div>
           <p>You can use <code>Pressure.config()</code> to set default configurations for site wide setup. All of the configurations are the same as the options listed above.</p>
           <div class="alert alert-warning">

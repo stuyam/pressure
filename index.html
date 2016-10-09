@@ -87,7 +87,7 @@
           </div>
         </div>
 
-        <div class="pressure-failed text-xs-center">Your device does not support force touch or 3d touch so Pressure.js has fallen back to the polyfill.</div>
+        <div class="pressure-failed text-xs-center">Your device does not support force touch or 3d touch so Pressure.js has fallen back to the optional polyfill.</div>
       </div>
     </header>
     <div class="container">
@@ -131,7 +131,8 @@
       <hr>
       <p>If you are not using one of the devices / browsers listed above, here is a gif to show it in action.</p>
       <img src="pressure.gif" style="width: 100%;box-shadow: 0 0 5px 5px rgba(0,0,0,0.1);margin: 20px 0;" />
-      <hr />
+      <hr class="m-y-2"/>
+      <a name="examples"></a>
       <h3>Examples</h3>
       <div class="alert alert-success">
         <strong>Note:</strong> This page is using the "polyfill" option on most of the Pressure elements to give support for browsers that do not support Force or 3D touch. The "polyfill" option is disabled by default but can be useful in lots of situations where time is an ok replacement for force. <strong>For Example:</strong> The Instagram app uses 3D touch to allow users to quick look images, however if you do not have 3D touchs support, you can simply hold down on the image for a second and it will have the same affect.
