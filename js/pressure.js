@@ -1,4 +1,4 @@
-// Pressure v1.0.1 | Created By Stuart Yamartino | MIT License | 2015-Present
+// Pressure v2.0.0 | Created By Stuart Yamartino | MIT License | 2015 - Present
 ;(function(window, document) {
 "use strict";
 
@@ -17,7 +17,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // only the methods in this object can be called, making it the "public api"
 var Pressure = {
 
-  // targets any device with Force of 3D Touch
+  // targets any device with Force or 3D Touch
 
   set: function set(selector, closure, options) {
     loopPressureElements(selector, closure, options);
@@ -83,45 +83,41 @@ var Element = function () {
   _createClass(Element, [{
     key: "routeEvents",
     value: function routeEvents() {
+      var _this = this;
+
       // if on desktop and requesting Force Touch or not requesting 3D Touch
-      if (Support.mobile === false && (this.type === 'force' || this.type !== '3d')) {
+      if (isDesktop && (this.type === 'desktop' || this.type !== 'mobile')) {
         new AdapterForceTouch(this);
       }
       // if on mobile and requesting 3D Touch or not requestion Force Touch
-      else if (Support.mobile === true && (this.type === '3d' || this.type !== 'force')) {
+      else if (isMobile && (this.type === 'mobile' || this.type !== 'desktop')) {
           new Adapter3DTouch(this);
         }
-        // if it is requesting a type and your browser is of other type
+        // unsupported if it is requesting a type and your browser is of other type
         else {
-            this.instantFail();
+            this.element.addEventListener(isMobile ? 'touchstart' : 'mousedown', function (event) {
+              return new BaseAdapter(_this).runClosure('unsupported', event);
+            }, false);
           }
-    }
-  }, {
-    key: "instantFail",
-    value: function instantFail() {
-      var _this = this;
-
-      this.element.addEventListener(Support.mobile ? 'touchstart' : 'mousedown', function () {
-        return runClosure(_this.block, 'unsupported', _this.element);
-      }, false);
     }
   }]);
 
   return Element;
 }();
 
-var Adapter = function () {
-  function Adapter(element) {
-    _classCallCheck(this, Adapter);
+var BaseAdapter = function () {
+  function BaseAdapter(element) {
+    _classCallCheck(this, BaseAdapter);
 
     this.element = element;
     this.el = element.element;
     this.block = element.block;
     this.pressed = false;
     this.deepPressed = false;
+    this.preventSelect();
   }
 
-  _createClass(Adapter, [{
+  _createClass(BaseAdapter, [{
     key: "add",
     value: function add(event, set) {
       this.el.addEventListener(event, set, false);
@@ -144,124 +140,266 @@ var Adapter = function () {
   }, {
     key: "failOrPolyfill",
     value: function failOrPolyfill(event) {
-      Support.didFail();
       // is the polyfill option set
-      if (Config.get('polyfill', this.element.options) === true) {
+      if (Config.get('polyfill', this.element.options)) {
         this.polyfill = new AdapterPolyfill(this.element, event);
       } else {
-        runClosure(this.block, 'unsupported', this.el);
+        this.runClosure('unsupported', event);
+      }
+    }
+
+    // run the closure if the property exists in the object
+
+  }, {
+    key: "runClosure",
+    value: function runClosure(method) {
+      if (this.block.hasOwnProperty(method)) {
+        // call the closure method and apply nth arguments if they exist
+        this.block[method].apply(this.el || this, Array.prototype.slice.call(arguments, 1));
       }
     }
 
     // prevent the default action of text selection, "peak & pop", and force touch special feature
 
   }, {
-    key: "preventDefault",
-    value: function preventDefault(event) {
-      if (Config.get('preventDefault', this.element.options) === true) {
-        event.preventDefault();
+    key: "preventSelect",
+    value: function preventSelect() {
+      if (Config.get('preventSelect', this.element.options)) {
         this.el.style.webkitTouchCallout = "none";
-        this.el.style.userSelect = "none";
         this.el.style.webkitUserSelect = "none";
+        this.el.style.khtmlUserSelect = "none";
         this.el.style.MozUserSelect = "none";
+        this.el.style.msUserSelect = "none";
+        this.el.style.userSelect = "none";
       }
     }
   }]);
 
-  return Adapter;
+  return BaseAdapter;
 }();
 
-var Adapter3DTouch = function (_Adapter) {
-  _inherits(Adapter3DTouch, _Adapter);
+/*
+This adapter is for Macs with Force Touch trackpads.
+*/
 
-  function Adapter3DTouch(element) {
-    _classCallCheck(this, Adapter3DTouch);
+var AdapterForceTouch = function (_BaseAdapter) {
+  _inherits(AdapterForceTouch, _BaseAdapter);
 
-    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(Adapter3DTouch).call(this, element));
+  function AdapterForceTouch(element) {
+    _classCallCheck(this, AdapterForceTouch);
 
-    _this2.$support();
+    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterForceTouch).call(this, element));
+
     _this2.$start();
     _this2.$change();
+    _this2.$startDeepPress();
+    _this2.$endDeepPress();
     _this2.$end();
     return _this2;
   }
 
-  _createClass(Adapter3DTouch, [{
-    key: "$support",
-    value: function $support() {
-      this.supportMethod = this.middleMan.bind(this);
-      this.add('touchstart', this.supportMethod);
+  // Support check methods
+
+
+  _createClass(AdapterForceTouch, [{
+    key: "$start",
+    value: function $start() {
+      this.add('webkitmouseforcewillbegin', this.startForce.bind(this));
+      this.add('mousedown', this.support.bind(this));
     }
   }, {
-    key: "middleMan",
-    value: function middleMan(event) {
+    key: "startForce",
+    value: function startForce(event) {
       this.setPressed(true);
-      this.forceValueTest = event.touches[0].force;
-      this.supportCallback(0, event);
+      this.runClosure('start', event);
     }
   }, {
-    key: "supportCallback",
-    value: function supportCallback(iter, event) {
-      // this checks up to 10 times on a touch to see if the touch can read a force value or not to check "support"
-      if (Support.hasRun === false && !(this.polyfill instanceof AdapterPolyfill)) {
-        // if the force value has changed it means the device supports pressure
-        // more info from this issue https://github.com/yamartino/pressure/issues/15
-        if (event.touches[0].force !== this.forceValueTest) {
-          this.preventDefault(event);
-          Support.didSucceed('3d');
-          this.remove('touchstart', this.supportMethod);
-          runClosure(this.block, 'start', this.el, event);
-          this.changeLogic(event);
-        } else if (iter <= 10 && this.pressed) {
-          iter += 1;
-          setTimeout(this.supportCallback.bind(this), 10, iter, event);
-        } else if (this.pressed) {
-          this.failOrPolyfill(event);
+    key: "support",
+    value: function support(event) {
+      if (this.pressed === false) {
+        this.failOrPolyfill(event);
+      }
+    }
+  }, {
+    key: "$change",
+    value: function $change() {
+      var _this3 = this;
+
+      this.add('webkitmouseforcechanged', function (event) {
+        if (_this3.pressed && event.webkitForce > 0) {
+          _this3.runClosure('change', _this3.normalizeForce(event.webkitForce), event);
         }
-      } else if (Support.forPressure || this.polyfill instanceof AdapterPolyfill) {
-        this.remove('touchstart', this.supportMethod);
+      });
+    }
+  }, {
+    key: "$startDeepPress",
+    value: function $startDeepPress() {
+      var _this4 = this;
+
+      this.add('webkitmouseforcedown', function (event) {
+        if (_this4.pressed) {
+          _this4.setDeepPressed(true);
+          _this4.runClosure('startDeepPress', event);
+        }
+      });
+    }
+  }, {
+    key: "$endDeepPress",
+    value: function $endDeepPress() {
+      var _this5 = this;
+
+      this.add('webkitmouseforceup', function () {
+        if (_this5.pressed && _this5.deepPressed) {
+          _this5.runClosure('endDeepPress');
+        }
+        _this5.setDeepPressed(false);
+      });
+      this.add('mouseleave', function () {
+        if (_this5.pressed && _this5.deepPressed) {
+          _this5.runClosure('endDeepPress');
+        }
+        _this5.setDeepPressed(false);
+      });
+    }
+  }, {
+    key: "$end",
+    value: function $end() {
+      var _this6 = this;
+
+      // call 'end' when the mouse goes up or leaves the element
+      this.add('mouseup', function () {
+        if (_this6.pressed) {
+          _this6.runClosure('end');
+        }
+        _this6.setPressed(false);
+      });
+
+      this.add('mouseleave', function () {
+        if (_this6.pressed) {
+          _this6.runClosure('end');
+        }
+        _this6.setPressed(false);
+      });
+    }
+
+    // make the force the standard 0 to 1 scale and not the 1 to 3 scale
+
+  }, {
+    key: "normalizeForce",
+    value: function normalizeForce(force) {
+      return this.reachOne(_map(force, 1, 3, 0, 1));
+    }
+
+    // if the force value is above 0.999 set the force to 1
+
+  }, {
+    key: "reachOne",
+    value: function reachOne(force) {
+      return force > 0.999 ? 1 : force;
+    }
+  }]);
+
+  return AdapterForceTouch;
+}(BaseAdapter);
+
+/*
+This adapter is more iOS devices running iOS 10 or higher and support 3D touch.
+*/
+
+var Adapter3DTouch = function (_BaseAdapter2) {
+  _inherits(Adapter3DTouch, _BaseAdapter2);
+
+  function Adapter3DTouch(element) {
+    _classCallCheck(this, Adapter3DTouch);
+
+    var _this7 = _possibleConstructorReturn(this, Object.getPrototypeOf(Adapter3DTouch).call(this, element));
+
+    if (supportsTouchForceChange) {
+      _this7.$start();
+    } else {
+      _this7.$start_legacy();
+    }
+    _this7.$end();
+    return _this7;
+  }
+
+  // Support check methods
+
+
+  _createClass(Adapter3DTouch, [{
+    key: "$start",
+    value: function $start() {
+      var _this8 = this;
+
+      this.add('touchforcechange', function (event) {
+        _this8.setPressed(true);
+        _this8.runClosure('change', _this8.selectTouch(event).force, event);
+      });
+      this.add('touchstart', this.support.bind(this, 0));
+    }
+  }, {
+    key: "support",
+    value: function support(iter, event) {
+      if (this.pressed === false && iter > 10) {
+        this.failOrPolyfill(event);
+      } else if (this.pressed === false) {
+        setTimeout(this.support.bind(this), 10, iter++, event);
+      } else {
+        this.runClosure('start', event);
+      }
+    }
+  }, {
+    key: "$start_legacy",
+    value: function $start_legacy() {
+      var _this9 = this;
+
+      this.add('touchstart', function (event) {
+        _this9.forceValueTest = event.touches[0].force;
+        _this9.support_legacy(0, event);
+      });
+    }
+  }, {
+    key: "support_legacy",
+    value: function support_legacy(iter, event) {
+      // this checks up to 10 times on a touch to see if the touch can read a force value
+      // if the force value has changed it means the device supports pressure
+      // more info from this issue https://github.com/yamartino/pressure/issues/15
+      if (event.touches[0].force !== this.forceValueTest) {
+        this.started(event);
+      } else if (iter <= 10) {
+        setTimeout(this.support_legacy.bind(this), 10, iter++, event);
       } else {
         this.failOrPolyfill(event);
       }
     }
   }, {
-    key: "$start",
-    value: function $start() {
-      var _this3 = this;
-
-      // call 'start' when the touch goes down
-      this.add('touchstart', function (event) {
-        if (Support.forPressure) {
-          _this3.setPressed(true);
-          _this3.preventDefault(event);
-          runClosure(_this3.block, 'start', _this3.el, event);
-        }
-      });
+    key: "started",
+    value: function started(event) {
+      this.setPressed(true);
+      this.runClosure('start', event);
+      this.runForce(event);
     }
   }, {
-    key: "$change",
-    value: function $change() {
-      this.add('touchstart', this.changeLogic.bind(this));
-    }
-  }, {
-    key: "changeLogic",
-    value: function changeLogic(event) {
-      if (Support.forPressure && this.pressed) {
+    key: "runForce",
+    value: function runForce(event) {
+      if (this.pressed) {
         this.setPressed(true);
-        this.runForce(event);
+        this.touch = this.selectTouch(event);
+        setTimeout(this.runForce.bind(this), 10, event);
+        this.runClosure('change', this.touch.force, event);
       }
     }
   }, {
     key: "$end",
     value: function $end() {
-      var _this4 = this;
+      var _this10 = this;
 
       // call 'end' when the touch goes up
       this.add('touchend', function () {
-        if (Support.forPressure) {
-          _this4.endDeepPress();
-          _this4.setPressed(false);
-          runClosure(_this4.block, 'end', _this4.el);
+        if (_this10.pressed) {
+          _this10.endDeepPress();
+          _this10.setPressed(false);
+          _this10.runClosure('end');
         }
       });
     }
@@ -269,7 +407,7 @@ var Adapter3DTouch = function (_Adapter) {
     key: "startDeepPress",
     value: function startDeepPress(event) {
       if (this.deepPressed === false) {
-        runClosure(this.block, 'startDeepPress', this.el, event);
+        this.runClosure('startDeepPress', event);
       }
       this.setDeepPressed(true);
     }
@@ -277,18 +415,9 @@ var Adapter3DTouch = function (_Adapter) {
     key: "endDeepPress",
     value: function endDeepPress() {
       if (this.deepPressed === true) {
-        runClosure(this.block, 'endDeepPress', this.el);
+        this.runClosure('endDeepPress');
       }
       this.setDeepPressed(false);
-    }
-  }, {
-    key: "runForce",
-    value: function runForce(event) {
-      if (this.pressed) {
-        this.touch = this.selectTouch(event);
-        setTimeout(this.runForce.bind(this), 10, event);
-        runClosure(this.block, 'change', this.el, this.touch.force, event);
-      }
     }
 
     // link up the touch point to the correct element, this is to support multitouch
@@ -319,150 +448,10 @@ var Adapter3DTouch = function (_Adapter) {
   }]);
 
   return Adapter3DTouch;
-}(Adapter);
+}(BaseAdapter);
 
-var AdapterForceTouch = function (_Adapter2) {
-  _inherits(AdapterForceTouch, _Adapter2);
-
-  function AdapterForceTouch(element) {
-    _classCallCheck(this, AdapterForceTouch);
-
-    var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterForceTouch).call(this, element));
-
-    _this5.$support();
-    _this5.$start();
-    _this5.$change();
-    _this5.$startDeepPress();
-    _this5.$endDeepPress();
-    _this5.$end();
-    return _this5;
-  }
-
-  // Support check methods
-
-
-  _createClass(AdapterForceTouch, [{
-    key: "$support",
-    value: function $support() {
-      this.add('webkitmouseforcewillbegin', this.forceTouchEnabled);
-      this.add('mousedown', this.supportCallback.bind(this));
-    }
-  }, {
-    key: "forceTouchEnabled",
-    value: function forceTouchEnabled(event) {
-      event.preventDefault();
-      Support.didSucceed('force');
-    }
-  }, {
-    key: "supportCallback",
-    value: function supportCallback(event) {
-      if (Support.forPressure === true || this.polyfill instanceof AdapterPolyfill) {
-        this.remove('webkitmouseforcewillbegin', this.forceTouchEnabled);
-        this.preventDefault(event);
-      } else {
-        this.failOrPolyfill(event);
-      }
-    }
-  }, {
-    key: "$start",
-    value: function $start() {
-      var _this6 = this;
-
-      // call 'start' when the mouse goes down
-      this.add('mousedown', function (event) {
-        if (Support.forPressure) {
-          _this6.setPressed(true);
-          runClosure(_this6.block, 'start', _this6.el, event);
-        }
-      });
-    }
-  }, {
-    key: "$change",
-    value: function $change() {
-      var _this7 = this;
-
-      this.add('webkitmouseforcechanged', function (event) {
-        if (Support.forPressure && event.webkitForce !== 0 && _this7.pressed) {
-          runClosure(_this7.block, 'change', _this7.el, _this7.normalizeForce(event.webkitForce), event);
-        }
-      });
-    }
-  }, {
-    key: "$end",
-    value: function $end() {
-      var _this8 = this;
-
-      // call 'end' when the mouse goes up or leaves the element
-      this.add('mouseup', function () {
-        if (Support.forPressure) {
-          _this8.setPressed(false);
-          runClosure(_this8.block, 'end', _this8.el);
-        }
-      });
-      this.add('mouseleave', function () {
-        if (Support.forPressure) {
-          if (_this8.pressed) {
-            runClosure(_this8.block, 'end', _this8.el);
-          }
-          _this8.setPressed(false);
-        }
-      });
-    }
-  }, {
-    key: "$startDeepPress",
-    value: function $startDeepPress() {
-      var _this9 = this;
-
-      this.add('webkitmouseforcedown', function (event) {
-        if (Support.forPressure) {
-          _this9.setDeepPressed(true);
-          runClosure(_this9.block, 'startDeepPress', _this9.el, event);
-        }
-      });
-    }
-  }, {
-    key: "$endDeepPress",
-    value: function $endDeepPress() {
-      var _this10 = this;
-
-      this.add('webkitmouseforceup', function () {
-        if (Support.forPressure) {
-          _this10.setDeepPressed(false);
-          runClosure(_this10.block, 'endDeepPress', _this10.el);
-        }
-      });
-      this.add('mouseleave', function () {
-        if (Support.forPressure) {
-          if (_this10.deepPressed) {
-            runClosure(_this10.block, 'endDeepPress', _this10.el);
-          }
-          _this10.setDeepPressed(false);
-        }
-      });
-    }
-
-    // make the force the standard 0 to 1 scale and not the 1 to 3 scale
-
-  }, {
-    key: "normalizeForce",
-    value: function normalizeForce(force) {
-      return this.reachOne(_map(force, 1, 3, 0, 1));
-    }
-
-    // if the force value is above 0.999 set the force to 1
-
-  }, {
-    key: "reachOne",
-    value: function reachOne(force) {
-      return force > 0.999 ? 1 : force;
-    }
-  }]);
-
-  return AdapterForceTouch;
-}(Adapter);
-
-var AdapterPolyfill = function (_Adapter3) {
-  _inherits(AdapterPolyfill, _Adapter3);
+var AdapterPolyfill = function (_BaseAdapter3) {
+  _inherits(AdapterPolyfill, _BaseAdapter3);
 
   function AdapterPolyfill(element, firstEvent) {
     _classCallCheck(this, AdapterPolyfill);
@@ -473,7 +462,7 @@ var AdapterPolyfill = function (_Adapter3) {
     _this11.$change();
     _this11.$end();
     _this11.force = 0;
-    _this11.increment = 0.01;
+    _this11.increment = 10 / Config.get('polyfillSpeed', _this11.element.options);
     _this11.firstRun(firstEvent);
     return _this11;
   }
@@ -481,7 +470,6 @@ var AdapterPolyfill = function (_Adapter3) {
   _createClass(AdapterPolyfill, [{
     key: "firstRun",
     value: function firstRun(event) {
-      this.preventDefault(event);
       this.startLogic(event);
       this.changeLogic(event);
     }
@@ -491,7 +479,7 @@ var AdapterPolyfill = function (_Adapter3) {
       var _this12 = this;
 
       // call 'start' when the touch goes down
-      this.add(Support.mobile ? 'touchstart' : 'mousedown', function (event) {
+      this.add(isMobile ? 'touchstart' : 'mousedown', function (event) {
         _this12.startLogic(event);
       });
     }
@@ -499,12 +487,12 @@ var AdapterPolyfill = function (_Adapter3) {
     key: "startLogic",
     value: function startLogic(event) {
       this.setPressed(true);
-      runClosure(this.block, 'start', this.el, event);
+      this.runClosure('start', event);
     }
   }, {
     key: "$change",
     value: function $change() {
-      this.add(Support.mobile ? 'touchstart' : 'mousedown', this.changeLogic.bind(this));
+      this.add(isMobile ? 'touchstart' : 'mousedown', this.changeLogic.bind(this));
     }
   }, {
     key: "changeLogic",
@@ -520,16 +508,16 @@ var AdapterPolyfill = function (_Adapter3) {
       var _this13 = this;
 
       // call 'end' when the mouse goes up or leaves the element
-      this.add(Support.mobile ? 'touchend' : 'mouseup', function () {
+      this.add(isMobile ? 'touchend' : 'mouseup', function () {
         _this13.endDeepPress();
         _this13.setPressed(false);
-        runClosure(_this13.block, 'end', _this13.el);
+        _this13.runClosure('end');
         _this13.force = 0;
       });
       this.add('mouseleave', function () {
         _this13.endDeepPress();
         if (_this13.pressed) {
-          runClosure(_this13.block, 'end', _this13.el);
+          _this13.runClosure('end');
         }
         _this13.setPressed(false);
         _this13.force = 0;
@@ -539,7 +527,7 @@ var AdapterPolyfill = function (_Adapter3) {
     key: "startDeepPress",
     value: function startDeepPress(event) {
       if (this.deepPressed === false) {
-        runClosure(this.block, 'startDeepPress', this.el, event);
+        this.runClosure('startDeepPress', event);
       }
       this.setDeepPressed(true);
     }
@@ -547,7 +535,7 @@ var AdapterPolyfill = function (_Adapter3) {
     key: "endDeepPress",
     value: function endDeepPress() {
       if (this.deepPressed === true) {
-        runClosure(this.block, 'endDeepPress', this.el);
+        this.runClosure('endDeepPress');
       }
       this.setDeepPressed(false);
     }
@@ -555,7 +543,7 @@ var AdapterPolyfill = function (_Adapter3) {
     key: "runForce",
     value: function runForce(event) {
       if (this.pressed) {
-        runClosure(this.block, 'change', this.el, this.force, event);
+        this.runClosure('change', this.force, event);
         this.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
         this.force = this.force + this.increment > 1 ? 1 : this.force + this.increment;
         setTimeout(this.runForce.bind(this), 10, event);
@@ -564,18 +552,24 @@ var AdapterPolyfill = function (_Adapter3) {
   }]);
 
   return AdapterPolyfill;
-}(Adapter);
+}(BaseAdapter);
 
 // This class holds the states of the the Pressure config
 
 
 var Config = {
 
-  preventDefault: true,
+  // 'true' prevents the selecting of text and images via css properties
+  preventSelect: true,
 
+  // 'mobile' or 'desktop' will make it run only on that type of device
   only: null,
 
+  // 'true' will make polyfill run when pressure is not supported
   polyfill: false,
+
+  // milliseconds it takes to go from 0 to 1 for the polyfill
+  polyfillSpeed: 1000,
 
   // this will get the correct config / option settings for the current pressure check
   get: function get(option, options) {
@@ -593,33 +587,7 @@ var Config = {
   }
 };
 
-// This class holds the states of the the Pressure support the user has
-var Support = {
-
-  // if the support has already been checked
-  hasRun: false,
-
-  // if the device has support for pressure or not
-  forPressure: false,
-
-  // the type of support the device has "force" or "3d"
-  type: false,
-
-  // Check if the device is mobile or desktop
-  mobile: 'ontouchstart' in document,
-
-  didFail: function didFail() {
-    this.hasRun = true;
-    this.forPressure = false;
-  },
-  didSucceed: function didSucceed(type) {
-    this.hasRun = true;
-    this.forPressure = true;
-    this.type = type;
-  }
-};
-
-//------------------- Helpers Section -------------------//
+//------------------- Helpers -------------------//
 
 // accepts jQuery object, node list, string selector, then called a setup for each element
 var loopPressureElements = function loopPressureElements(selector, closure) {
@@ -648,17 +616,18 @@ var isElement = function isElement(o) {
   o && (typeof o === "undefined" ? "undefined" : _typeof(o)) === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string";
 };
 
-// run the closure if the property exists in the object
-var runClosure = function runClosure(closure, method, element) {
-  if (closure.hasOwnProperty(method)) {
-    // call the closure method and apply nth arguments if they exist
-    closure[method].apply(element || this, Array.prototype.slice.call(arguments, 3));
-  }
-};
-
 // the map method allows for interpolating a value from one range of values to another
 // example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
 var _map = function _map(x, in_min, in_max, out_min, out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 };
+
+// check if device is desktop device
+var isDesktop = 'ontouchstart' in document === false;
+
+// check if device is regular mobile device
+var isMobile = 'ontouchstart' in document === true;
+
+// check if device is an Apple iOS 10+ device
+var supportsTouchForceChange = 'ontouchforcechange' in document;
 }(typeof window !== "undefined" ? window : false, typeof window !== "undefined" ? window.document : false));
