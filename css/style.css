@@ -36,6 +36,24 @@ header{
   padding: 10px 5px 0 5px;
 }
 
+.supported-device{
+  width: 100%;
+  padding: 0.5rem;
+}
+
+.supported-device .device-name{
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/*.supported-device img{
+  height: 200px;
+  display: table;
+  position: relative;
+  margin-right: auto;
+  margin-left: auto;
+}*/
+
 .mighty-2{
   margin: 0;
 }
