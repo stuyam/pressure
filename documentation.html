@@ -130,30 +130,43 @@ requirejs(['pressure'], function( Pressure ) {
           <div class="h4 doc-title">3. Usage</div>
           <p>Pressure has a really simple method signature. The first argument is the element(s) you are targeting and the second argument is an object with optional callback functions. This lists all the element types that can be passed into Pressure, anything from a string selector, to a DOM node object.</p>
           <div class="doc-section">
-            <div class="doc-top">
-              <div id="output-element" style="width: 100%;padding: 10px;">Click Me</div>
-            </div>
             <div class="doc-bottom">
               <pre class="language-javascript"><code>// target all links
 Pressure.set('a', {});
+</code></pre>
+            </div>
+          </div>
 
-// pass in jQuery elements
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// pass in jQuery elements
 var elements = $('.dogs');
 Pressure.set(elements, {});
+</code></pre>
+            </div>
+          </div>
 
-// pass in element list or single element
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// pass in element list or single element
 var elements2 = document.querySelectorAll('.cats');
 Pressure.set(elements2, {});
 var elements3 = document.getElementById('cat');
 Pressure.set(elements3, {});
+</code></pre>
+            </div>
+          </div>
 
-// element with the 'stuart' ID being selected and calling the 'change' callback
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// element with the 'stuart' ID being selected and calling the 'change' callback
 Pressure.set('#stuart', {
   change: function(force, event){
     // the force value is passed back as well as the full event
     this.innerHTML = force;
   }
-});</code></pre>
+});
+</code></pre>
             </div>
           </div>
 
@@ -177,6 +190,7 @@ Pressure.set('#stuart', {
   },
   change: function(force, event){
     // this is called every time there is a change in pressure
+    // 'force' is a value ranging from 0 to 1
   },
   unsupported: function(){
     // this is called once there is a touch on the element and the device or browser does not support Force or 3D touch
@@ -206,6 +220,7 @@ Pressure.set('#stuart', {
   },
   change: function(force, event){
     // this is called every time there is a change in pressure
+    // 'force' is a value ranging from 0 to 1
   },
   unsupported: function(){
     // this is called once there is a touch on the element and the device or browser does not support Force or 3D touch
@@ -218,7 +233,7 @@ Pressure.set('#stuart', {
 
           <a name="options"></a>
           <div class="h4 doc-title">5. Options</div>
-          <h4><b>Polyfill Support</b></h4>
+          <h4 class="text-light">Polyfill Support</h4>
           <p>With Pressure, the third paramater is an optional object of options that can be passed in. Using the "polyfill" keyword, you can enable polyfill support for the element. What this means is that if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support force or 3D touch and see for yourself how it works.</p>
           <div class="doc-section">
             <div class="doc-top">
@@ -233,18 +248,18 @@ Pressure.set('#stuart', {
             </div>
           </div>
 
-          <h4><b>Device Detection</b></h4>
+          <h4 class="text-light">Device Detection</h4>
           <p>With Pressure, the third paramater is an optional object of options that can be passed in. The first option is device targeting. Using the "only" keyword, you can define if you want pressure to run on ONLY Mac or ONLY iPhone.</p>
           <div class="doc-section">
             <div class="doc-top">
-              <div id="element-3d" style="width: 100%;padding: 10px;">Click Me On an iPhone 6s</div>
+              <div id="element-3d" style="width: 100%;padding: 10px;">Click Me On an iPhone 6s or iPhone 7</div>
             </div>
             <div class="doc-bottom">
-              <pre class="language-javascript"><code>Pressure.set('#element-3d', {
+              <pre class="language-javascript"><code>Pressure.set('#element-mobile', {
   change: function(force, event){
     this.innerHTML = force + 'on an iphone';
   }
-}, {only: '3d'});</code></pre>
+}, {only: 'mobile'});</code></pre>
             </div>
           </div>
 
@@ -257,16 +272,16 @@ Pressure.set('#stuart', {
   change: function(force, event){
     this.innerHTML = force + 'on a Mac';
   }
-}, {only: 'force'});</code></pre>
+}, {only: 'desktop'});</code></pre>
             </div>
           </div>
 
-          <h4><b>Prevent Default</b></h4>
-          <p>Both Mac and iPhones have system wide features that they default to when force clicking on something (ex. defining a word on Mac or "peeking and popping" an image on iOS). Pressure prevents those actions from happening, however if you still want those actions to be possible on "Pressure" elements, you can pass in "preventDefault" as an option.</p>
-          <div class="alert alert-success">Pressure sets <code>user-select: none;</code> css property on all of the elements it is attached to. It does this to keep text from being selected while force touching. However, sometimes you may want this turned off. The "preventDefault" option also handles removing that"</div>
+          <h4 class="text-light">Prevent Select</h4>
+          <p>Both Mac and iPhones have system wide features that they default to when force clicking on something (ex. defining a word on Mac or "peeking and popping" an image on iOS). Pressure prevents those actions from happening, however if you still want those actions to be possible on "Pressure" elements, you can pass in "preventSelect" as an option.</p>
+          <div class="alert alert-success">Pressure sets <code>user-select: none;</code> css property on all of the elements it is attached to. It does this to keep text from being selected while force touching. However, sometimes you may want this turned off. The "preventSelect" option also handles removing that."</div>
           <div class="doc-section">
             <div class="doc-top">
-              <div style="width: 100%;padding: 10px;">Push the image hard on an iPhone6s to "peek and pop" it</div>
+              <div style="width: 100%;padding: 10px;">Push the image hard on an iPhone6s or iPhone7 to "peek and pop" it</div>
               <img src="pickle.jpg" style="widht: 100%; max-width: 200px" id="element-3d-prevent" />
             </div>
             <div class="doc-bottom">
@@ -274,7 +289,7 @@ Pressure.set('#stuart', {
   start: function(event){
     console.log('cool it started');
   }
-}, {only: '3d', preventDefault: false});</code></pre>
+}, {only: 'mobile', preventSelect: false});</code></pre>
             </div>
           </div>
 
@@ -287,7 +302,7 @@ Pressure.set('#stuart', {
   start: function(event){
     console.log('cool it started');
   }
-}, {only: 'force', preventDefault: false});</code></pre>
+}, {only: 'desktop', preventSelect: false});</code></pre>
             </div>
           </div>
 
@@ -304,7 +319,7 @@ Pressure.set('#stuart', {
               <pre class="language-javascript"><code>// These are the default configs set by Pressure
 Pressure.config({
   polyfill: false,
-  preventDefault: true,
+  preventSelect: true,
   only: null
 });</code></pre>
             </div>
