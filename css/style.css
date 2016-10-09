@@ -31,11 +31,9 @@ header{
 
 .pressure-failed{
   display: none;
-  font-size: 14px;
-  color: black;
-  position: absolute;
-  bottom: 0;
-  padding: 5px;
+  font-size: 16px;
+  color: white;
+  padding: 10px 5px 0 5px;
 }
 
 .mighty-2{

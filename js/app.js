@@ -26,7 +26,7 @@ Pressure.set('.device-circle', {
 
 Pressure.set('.device-circle', {
   unsupported: function(){
-    $(this).closest('.pressure-failed').show();
+    $('.pressure-failed').show();
   }
 });
 
