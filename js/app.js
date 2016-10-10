@@ -37,14 +37,14 @@ var block = {
   change: function(force, event){
     this.style.width = ((200 * force) + 200) + 'px';
     this.innerHTML = force;
-    this.style.backgroundColor = "rgb(" + parseInt(Pressure.map(force, 0, 1, 255, 0)) + ",200," + parseInt(Pressure.map(force, 0, 1, 0, 255)) +")";
-    this.style.color = force > 0.4 ? 'white' : 'black';
+    this.style.backgroundColor = "rgb(" + parseInt(Pressure.map(force, 0, 1, 255, 0)) + ",100," + parseInt(Pressure.map(force, 0, 1, 0, 255)) +")";
+    this.style.color = force > 0.3 ? 'white' : 'black';
   },
 
   end: function(){
     this.style.width = '200px';
     this.innerHTML = 0;
-    this.style.backgroundColor = '#FFC800';
+    this.style.backgroundColor = 'rgb(255,100,0)';
     this.style.color = 'black';
   },
 
@@ -54,8 +54,8 @@ var block = {
 }
 
 Pressure.set('#el1', block, {polyfill: true});
-Pressure.set('#el2', block, {only: 'force', polyfill: true});
-Pressure.set('#el3', block, {only: '3d', polyfill: true});
+Pressure.set('#el2', block, {only: 'desktop', polyfill: true});
+Pressure.set('#el3', block, {only: 'mobile', polyfill: true});
 
 Pressure.set('#pressure-test', {
   start: function(){
@@ -119,7 +119,7 @@ Pressure.set('#element-3d', {
   change: function(force, event){
     this.innerHTML = force + 'on an iphone';
   }
-}, {only: '3d'});
+}, {only: 'mobile'});
 
 Pressure.set('#element-force', {
   change: function(force, event){
@@ -127,9 +127,9 @@ Pressure.set('#element-force', {
   }
 }, {only: 'force'});
 
-Pressure.set('#element-3d-prevent', {}, {only: '3d', preventDefault: false});
+Pressure.set('#element-3d-prevent', {}, {only: 'mobile', preventDefault: false});
 
-Pressure.set('#element-force-prevent', {}, {only: 'force', preventDefault: false});
+Pressure.set('#element-force-prevent', {}, {only: 'desktop', preventDefault: false});
 
 Pressure.set('#polyfill-example', {
   change: function(force, event){

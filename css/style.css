@@ -141,9 +141,9 @@ footer{
 .element{
   width: 200px;
   padding: 20px;
-  background: #FFC800;
+  background: rgb(255,100,0);
   margin-bottom: 10px;
-  border-radius: 30px;
+  border-radius: 5px;
 }
 h3{
   margin-top: 0;
