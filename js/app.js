@@ -140,6 +140,15 @@ Pressure.set('#polyfill-example', {
   }
 }, {polyfill: true});
 
+Pressure.set('#polyfill-speed-example', {
+  change: function(force, event){
+    this.innerHTML = force;
+  },
+  end: function(){
+    this.innerHTML = 0;
+  }
+}, {polyfill: true, polyfillSpeed: 5000});
+
 // Twitter BTN
 window.twttr = (function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0],

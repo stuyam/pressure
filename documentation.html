@@ -62,6 +62,31 @@
         </li>
       </ul>
 
+      <div class="fixed-docs-nav">
+        <div class="container">
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <a class="nav-link active" href="#installation">Installation</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#setup">Setup</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#usage">Usage</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#jquery-usage">jQuery Usage</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#options">Options</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#helpers">Helpers</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
       <a name="installation"></a>
       <hr class="m-b-2 m-t-1">
 
@@ -253,6 +278,23 @@ Pressure.set('#stuart', {
             </div>
           </div>
 
+          <h4 class="text-light">Polyfill Speed</h4>
+          <p>If you are using the polyfill option, you can see the "polyfillSpeed" speed to determine how fast the polyfill takes to go from 0 to 1. The value is an integer in milliseconds and the default is 1000 (1 second).</p>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div id="polyfill-speed-example" style="width: 100%;padding: 10px;">Click on me on any device :)</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#polyfill-speed-example', {
+  change: function(force, event){
+    this.innerHTML = force;
+  }
+}, {polyfill: true, polyfillSpeed: 5000});
+// takes 5 seconds to go from a force value of 0 to 1
+// only on devices that do not support force touch or 3d touch</code></pre>
+            </div>
+          </div>
+
           <h4 class="text-light">Device Detection</h4>
           <p>With Pressure, the third paramater is an optional object of options that can be passed in. The first option is device targeting. Using the "only" keyword, you can define if you want pressure to run on ONLY Mac or ONLY iPhone.</p>
           <div class="doc-section">
@@ -315,6 +357,7 @@ Pressure.set('#stuart', {
           <hr class="m-b-2 m-t-1">
 
           <div class="h4 doc-title">6. Helpers</div>
+          <h5 class="text-light">Config:</h5>
           <p>You can use <code>Pressure.config()</code> to set default configurations for site wide setup. All of the configurations are the same as the options listed above.</p>
           <div class="alert alert-warning">
             <strong>Heads Up:</strong> If you have a config set, you can always overide the config on individual Pressure elements by passing in any of the options listed above to a specific Pressure block.
@@ -325,12 +368,14 @@ Pressure.set('#stuart', {
               <pre class="language-javascript"><code>// These are the default configs set by Pressure
 Pressure.config({
   polyfill: false,
+  polyfillSpeed: 1000,
   preventSelect: true,
   only: null
 });</code></pre>
             </div>
           </div>
 
+          <h5 class="text-light">Map:</h5>
           <p>You can use <code>Pressure.map()</code> to map a value from one range of values to another. It takes 5 params: <code>Pressure.map(inputValue, inputValueMin, inputValueMax, mapToMin, mapToMax);</code> Here is a good write up on how this works in the Processing framework: <a href="https://processing.org/reference/map_.html">Map Function</a>.</p>
           <div class="alert alert-success">When using the jQuery Pressure library, use <code>$.pressureMap()</code> rather than <code>Pressure.map()</code></div>
           <div class="doc-section">
@@ -356,6 +401,15 @@ Pressure.config({
 
     <script type="text/javascript" src="js/pressure.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript">
+      $(document).scroll(function() {
+        if($(this).scrollTop() > 67){
+          $('.fixed-docs-nav').show();
+        } else {
+          $('.fixed-docs-nav').hide();
+        }
+      });
+    </script>
     <!-- GitHub. -->
     <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
     <!-- Gitter Sidecar. -->
