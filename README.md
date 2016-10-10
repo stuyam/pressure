@@ -7,10 +7,10 @@
 
 Pressure is a JavaScript library that makes dealing with Apple's Force Touch and 3D Touch simple. Force Touch for new Macs and 3D Touch for the new iPhone 6s and 6s Plus, all bundled under one roof with a simple API that makes working with them painless.
 
-Head over to the [documentation](http://yamartino.github.com/pressure) website for installation instructions and how to use pressure.js
+Head over to the [documentation](http://pressurejs.com/documentation) website for installation instructions and how to use pressure.js
 
 ## Install
-download pressure.min.js or pressure.js files from GitHub or install with npm or bower
+Download pressure.min.js or pressure.js files from GitHub or install with npm or bower
 #### npm
 ```
 npm install pressure --save
@@ -100,7 +100,17 @@ $('#element').pressure({
 ###Polyfill Support
 With Pressure, the third paramater is an optional object of options that can be passed in. Using the "polyfill" keyword, you can enable polyfill support for the element. What this means is that if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the [main page](http://pressurejs.com) on a devices that does not support force or 3D touch and see for yourself how it works.
 ```javascript
-Pressure.set('#polyfill-example', {
+Pressure.set('#example', {
+  change: function(force, event){
+    this.innerHTML = force;
+  }
+}, {polyfill: true});
+```
+
+###Polyfill Speed
+With Pressure, the third paramater is an optional object of options that can be passed in. Using the "polyfill" keyword, you can enable polyfill support for the element. What this means is that if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the [main page](http://pressurejs.com) on a devices that does not support force or 3D touch and see for yourself how it works.
+```javascript
+Pressure.set('#example', {
   change: function(force, event){
     this.innerHTML = force;
   }
@@ -108,31 +118,31 @@ Pressure.set('#polyfill-example', {
 ```
 
 ### Only run on Force Touch trackpads (Mac)
-Set the option only to the type you want it to run on 'force' or '3d'
+Set the option only to the type you want it to run on 'desktop' or 'mobile'
 ```javascript
-$('#element').pressure({
+Pressure.set('#example',{
   change: function(force, event){
     console.log(force);
   },
-}, {only: 'force'});
+}, {only: 'desktop'});
 ```
 ### Only run on 3D Touch (iPhone 6s)
 ```javascript
-$('#element').pressure({
+Pressure.set('#example',{
   change: function(force, event){
     console.log(force);
   },
-}, {only: '3d'});
+}, {only: 'mobile'});
 ```
 
-### Change the preventDefault option
+### Change the preventSelect option
 The preventDefault option in "true" by default and it prevents the default actions that happen on 3D "peel and pop" actions and the Force "define word" actions as well as other defaults. To allow the defaults to run set preventDefault to "false"
 ```javascript
-$('#element').pressure({
+Pressure.set('#example',{
   change: function(force, event){
     console.log(force);
   },
-}, {preventDefault: false});
+}, {preventSelect: false});
 ```
 
 ## Helpers
