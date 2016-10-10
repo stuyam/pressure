@@ -3,14 +3,12 @@ $(function () {
 });
 
 Pressure.set('.device-circle', {
-  start: function(){
-    this.style.width = '10em';
-    this.style.height = '10em';
-  },
   change: function(force){
     console.log(force);
     this.style.width = Pressure.map(force, 0, 1, 10, $(this).data('size')) + 'em';
     this.style.height = Pressure.map(force, 0, 1, 10, $(this).data('size')) + 'em';
+    this.style.marginTop = '-' + Pressure.map(force, 0, 1, 10, $(this).data('size'))/2 + 'em';
+    this.style.marginLeft = '-' + Pressure.map(force, 0, 1, 10, $(this).data('size'))/2 + 'em';
   },
   startDeepPress: function(){
     this.style.backgroundColor = '#5bc0de';
@@ -21,6 +19,8 @@ Pressure.set('.device-circle', {
   end: function(){
     this.style.width = '10em';
     this.style.height = '10em';
+    this.style.marginTop = '-5em';
+    this.style.marginLeft = '-5em';
   }
 }, {polyfill: true});
 
