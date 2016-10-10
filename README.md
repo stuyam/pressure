@@ -108,13 +108,15 @@ Pressure.set('#example', {
 ```
 
 ###Polyfill Speed
-With Pressure, the third paramater is an optional object of options that can be passed in. Using the "polyfill" keyword, you can enable polyfill support for the element. What this means is that if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the [main page](http://pressurejs.com) on a devices that does not support force or 3D touch and see for yourself how it works.
+If you are using the polyfill option, you can see the "polyfillSpeed" speed to determine how fast the polyfill takes to go from 0 to 1. The value is an integer in milliseconds and the default is 1000 (1 second).
 ```javascript
 Pressure.set('#example', {
   change: function(force, event){
     this.innerHTML = force;
   }
-}, {polyfill: true});
+}, {polyfill: true, polyfillSpeed: 5000});
+// takes 5 seconds to go from a force value of 0 to 1
+// only on devices that do not support force touch or 3d touch
 ```
 
 ### Only run on Force Touch trackpads (Mac)
