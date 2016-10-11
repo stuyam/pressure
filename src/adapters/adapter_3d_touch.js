@@ -1,8 +1,8 @@
 /*
-This adapter is more iOS devices running iOS 10 or higher and support 3D touch.
+This adapter is more mobile devices that support 3D Touch.
 */
 
-class Adapter3DTouch extends BaseAdapter{
+class Adapter3DTouch extends Adapter{
 
   constructor(element){
     super(element);
@@ -25,7 +25,7 @@ class Adapter3DTouch extends BaseAdapter{
 
   support(iter, event){
     if(this.pressed === false && iter > 10){
-      this.failOrPolyfill(event);
+      this.element.failOrPolyfill(event);
     } else if(this.pressed === false){
       setTimeout(this.support.bind(this), 10, iter++, event);
     } else {

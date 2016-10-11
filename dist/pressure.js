@@ -143,49 +143,12 @@ var Element = function () {
   return Element;
 }();
 
-var BaseAdapter = function () {
-  function BaseAdapter(element) {
-    _classCallCheck(this, BaseAdapter);
-
-    this.element = element;
-    this.el = element.el;
-    this.block = element.block;
-    this.runClosure = element.runClosure;
-    this.pressed = false;
-    this.deepPressed = false;
-  }
-
-  _createClass(BaseAdapter, [{
-    key: "add",
-    value: function add(event, set) {
-      this.el.addEventListener(event, set, false);
-    }
-  }, {
-    key: "remove",
-    value: function remove(event, set) {
-      this.el.removeEventListener(event, set);
-    }
-  }, {
-    key: "setPressed",
-    value: function setPressed(boolean) {
-      this.pressed = boolean;
-    }
-  }, {
-    key: "setDeepPressed",
-    value: function setDeepPressed(boolean) {
-      this.deepPressed = boolean;
-    }
-  }]);
-
-  return BaseAdapter;
-}();
-
 /*
 This adapter is for Macs with Force Touch trackpads.
 */
 
-var AdapterForceTouch = function (_BaseAdapter) {
-  _inherits(AdapterForceTouch, _BaseAdapter);
+var AdapterForceTouch = function (_Adapter) {
+  _inherits(AdapterForceTouch, _Adapter);
 
   function AdapterForceTouch(element) {
     _classCallCheck(this, AdapterForceTouch);
@@ -302,14 +265,14 @@ var AdapterForceTouch = function (_BaseAdapter) {
   }]);
 
   return AdapterForceTouch;
-}(BaseAdapter);
+}(Adapter);
 
 /*
-This adapter is more iOS devices running iOS 10 or higher and support 3D touch.
+This adapter is more mobile devices that support 3D Touch.
 */
 
-var Adapter3DTouch = function (_BaseAdapter2) {
-  _inherits(Adapter3DTouch, _BaseAdapter2);
+var Adapter3DTouch = function (_Adapter2) {
+  _inherits(Adapter3DTouch, _Adapter2);
 
   function Adapter3DTouch(element) {
     _classCallCheck(this, Adapter3DTouch);
@@ -343,7 +306,7 @@ var Adapter3DTouch = function (_BaseAdapter2) {
     key: "support",
     value: function support(iter, event) {
       if (this.pressed === false && iter > 10) {
-        this.failOrPolyfill(event);
+        this.element.failOrPolyfill(event);
       } else if (this.pressed === false) {
         setTimeout(this.support.bind(this), 10, iter++, event);
       } else {
@@ -450,10 +413,15 @@ var Adapter3DTouch = function (_BaseAdapter2) {
   }]);
 
   return Adapter3DTouch;
-}(BaseAdapter);
+}(Adapter);
 
-var AdapterPolyfill = function (_BaseAdapter3) {
-  _inherits(AdapterPolyfill, _BaseAdapter3);
+/*
+This adapter is for devices that don't have Force Touch or 3D Touch
+support and have the 'polyfill' option turned on.
+*/
+
+var AdapterPolyfill = function (_Adapter3) {
+  _inherits(AdapterPolyfill, _Adapter3);
 
   function AdapterPolyfill(element) {
     _classCallCheck(this, AdapterPolyfill);
@@ -468,23 +436,10 @@ var AdapterPolyfill = function (_BaseAdapter3) {
   _createClass(AdapterPolyfill, [{
     key: "runEvent",
     value: function runEvent(event) {
-      this.start(event);
-      this.change(event);
-      this.end();
-    }
-  }, {
-    key: "start",
-    value: function start(event) {
       this.setPressed(true);
       this.runClosure('start', event);
-    }
-  }, {
-    key: "change",
-    value: function change(event) {
-      if (this.pressed) {
-        this.setPressed(true);
-        this.runForce(event);
-      }
+      this.runForce(event);
+      this.end();
     }
   }, {
     key: "end",
@@ -536,7 +491,7 @@ var AdapterPolyfill = function (_BaseAdapter3) {
   }]);
 
   return AdapterPolyfill;
-}(BaseAdapter);
+}(Adapter);
 
 // This class holds the states of the the Pressure config
 

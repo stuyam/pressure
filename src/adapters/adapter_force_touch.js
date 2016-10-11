@@ -2,7 +2,7 @@
 This adapter is for Macs with Force Touch trackpads.
 */
 
-class AdapterForceTouch extends BaseAdapter{
+class AdapterForceTouch extends Adapter{
 
   constructor(element){
     super(element);

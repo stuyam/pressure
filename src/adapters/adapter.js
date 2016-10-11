@@ -1,4 +1,8 @@
-class BaseAdapter{
+/*
+This is the base adapter from which all the other adapters extend.
+*/
+
+class Adapter{
 
   constructor(element){
     this.element = element;

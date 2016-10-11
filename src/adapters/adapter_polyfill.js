@@ -1,4 +1,9 @@
-class AdapterPolyfill extends BaseAdapter{
+/*
+This adapter is for devices that don't have Force Touch or 3D Touch
+support and have the 'polyfill' option turned on.
+*/
+
+class AdapterPolyfill extends Adapter{
 
   constructor(element){
     super(element);
@@ -7,21 +12,10 @@ class AdapterPolyfill extends BaseAdapter{
   }
 
   runEvent(event){
-    this.start(event);
-    this.change(event);
-    this.end();
-  }
-
-  start(event){
     this.setPressed(true);
     this.runClosure('start', event);
-  }
-
-  change(event){
-    if(this.pressed){
-      this.setPressed(true);
-      this.runForce(event);
-    }
+    this.runForce(event);
+    this.end();
   }
 
   end(){
