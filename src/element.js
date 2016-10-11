@@ -21,7 +21,7 @@ class Element{
     }
     // unsupported if it is requesting a type and your browser is of other type
     else{
-      this.el.addEventListener(isMobile ? 'touchstart' : 'mousedown', (event) => new BaseAdapter(this).runClosure('unsupported', event), false);
+      this.el.addEventListener(isMobile ? 'touchstart' : 'mousedown', (event) => this.runClosure('unsupported', event), false);
     }
   }
 

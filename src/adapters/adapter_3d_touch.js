@@ -17,8 +17,10 @@ class Adapter3DTouch extends Adapter{
   // Support check methods
   start(){
     this.add('touchforcechange', (event) => {
-      this.setPressed(true);
-      this.runClosure('change', this.selectTouch(event).force, event);
+      if(event.touches.length > 0){
+        this.setPressed(true);
+        this.runClosure('change', this.selectTouch(event).force, event);
+      }
     });
     this.add('touchstart', this.support.bind(this, 0));
   }

@@ -91,7 +91,7 @@ var Element = function () {
         // unsupported if it is requesting a type and your browser is of other type
         else {
             this.el.addEventListener(isMobile ? 'touchstart' : 'mousedown', function (event) {
-              return new BaseAdapter(_this).runClosure('unsupported', event);
+              return _this.runClosure('unsupported', event);
             }, false);
           }
     }
@@ -134,6 +134,47 @@ var Element = function () {
   }]);
 
   return Element;
+}();
+
+/*
+This is the base adapter from which all the other adapters extend.
+*/
+
+var Adapter = function () {
+  function Adapter(element) {
+    _classCallCheck(this, Adapter);
+
+    this.element = element;
+    this.el = element.el;
+    this.block = element.block;
+    this.runClosure = element.runClosure;
+    this.pressed = false;
+    this.deepPressed = false;
+  }
+
+  _createClass(Adapter, [{
+    key: "add",
+    value: function add(event, set) {
+      this.el.addEventListener(event, set, false);
+    }
+  }, {
+    key: "remove",
+    value: function remove(event, set) {
+      this.el.removeEventListener(event, set);
+    }
+  }, {
+    key: "setPressed",
+    value: function setPressed(boolean) {
+      this.pressed = boolean;
+    }
+  }, {
+    key: "setDeepPressed",
+    value: function setDeepPressed(boolean) {
+      this.deepPressed = boolean;
+    }
+  }]);
+
+  return Adapter;
 }();
 
 /*
@@ -290,8 +331,10 @@ var Adapter3DTouch = function (_Adapter2) {
       var _this8 = this;
 
       this.add('touchforcechange', function (event) {
-        _this8.setPressed(true);
-        _this8.runClosure('change', _this8.selectTouch(event).force, event);
+        if (event.touches.length > 0) {
+          _this8.setPressed(true);
+          _this8.runClosure('change', _this8.selectTouch(event).force, event);
+        }
       });
       this.add('touchstart', this.support.bind(this, 0));
     }
