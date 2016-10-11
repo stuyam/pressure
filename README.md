@@ -7,7 +7,7 @@
 
 Pressure is a JavaScript library for handling both Force Touch and 3D Touch on the web, bundled under one library with a simple API that makes working with them painless.
 
-Head over to the [documentation](http://pressurejs.com/documentation.html) website for installation instructions and how to use pressure.js
+Head over to the [documentation](http://pressurejs.com/documentation.html) for installation instructions and more details on pressure.js.
 
 ## Install
 Download pressure.min.js or pressure.js files from GitHub or install with npm or bower
