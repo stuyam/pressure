@@ -5,7 +5,7 @@
 
 ![Pressure Example](http://pressurejs.com/img/pressure.gif)
 
-Pressure is a JavaScript library that makes dealing with Apple's Force Touch and 3D Touch simple. Force Touch for new Macs and 3D Touch for the new iPhone 6s and 6s Plus, all bundled under one roof with a simple API that makes working with them painless.
+Pressure is a JavaScript library for handling both Force Touch and 3D Touch on the web, bundled under one library with a simple API that makes working with them painless.
 
 Head over to the [documentation](http://pressurejs.com/documentation.html) website for installation instructions and how to use pressure.js
 
@@ -119,7 +119,7 @@ Pressure.set('#example', {
 // only on devices that do not support force touch or 3d touch
 ```
 
-### Only run on Force Touch trackpads (Mac)
+### Only run on Force Touch trackpads (Desktop)
 Set the option only to the type you want it to run on 'desktop' or 'mobile'
 ```javascript
 Pressure.set('#example',{
@@ -128,7 +128,7 @@ Pressure.set('#example',{
   },
 }, {only: 'desktop'});
 ```
-### Only run on 3D Touch (iPhone 6s)
+### Only run on 3D Touch (Mobile)
 ```javascript
 Pressure.set('#example',{
   change: function(force, event){
