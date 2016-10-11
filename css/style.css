@@ -81,6 +81,19 @@ header{
   cursor: pointer;
 }
 
+.why-pressure-item{
+  width: 100%;
+  border: 1px solid #eee;
+  text-align: center;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+.why-pressure-item img{
+  max-width: 100px;
+  padding-bottom: 1rem;
+}
+
 .mighty-2{
   margin: 0;
 }

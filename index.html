@@ -1,7 +1,6 @@
 <!doctype>
 <html>
   <head>
-    <script src="https://use.typekit.net/uqo0cpv.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="css/poet.css">
@@ -25,6 +24,9 @@
         <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
           <a class="navbar-brand" style="line-height: 1.3;" href="index.html">Pressure.js</a>
           <ul class="nav navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#why-pressure">Why Pressure?</a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="index.html#examples">Examples</a>
             </li>
@@ -52,6 +54,7 @@
 
         <div class="row">
           <div class="col-sm-3 m-b-1">
+            <!-- http://cssdevices.io -->
             <div class="cd-iphone-6 cd-fill-parent">
               <div class="cd-body">
                 <div class="cd-sound"></div>
@@ -69,6 +72,7 @@
           </div>
 
           <div class="col-sm-9">
+            <!-- http://cssdevices.io -->
             <div class="cd-mac cd-pro cd-fill-parent">
               <div class="cd-top"></div>
               <div class="cd-bottom"></div>
@@ -88,6 +92,41 @@
       </div>
     </header>
     <div class="container">
+
+      <a name="why-pressure"></a>
+      <h3 class="m-b-2">Why Pressure?</h3>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="why-pressure-item">
+            <img src="img/icons/devices.svg">
+            <h3>All Devices</h3>
+            <p class="text-left">Devices implement force differently from one another. Pressure has a simple to use API that works across all devices by default.</p>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="why-pressure-item">
+            <img src="img/icons/flask.svg">
+            <h3>Support Testing</h3>
+            <p class="text-left">It can be hard to know if a device supports Force Touch or 3D Touch. With Pressure, you can determine supported and upsupported devices.</p>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="why-pressure-item">
+            <img src="img/icons/drag.svg">
+            <h3>Multitouch Support</h3>
+            <p class="text-left">Pressure will handle multiple fingers on the screen pushing with different amounts of pressure on different element simultaneously.</p>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="why-pressure-item">
+            <img src="img/icons/stopwatch.svg">
+            <h3>Polyfill</h3>
+            <p class="text-left">Don't have a force sensitive device? Not a problem, use the optional polyfill to use time as a replacement for force.</p>
+          </div>
+        </div>
+      </div>
+
+      <hr class="m-t-2 m-b-3"/>
 
       <h3>Device Support</h3>
       <div class="text-success text-bold">Future devices and browsers that support pressure will be added when they are released.</div>
