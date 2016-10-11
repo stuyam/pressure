@@ -1,59 +1,64 @@
 class AdapterPolyfill extends BaseAdapter{
 
-  constructor(element, firstEvent){
+  constructor(element){
     super(element);
-    this.$start();
-    this.$change();
-    this.$end();
+    // this.$start();
+    // this.$change();
+    this.end();
     this.force = 0;
     this.increment = 10/Config.get('polyfillSpeed', this.element.options);
-    this.firstRun(firstEvent)
+    // this.firstRun(firstEvent);
   }
 
-  firstRun(event){
-    this.startLogic(event);
-    this.changeLogic(event);
+  runEvent(event){
+    this.start(event);
+    this.change(event);
   }
 
-  $start(){
-    // call 'start' when the touch goes down
-    this.add(isMobile ? 'touchstart' : 'mousedown', (event) => {
-      this.startLogic(event);
-    });
+  // $start(){
+  //   // call 'start' when the touch goes down
+  //   this.add(isMobile ? 'touchstart' : 'mousedown', (event) => {
+  //     this.startLogic(event);
+  //   });
+  // }
+
+  start(event){
+    console.warn(this.supported, 1);
+    if(this.supported === false){
+      this.setPressed(true);
+      this.runClosure('start', event);
+    }
   }
 
-  startLogic(event){
-    this.setPressed(true);
-    this.runClosure('start', event);
-  }
+  // $change(){
+  //   this.add(isMobile ? 'touchstart' : 'mousedown', this.changeLogic.bind(this));
+  // }
 
-  $change(){
-    this.add(isMobile ? 'touchstart' : 'mousedown', this.changeLogic.bind(this));
-  }
-
-  changeLogic(event){
-    if(this.pressed){
+  change(event){
+    console.warn(this.supported, 2);
+    if(this.pressed && this.supported === false){
       this.setPressed(true);
       this.runForce(event);
     }
   }
 
-  $end(){
+  end(){
     // call 'end' when the mouse goes up or leaves the element
-    this.add(isMobile ? 'touchend' : 'mouseup', () => {
+    if(isMobile){
+      this.add('touchend', this.endEvent.bind(this));
+    } else {
+      this.add('mouseup', this.endEvent.bind(this));
+      this.add('mouseleave', this.endEvent.bind(this));
+    }
+  }
+
+  endEvent(){
+    if(this.supported === false){
       this.endDeepPress();
       this.setPressed(false);
       this.runClosure('end');
       this.force = 0;
-    });
-    this.add('mouseleave', () => {
-      this.endDeepPress();
-      if(this.pressed){
-        this.runClosure('end');
-      }
-      this.setPressed(false);
-      this.force = 0;
-    });
+    }
   }
 
   startDeepPress(event){

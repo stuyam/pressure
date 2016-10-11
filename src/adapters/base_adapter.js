@@ -6,6 +6,7 @@ class BaseAdapter{
     this.block = element.block;
     this.pressed = false;
     this.deepPressed = false;
+    this.supported = false;
     this.preventSelect();
   }
 
@@ -25,10 +26,18 @@ class BaseAdapter{
     this.deepPressed = boolean;
   }
 
+  setSupport(boolean){
+    this.supported = boolean;
+  }
+
   failOrPolyfill(event){
     // is the polyfill option set
     if(Config.get('polyfill', this.element.options)){
-      this.polyfill = new AdapterPolyfill(this.element, event);
+      // if the polyfill is not set, set it
+      if(this.polyfill instanceof AdapterPolyfill === false){
+        this.polyfill = new AdapterPolyfill(this.element);
+      }
+      this.polyfill.runEvent(event);
     } else {
       this.runClosure('unsupported', event);
     }

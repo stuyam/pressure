@@ -107,6 +107,7 @@ var BaseAdapter = function () {
     this.block = element.block;
     this.pressed = false;
     this.deepPressed = false;
+    this.supported = false;
     this.preventSelect();
   }
 
@@ -131,11 +132,20 @@ var BaseAdapter = function () {
       this.deepPressed = boolean;
     }
   }, {
+    key: "setSupport",
+    value: function setSupport(boolean) {
+      this.supported = boolean;
+    }
+  }, {
     key: "failOrPolyfill",
     value: function failOrPolyfill(event) {
       // is the polyfill option set
       if (Config.get('polyfill', this.element.options)) {
-        this.polyfill = new AdapterPolyfill(this.element, event);
+        // if the polyfill is not set, set it
+        if (this.polyfill instanceof AdapterPolyfill === false) {
+          this.polyfill = new AdapterPolyfill(this.element);
+        }
+        this.polyfill.runEvent(event);
       } else {
         this.runClosure('unsupported', event);
       }
@@ -183,11 +193,11 @@ var AdapterForceTouch = function (_BaseAdapter) {
 
     var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterForceTouch).call(this, element));
 
-    _this2.$start();
-    _this2.$change();
-    _this2.$startDeepPress();
-    _this2.$endDeepPress();
-    _this2.$end();
+    _this2.start();
+    _this2.change();
+    _this2.startDeepPress();
+    _this2.endDeepPress();
+    _this2.end();
     return _this2;
   }
 
@@ -195,14 +205,15 @@ var AdapterForceTouch = function (_BaseAdapter) {
 
 
   _createClass(AdapterForceTouch, [{
-    key: "$start",
-    value: function $start() {
+    key: "start",
+    value: function start() {
       this.add('webkitmouseforcewillbegin', this.startForce.bind(this));
       this.add('mousedown', this.support.bind(this));
     }
   }, {
     key: "startForce",
     value: function startForce(event) {
+      this.setSupport(true);
       this.setPressed(true);
       this.runClosure('start', event);
     }
@@ -210,12 +221,13 @@ var AdapterForceTouch = function (_BaseAdapter) {
     key: "support",
     value: function support(event) {
       if (this.pressed === false) {
+        this.setSupport(false);
         this.failOrPolyfill(event);
       }
     }
   }, {
-    key: "$change",
-    value: function $change() {
+    key: "change",
+    value: function change() {
       var _this3 = this;
 
       this.add('webkitmouseforcechanged', function (event) {
@@ -225,8 +237,8 @@ var AdapterForceTouch = function (_BaseAdapter) {
       });
     }
   }, {
-    key: "$startDeepPress",
-    value: function $startDeepPress() {
+    key: "startDeepPress",
+    value: function startDeepPress() {
       var _this4 = this;
 
       this.add('webkitmouseforcedown', function (event) {
@@ -237,8 +249,8 @@ var AdapterForceTouch = function (_BaseAdapter) {
       });
     }
   }, {
-    key: "$endDeepPress",
-    value: function $endDeepPress() {
+    key: "endDeepPress",
+    value: function endDeepPress() {
       var _this5 = this;
 
       this.add('webkitmouseforceup', function () {
@@ -255,8 +267,8 @@ var AdapterForceTouch = function (_BaseAdapter) {
       });
     }
   }, {
-    key: "$end",
-    value: function $end() {
+    key: "end",
+    value: function end() {
       var _this6 = this;
 
       // call 'end' when the mouse goes up or leaves the element
@@ -308,11 +320,11 @@ var Adapter3DTouch = function (_BaseAdapter2) {
     var _this7 = _possibleConstructorReturn(this, Object.getPrototypeOf(Adapter3DTouch).call(this, element));
 
     if (supportsTouchForceChange) {
-      _this7.$start();
+      _this7.start();
     } else {
-      _this7.$start_legacy();
+      _this7.start_legacy();
     }
-    _this7.$end();
+    _this7.end();
     return _this7;
   }
 
@@ -320,8 +332,8 @@ var Adapter3DTouch = function (_BaseAdapter2) {
 
 
   _createClass(Adapter3DTouch, [{
-    key: "$start",
-    value: function $start() {
+    key: "start",
+    value: function start() {
       var _this8 = this;
 
       this.add('touchforcechange', function (event) {
@@ -342,8 +354,8 @@ var Adapter3DTouch = function (_BaseAdapter2) {
       }
     }
   }, {
-    key: "$start_legacy",
-    value: function $start_legacy() {
+    key: "start_legacy",
+    value: function start_legacy() {
       var _this9 = this;
 
       this.add('touchstart', function (event) {
@@ -383,8 +395,8 @@ var Adapter3DTouch = function (_BaseAdapter2) {
       }
     }
   }, {
-    key: "$end",
-    value: function $end() {
+    key: "end",
+    value: function end() {
       var _this10 = this;
 
       // call 'end' when the touch goes up
@@ -446,75 +458,78 @@ var Adapter3DTouch = function (_BaseAdapter2) {
 var AdapterPolyfill = function (_BaseAdapter3) {
   _inherits(AdapterPolyfill, _BaseAdapter3);
 
-  function AdapterPolyfill(element, firstEvent) {
+  function AdapterPolyfill(element) {
     _classCallCheck(this, AdapterPolyfill);
+
+    // this.$start();
+    // this.$change();
 
     var _this11 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterPolyfill).call(this, element));
 
-    _this11.$start();
-    _this11.$change();
-    _this11.$end();
+    _this11.end();
     _this11.force = 0;
     _this11.increment = 10 / Config.get('polyfillSpeed', _this11.element.options);
-    _this11.firstRun(firstEvent);
+    // this.firstRun(firstEvent);
     return _this11;
   }
 
   _createClass(AdapterPolyfill, [{
-    key: "firstRun",
-    value: function firstRun(event) {
-      this.startLogic(event);
-      this.changeLogic(event);
+    key: "runEvent",
+    value: function runEvent(event) {
+      this.start(event);
+      this.change(event);
     }
-  }, {
-    key: "$start",
-    value: function $start() {
-      var _this12 = this;
 
-      // call 'start' when the touch goes down
-      this.add(isMobile ? 'touchstart' : 'mousedown', function (event) {
-        _this12.startLogic(event);
-      });
-    }
+    // $start(){
+    //   // call 'start' when the touch goes down
+    //   this.add(isMobile ? 'touchstart' : 'mousedown', (event) => {
+    //     this.startLogic(event);
+    //   });
+    // }
+
   }, {
-    key: "startLogic",
-    value: function startLogic(event) {
-      this.setPressed(true);
-      this.runClosure('start', event);
+    key: "start",
+    value: function start(event) {
+      console.warn(this.supported, 1);
+      if (this.supported === false) {
+        this.setPressed(true);
+        this.runClosure('start', event);
+      }
     }
+
+    // $change(){
+    //   this.add(isMobile ? 'touchstart' : 'mousedown', this.changeLogic.bind(this));
+    // }
+
   }, {
-    key: "$change",
-    value: function $change() {
-      this.add(isMobile ? 'touchstart' : 'mousedown', this.changeLogic.bind(this));
-    }
-  }, {
-    key: "changeLogic",
-    value: function changeLogic(event) {
-      if (this.pressed) {
+    key: "change",
+    value: function change(event) {
+      console.warn(this.supported, 2);
+      if (this.pressed && this.supported === false) {
         this.setPressed(true);
         this.runForce(event);
       }
     }
   }, {
-    key: "$end",
-    value: function $end() {
-      var _this13 = this;
-
+    key: "end",
+    value: function end() {
       // call 'end' when the mouse goes up or leaves the element
-      this.add(isMobile ? 'touchend' : 'mouseup', function () {
-        _this13.endDeepPress();
-        _this13.setPressed(false);
-        _this13.runClosure('end');
-        _this13.force = 0;
-      });
-      this.add('mouseleave', function () {
-        _this13.endDeepPress();
-        if (_this13.pressed) {
-          _this13.runClosure('end');
-        }
-        _this13.setPressed(false);
-        _this13.force = 0;
-      });
+      if (isMobile) {
+        this.add('touchend', this.endEvent.bind(this));
+      } else {
+        this.add('mouseup', this.endEvent.bind(this));
+        this.add('mouseleave', this.endEvent.bind(this));
+      }
+    }
+  }, {
+    key: "endEvent",
+    value: function endEvent() {
+      if (this.supported === false) {
+        this.endDeepPress();
+        this.setPressed(false);
+        this.runClosure('end');
+        this.force = 0;
+      }
     }
   }, {
     key: "startDeepPress",

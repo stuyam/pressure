@@ -6,31 +6,33 @@ class AdapterForceTouch extends BaseAdapter{
 
   constructor(element){
     super(element);
-    this.$start();
-    this.$change();
-    this.$startDeepPress();
-    this.$endDeepPress();
-    this.$end();
+    this.start();
+    this.change();
+    this.startDeepPress();
+    this.endDeepPress();
+    this.end();
   }
 
   // Support check methods
-  $start(){
+  start(){
     this.add('webkitmouseforcewillbegin', this.startForce.bind(this));
     this.add('mousedown', this.support.bind(this));
   }
 
   startForce(event){
+    this.setSupport(true);
     this.setPressed(true);
     this.runClosure('start', event);
   }
 
   support(event){
     if(this.pressed === false){
+      this.setSupport(false);
       this.failOrPolyfill(event);
     }
   }
 
-  $change(){
+  change(){
     this.add('webkitmouseforcechanged', (event) => {
       if(this.pressed && event.webkitForce > 0){
         this.runClosure('change', this.normalizeForce(event.webkitForce), event);
@@ -38,7 +40,7 @@ class AdapterForceTouch extends BaseAdapter{
     });
   }
 
-  $startDeepPress(){
+  startDeepPress(){
     this.add('webkitmouseforcedown', (event) => {
       if(this.pressed){
         this.setDeepPressed(true);
@@ -47,7 +49,7 @@ class AdapterForceTouch extends BaseAdapter{
     });
   }
 
-  $endDeepPress(){
+  endDeepPress(){
     this.add('webkitmouseforceup', () => {
       if(this.pressed && this.deepPressed){
         this.runClosure('endDeepPress');
@@ -62,7 +64,7 @@ class AdapterForceTouch extends BaseAdapter{
     });
   }
 
-  $end(){
+  end(){
     // call 'end' when the mouse goes up or leaves the element
     this.add('mouseup', () => {
       if(this.pressed){

@@ -7,15 +7,15 @@ class Adapter3DTouch extends BaseAdapter{
   constructor(element){
     super(element);
     if(supportsTouchForceChange){
-      this.$start();
+      this.start();
     } else {
-      this.$start_legacy();
+      this.start_legacy();
     }
-    this.$end();
+    this.end();
   }
 
   // Support check methods
-  $start(){
+  start(){
     this.add('touchforcechange', (event) => {
       this.setPressed(true);
       this.runClosure('change', this.selectTouch(event).force, event);
@@ -33,7 +33,7 @@ class Adapter3DTouch extends BaseAdapter{
     }
   }
 
-  $start_legacy(){
+  start_legacy(){
     this.add('touchstart', (event) => {
       this.forceValueTest = event.touches[0].force;
       this.support_legacy(0, event);
@@ -68,7 +68,7 @@ class Adapter3DTouch extends BaseAdapter{
     }
   }
 
-  $end(){
+  end(){
     // call 'end' when the touch goes up
     this.add('touchend', () => {
       if(this.pressed){
