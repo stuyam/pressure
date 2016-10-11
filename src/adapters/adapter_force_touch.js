@@ -20,15 +20,13 @@ class AdapterForceTouch extends BaseAdapter{
   }
 
   startForce(event){
-    this.setSupport(true);
     this.setPressed(true);
     this.runClosure('start', event);
   }
 
   support(event){
     if(this.pressed === false){
-      this.setSupport(false);
-      this.failOrPolyfill(event);
+      this.element.failOrPolyfill(event);
     }
   }
 

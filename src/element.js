@@ -1,11 +1,13 @@
 class Element{
 
   constructor(element, block, options){
-    this.element = element;
+    this.el = element;
     this.block = block;
-    this.type = Config.get('only', options);
     this.options = options;
+    this.type = Config.get('only', options);
     this.routeEvents();
+    this.preventSelect();
+    this.polyfill = new AdapterPolyfill(this);
   }
 
   routeEvents(){
@@ -19,7 +21,36 @@ class Element{
     }
     // unsupported if it is requesting a type and your browser is of other type
     else{
-      this.element.addEventListener(isMobile ? 'touchstart' : 'mousedown', (event) => new BaseAdapter(this).runClosure('unsupported', event), false);
+      this.el.addEventListener(isMobile ? 'touchstart' : 'mousedown', (event) => new BaseAdapter(this).runClosure('unsupported', event), false);
+    }
+  }
+
+  failOrPolyfill(event){
+    // is the polyfill option set
+    if(Config.get('polyfill', this.options)){
+      this.polyfill.runEvent(event);
+    } else {
+      this.runClosure('unsupported', event);
+    }
+  }
+
+  // run the closure if the property exists in the object
+  runClosure(method){
+    if(this.block.hasOwnProperty(method)){
+      // call the closure method and apply nth arguments if they exist
+      this.block[method].apply(this.el || this, Array.prototype.slice.call(arguments, 1));
+    }
+  }
+
+  // prevent the default action of text selection, "peak & pop", and force touch special feature
+  preventSelect(){
+    if(Config.get('preventSelect', this.options)){
+      this.el.style.webkitTouchCallout = "none";
+      this.el.style.webkitUserSelect = "none";
+      this.el.style.khtmlUserSelect = "none";
+      this.el.style.MozUserSelect = "none";
+      this.el.style.msUserSelect = "none";
+      this.el.style.userSelect = "none";
     }
   }
 

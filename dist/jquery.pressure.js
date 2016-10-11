@@ -66,11 +66,13 @@ var Element = function () {
   function Element(element, block, options) {
     _classCallCheck(this, Element);
 
-    this.element = element;
+    this.el = element;
     this.block = block;
-    this.type = Config.get('only', options);
     this.options = options;
+    this.type = Config.get('only', options);
     this.routeEvents();
+    this.preventSelect();
+    this.polyfill = new AdapterPolyfill(this);
   }
 
   _createClass(Element, [{
@@ -88,63 +90,16 @@ var Element = function () {
         }
         // unsupported if it is requesting a type and your browser is of other type
         else {
-            this.element.addEventListener(isMobile ? 'touchstart' : 'mousedown', function (event) {
+            this.el.addEventListener(isMobile ? 'touchstart' : 'mousedown', function (event) {
               return new BaseAdapter(_this).runClosure('unsupported', event);
             }, false);
           }
-    }
-  }]);
-
-  return Element;
-}();
-
-var BaseAdapter = function () {
-  function BaseAdapter(element) {
-    _classCallCheck(this, BaseAdapter);
-
-    this.element = element;
-    this.el = element.element;
-    this.block = element.block;
-    this.pressed = false;
-    this.deepPressed = false;
-    this.supported = false;
-    this.preventSelect();
-  }
-
-  _createClass(BaseAdapter, [{
-    key: "add",
-    value: function add(event, set) {
-      this.el.addEventListener(event, set, false);
-    }
-  }, {
-    key: "remove",
-    value: function remove(event, set) {
-      this.el.removeEventListener(event, set);
-    }
-  }, {
-    key: "setPressed",
-    value: function setPressed(boolean) {
-      this.pressed = boolean;
-    }
-  }, {
-    key: "setDeepPressed",
-    value: function setDeepPressed(boolean) {
-      this.deepPressed = boolean;
-    }
-  }, {
-    key: "setSupport",
-    value: function setSupport(boolean) {
-      this.supported = boolean;
     }
   }, {
     key: "failOrPolyfill",
     value: function failOrPolyfill(event) {
       // is the polyfill option set
-      if (Config.get('polyfill', this.element.options)) {
-        // if the polyfill is not set, set it
-        if (this.polyfill instanceof AdapterPolyfill === false) {
-          this.polyfill = new AdapterPolyfill(this.element);
-        }
+      if (Config.get('polyfill', this.options)) {
         this.polyfill.runEvent(event);
       } else {
         this.runClosure('unsupported', event);
@@ -167,7 +122,7 @@ var BaseAdapter = function () {
   }, {
     key: "preventSelect",
     value: function preventSelect() {
-      if (Config.get('preventSelect', this.element.options)) {
+      if (Config.get('preventSelect', this.options)) {
         this.el.style.webkitTouchCallout = "none";
         this.el.style.webkitUserSelect = "none";
         this.el.style.khtmlUserSelect = "none";
@@ -175,6 +130,43 @@ var BaseAdapter = function () {
         this.el.style.msUserSelect = "none";
         this.el.style.userSelect = "none";
       }
+    }
+  }]);
+
+  return Element;
+}();
+
+var BaseAdapter = function () {
+  function BaseAdapter(element) {
+    _classCallCheck(this, BaseAdapter);
+
+    this.element = element;
+    this.el = element.el;
+    this.block = element.block;
+    this.runClosure = element.runClosure;
+    this.pressed = false;
+    this.deepPressed = false;
+  }
+
+  _createClass(BaseAdapter, [{
+    key: "add",
+    value: function add(event, set) {
+      this.el.addEventListener(event, set, false);
+    }
+  }, {
+    key: "remove",
+    value: function remove(event, set) {
+      this.el.removeEventListener(event, set);
+    }
+  }, {
+    key: "setPressed",
+    value: function setPressed(boolean) {
+      this.pressed = boolean;
+    }
+  }, {
+    key: "setDeepPressed",
+    value: function setDeepPressed(boolean) {
+      this.deepPressed = boolean;
     }
   }]);
 
@@ -213,7 +205,6 @@ var AdapterForceTouch = function (_BaseAdapter) {
   }, {
     key: "startForce",
     value: function startForce(event) {
-      this.setSupport(true);
       this.setPressed(true);
       this.runClosure('start', event);
     }
@@ -221,8 +212,7 @@ var AdapterForceTouch = function (_BaseAdapter) {
     key: "support",
     value: function support(event) {
       if (this.pressed === false) {
-        this.setSupport(false);
-        this.failOrPolyfill(event);
+        this.element.failOrPolyfill(event);
       }
     }
   }, {
@@ -461,15 +451,10 @@ var AdapterPolyfill = function (_BaseAdapter3) {
   function AdapterPolyfill(element) {
     _classCallCheck(this, AdapterPolyfill);
 
-    // this.$start();
-    // this.$change();
-
     var _this11 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterPolyfill).call(this, element));
 
-    _this11.end();
     _this11.force = 0;
-    _this11.increment = 10 / Config.get('polyfillSpeed', _this11.element.options);
-    // this.firstRun(firstEvent);
+    _this11.increment = 10 / Config.get('polyfillSpeed', element.options);
     return _this11;
   }
 
@@ -478,34 +463,18 @@ var AdapterPolyfill = function (_BaseAdapter3) {
     value: function runEvent(event) {
       this.start(event);
       this.change(event);
+      this.end();
     }
-
-    // $start(){
-    //   // call 'start' when the touch goes down
-    //   this.add(isMobile ? 'touchstart' : 'mousedown', (event) => {
-    //     this.startLogic(event);
-    //   });
-    // }
-
   }, {
     key: "start",
     value: function start(event) {
-      console.warn(this.supported, 1);
-      if (this.supported === false) {
-        this.setPressed(true);
-        this.runClosure('start', event);
-      }
+      this.setPressed(true);
+      this.runClosure('start', event);
     }
-
-    // $change(){
-    //   this.add(isMobile ? 'touchstart' : 'mousedown', this.changeLogic.bind(this));
-    // }
-
   }, {
     key: "change",
     value: function change(event) {
-      console.warn(this.supported, 2);
-      if (this.pressed && this.supported === false) {
+      if (this.pressed) {
         this.setPressed(true);
         this.runForce(event);
       }
@@ -524,7 +493,7 @@ var AdapterPolyfill = function (_BaseAdapter3) {
   }, {
     key: "endEvent",
     value: function endEvent() {
-      if (this.supported === false) {
+      if (this.pressed) {
         this.endDeepPress();
         this.setPressed(false);
         this.runClosure('end');

@@ -2,41 +2,23 @@ class AdapterPolyfill extends BaseAdapter{
 
   constructor(element){
     super(element);
-    // this.$start();
-    // this.$change();
-    this.end();
     this.force = 0;
-    this.increment = 10/Config.get('polyfillSpeed', this.element.options);
-    // this.firstRun(firstEvent);
+    this.increment = 10 / Config.get('polyfillSpeed', element.options);
   }
 
   runEvent(event){
     this.start(event);
     this.change(event);
+    this.end();
   }
-
-  // $start(){
-  //   // call 'start' when the touch goes down
-  //   this.add(isMobile ? 'touchstart' : 'mousedown', (event) => {
-  //     this.startLogic(event);
-  //   });
-  // }
 
   start(event){
-    console.warn(this.supported, 1);
-    if(this.supported === false){
-      this.setPressed(true);
-      this.runClosure('start', event);
-    }
+    this.setPressed(true);
+    this.runClosure('start', event);
   }
 
-  // $change(){
-  //   this.add(isMobile ? 'touchstart' : 'mousedown', this.changeLogic.bind(this));
-  // }
-
   change(event){
-    console.warn(this.supported, 2);
-    if(this.pressed && this.supported === false){
+    if(this.pressed){
       this.setPressed(true);
       this.runForce(event);
     }
@@ -53,7 +35,7 @@ class AdapterPolyfill extends BaseAdapter{
   }
 
   endEvent(){
-    if(this.supported === false){
+    if(this.pressed){
       this.endDeepPress();
       this.setPressed(false);
       this.runClosure('end');
