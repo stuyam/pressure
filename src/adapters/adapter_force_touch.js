@@ -30,9 +30,9 @@ class AdapterForceTouch extends Adapter{
     return this.reachOne(map(force, 1, 3, 0, 1));
   }
 
-  // if the force value is above 0.999 set the force to 1
+  // if the force value is above 0.995 set the force to 1
   reachOne(force){
-    return force > 0.999 ? 1 : force;
+    return force > 0.995 ? 1 : force;
   }
 
 }
