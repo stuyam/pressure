@@ -308,11 +308,23 @@ var Adapter3DTouch = function (_Adapter2) {
     value: function bindEvents() {
       if (supportsTouchForceChange) {
         this.add('touchforcechange', this.start.bind(this));
-        this.add('touchstart', this._support.bind(this));
+        this.add('touchstart', this.support.bind(this, 0));
         this.add('touchend', this._endPress.bind(this));
       } else {
         this.add('touchstart', this.startLegacyPress.bind(this));
         this.add('touchend', this._endPress.bind(this));
+      }
+    }
+  }, {
+    key: "support",
+    value: function support(iter, event) {
+      if (this.isPressed() === false) {
+        if (iter > 10) {
+          this.element.failOrPolyfill(event);
+        } else {
+          iter++;
+          setTimeout(this.support.bind(this), 10, iter, event);
+        }
       }
     }
   }, {
@@ -327,7 +339,7 @@ var Adapter3DTouch = function (_Adapter2) {
     key: "startLegacyPress",
     value: function startLegacyPress() {
       this.forceValueTest = event.touches[0].force;
-      this.supportLegacyTouch(0, event);
+      this.supportLegacyPress(0, event);
     }
   }, {
     key: "supportLegacyPress",
@@ -339,9 +351,10 @@ var Adapter3DTouch = function (_Adapter2) {
         this._startPress(event);
         this.loopForce(event);
       } else if (iter <= 10) {
-        setTimeout(this.support_legacy.bind(this, iter++, event), 10);
+        iter++;
+        setTimeout(this.supportLegacyPress.bind(this), 10, iter, event);
       } else {
-        this.failOrPolyfill(event);
+        this.element.failOrPolyfill(event);
       }
     }
   }, {

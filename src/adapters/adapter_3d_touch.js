@@ -12,11 +12,22 @@ class Adapter3DTouch extends Adapter{
   bindEvents(){
     if(supportsTouchForceChange){
       this.add('touchforcechange', this.start.bind(this));
-      this.add('touchstart', this._support.bind(this));
+      this.add('touchstart', this.support.bind(this, 0));
       this.add('touchend', this._endPress.bind(this));
     } else {
       this.add('touchstart', this.startLegacyPress.bind(this));
       this.add('touchend', this._endPress.bind(this));
+    }
+  }
+
+  support(iter, event){
+    if(this.isPressed() === false){
+      if(iter > 10){
+        this.element.failOrPolyfill(event);
+      } else {
+        iter++;
+        setTimeout(this.support.bind(this), 10, iter, event);
+      }
     }
   }
 
@@ -29,7 +40,7 @@ class Adapter3DTouch extends Adapter{
 
   startLegacyPress(){
     this.forceValueTest = event.touches[0].force;
-    this.supportLegacyTouch(0, event);
+    this.supportLegacyPress(0, event);
   }
 
   supportLegacyPress(iter, event){
@@ -40,9 +51,10 @@ class Adapter3DTouch extends Adapter{
       this._startPress(event);
       this.loopForce(event);
     } else if(iter <= 10) {
-      setTimeout(this.support_legacy.bind(this, iter++, event), 10);
+      iter++
+      setTimeout(this.supportLegacyPress.bind(this), 10, iter, event);
     } else{
-      this.failOrPolyfill(event);
+      this.element.failOrPolyfill(event);
     }
   }
 
