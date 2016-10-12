@@ -6,93 +6,52 @@ class Adapter3DTouch extends Adapter{
 
   constructor(element){
     super(element);
+    this.bindEvents();
+  }
+
+  bindEvents(){
     if(supportsTouchForceChange){
-      this.start();
+      this.add('touchforcechange', this.start.bind(this));
+      this.add('touchstart', this._support.bind(this));
+      this.add('touchend', this._endPress.bind(this));
     } else {
-      this.start_legacy();
-    }
-    this.end();
-  }
-
-  // Support check methods
-  start(){
-    this.add('touchforcechange', (event) => {
-      if(event.touches.length > 0){
-        this.setPressed(true);
-        this.runClosure('change', this.selectTouch(event).force, event);
-      }
-    });
-    this.add('touchstart', this.support.bind(this, 0));
-  }
-
-  support(iter, event){
-    if(this.pressed === false && iter > 10){
-      this.element.failOrPolyfill(event);
-    } else if(this.pressed === false){
-      setTimeout(this.support.bind(this), 10, iter++, event);
-    } else {
-      this.runClosure('start', event);
+      this.add('touchstart', this.startLegacyPress.bind(this));
+      this.add('touchend', this._endPress.bind(this));
     }
   }
 
-  start_legacy(){
-    this.add('touchstart', (event) => {
-      this.forceValueTest = event.touches[0].force;
-      this.support_legacy(0, event);
-    });
+  start(event){
+    if(event.touches.length > 0){
+      this._startPress(event);
+      this.runClosure('change', this.selectTouch(event).force, event);
+    }
   }
 
-  support_legacy(iter, event){
+  startLegacyPress(){
+    this.forceValueTest = event.touches[0].force;
+    this.supportLegacyTouch(0, event);
+  }
+
+  supportLegacyPress(iter, event){
     // this checks up to 10 times on a touch to see if the touch can read a force value
     // if the force value has changed it means the device supports pressure
     // more info from this issue https://github.com/yamartino/pressure/issues/15
     if(event.touches[0].force !== this.forceValueTest){
-      this.started(event);
+      this._startPress(event);
+      this.loopForce(event);
     } else if(iter <= 10) {
-      setTimeout(this.support_legacy.bind(this), 10, iter++, event);
+      setTimeout(this.support_legacy.bind(this, iter++, event), 10);
     } else{
       this.failOrPolyfill(event);
     }
   }
 
-  started(event){
-    this.setPressed(true);
-    this.runClosure('start', event);
-    this.runForce(event);
-  }
-
-  runForce(event){
-    if(this.pressed) {
-      this.setPressed(true);
+  loopForce(event){
+    if(this.isPressed()) {
       this.touch = this.selectTouch(event);
-      setTimeout(this.runForce.bind(this), 10, event);
+      setTimeout(this.loopForce.bind(this, event), 10);
       this.runClosure('change', this.touch.force, event);
     }
-  }
-
-  end(){
-    // call 'end' when the touch goes up
-    this.add('touchend', () => {
-      if(this.pressed){
-        this.endDeepPress();
-        this.setPressed(false);
-        this.runClosure('end');
-      }
-    });
-  }
-
-  startDeepPress(event){
-    if(this.deepPressed === false){
-      this.runClosure('startDeepPress', event);
-    }
-    this.setDeepPressed(true);
-  }
-
-  endDeepPress(){
-    if(this.deepPressed === true){
-      this.runClosure('endDeepPress');
-    }
-    this.setDeepPressed(false);
   }
 
   // link up the touch point to the correct element, this is to support multitouch
@@ -111,7 +70,7 @@ class Adapter3DTouch extends Adapter{
 
   // return the touch and run a start or end for deep press
   returnTouch(touch, event){
-    touch.force >= 0.5 ? this.startDeepPress(event) : this.endDeepPress();
+    touch.force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
     return touch;
   }
 

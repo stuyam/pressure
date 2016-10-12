@@ -159,6 +159,7 @@ You can use ```Pressure.config()``` to set default configurations for site wide 
 // These are the default configs set by Pressure
 Pressure.config({
   polyfill: false,
+  polyfillSpeed: 1000,
   preventDefault: true,
   only: null
 });

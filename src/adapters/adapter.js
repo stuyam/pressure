@@ -9,24 +9,64 @@ class Adapter{
     this.el = element.el;
     this.block = element.block;
     this.runClosure = element.runClosure;
-    this.pressed = false;
-    this.deepPressed = false;
   }
 
   add(event, set){
     this.el.addEventListener(event, set, false);
   }
 
-  remove(event, set){
-    this.el.removeEventListener(event, set);
-  }
-
   setPressed(boolean){
-    this.pressed = boolean;
+    this.element.pressed = boolean;
   }
 
   setDeepPressed(boolean){
-    this.deepPressed = boolean;
+    this.element.deepPressed = boolean;
+  }
+
+  isPressed(){
+    return this.element.pressed;
+  }
+
+  isDeepPressed(){
+    return this.element.deepPressed;
+  }
+
+  _support(event){
+    console.log(this.isPressed(), 2);
+    if(this.isPressed() === false){
+      this.element.failOrPolyfill(event);
+    }
+  }
+
+  _startPress(event){
+    console.log(this.isPressed(), 1);
+    if(this.isPressed() === false){
+      this.setPressed(true);
+      this.runClosure('start', event);
+    }
+  }
+
+  _startDeepPress(event){
+    if(this.isPressed() && this.isDeepPressed() === false){
+      this.setDeepPressed(true);
+      this.runClosure('startDeepPress', event);
+    }
+  }
+
+  _endDeepPress(){
+    if(this.isPressed() && this.isDeepPressed()){
+      this.setDeepPressed(false);
+      this.runClosure('endDeepPress');
+    }
+  }
+
+  _endPress(){
+    if(this.isPressed()){
+      this._endDeepPress();
+      this.setPressed(false);
+      this.runClosure('end');
+      this.element.polyfill.force = 0;
+    }
   }
 
 }

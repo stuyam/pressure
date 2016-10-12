@@ -8,6 +8,8 @@ class Element{
     this.routeEvents();
     this.preventSelect();
     this.polyfill = new AdapterPolyfill(this);
+    this.pressed = false;
+    this.deepPressed = false;
   }
 
   routeEvents(){

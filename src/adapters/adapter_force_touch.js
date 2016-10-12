@@ -6,77 +6,23 @@ class AdapterForceTouch extends Adapter{
 
   constructor(element){
     super(element);
-    this.start();
-    this.change();
-    this.startDeepPress();
-    this.endDeepPress();
-    this.end();
+    this.bindEvents();
   }
 
-  // Support check methods
-  start(){
-    this.add('webkitmouseforcewillbegin', this.startForce.bind(this));
-    this.add('mousedown', this.support.bind(this));
+  bindEvents(){
+    this.add('webkitmouseforcewillbegin', this._startPress.bind(this));
+    this.add('mousedown', this._support.bind(this));
+    this.add('webkitmouseforcechanged', this.change.bind(this));
+    this.add('webkitmouseforcedown', this._startDeepPress.bind(this));
+    this.add('webkitmouseforceup', this._endDeepPress.bind(this));
+    this.add('mouseleave', this._endPress.bind(this));
+    this.add('mouseup', this._endPress.bind(this));
   }
 
-  startForce(event){
-    this.setPressed(true);
-    this.runClosure('start', event);
-  }
-
-  support(event){
-    if(this.pressed === false){
-      this.element.failOrPolyfill(event);
+  change(event){
+    if(this.isPressed() && event.webkitForce > 0){
+      this.runClosure('change', this.normalizeForce(event.webkitForce), event);
     }
-  }
-
-  change(){
-    this.add('webkitmouseforcechanged', (event) => {
-      if(this.pressed && event.webkitForce > 0){
-        this.runClosure('change', this.normalizeForce(event.webkitForce), event);
-      }
-    });
-  }
-
-  startDeepPress(){
-    this.add('webkitmouseforcedown', (event) => {
-      if(this.pressed){
-        this.setDeepPressed(true);
-        this.runClosure('startDeepPress', event);
-      }
-    });
-  }
-
-  endDeepPress(){
-    this.add('webkitmouseforceup', () => {
-      if(this.pressed && this.deepPressed){
-        this.runClosure('endDeepPress');
-      }
-      this.setDeepPressed(false);
-    });
-    this.add('mouseleave', () => {
-      if(this.pressed && this.deepPressed){
-        this.runClosure('endDeepPress');
-      }
-      this.setDeepPressed(false);
-    });
-  }
-
-  end(){
-    // call 'end' when the mouse goes up or leaves the element
-    this.add('mouseup', () => {
-      if(this.pressed){
-        this.runClosure('end');
-      }
-      this.setPressed(false);
-    });
-
-    this.add('mouseleave', () => {
-      if(this.pressed){
-        this.runClosure('end');
-      }
-      this.setPressed(false);
-    });
   }
 
   // make the force the standard 0 to 1 scale and not the 1 to 3 scale
