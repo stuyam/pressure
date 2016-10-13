@@ -31,15 +31,7 @@ class Adapter{
     return this.element.deepPressed;
   }
 
-  _support(event){
-    console.log(this.isPressed(), 2);
-    if(this.isPressed() === false){
-      this.element.failOrPolyfill(event);
-    }
-  }
-
   _startPress(event){
-    console.log(this.isPressed(), 1);
     if(this.isPressed() === false){
       this.setPressed(true);
       this.runClosure('start', event);

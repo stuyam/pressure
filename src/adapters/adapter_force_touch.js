@@ -11,12 +11,18 @@ class AdapterForceTouch extends Adapter{
 
   bindEvents(){
     this.add('webkitmouseforcewillbegin', this._startPress.bind(this));
-    this.add('mousedown', this._support.bind(this));
+    this.add('mousedown', this.support.bind(this));
     this.add('webkitmouseforcechanged', this.change.bind(this));
     this.add('webkitmouseforcedown', this._startDeepPress.bind(this));
     this.add('webkitmouseforceup', this._endDeepPress.bind(this));
     this.add('mouseleave', this._endPress.bind(this));
     this.add('mouseup', this._endPress.bind(this));
+  }
+
+  support(event){
+    if(this.isPressed() === false){
+      this.element.failOrPolyfill(event);
+    }
   }
 
   change(event){

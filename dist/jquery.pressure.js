@@ -115,7 +115,7 @@ var Element = function () {
     value: function runClosure(method) {
       if (this.block.hasOwnProperty(method)) {
         // call the closure method and apply nth arguments if they exist
-        this.block[method].apply(this.el || this, Array.prototype.slice.call(arguments, 1));
+        this.block[method].apply(this.el, Array.prototype.slice.call(arguments, 1));
       }
     }
 
@@ -178,17 +178,8 @@ var Adapter = function () {
       return this.element.deepPressed;
     }
   }, {
-    key: "_support",
-    value: function _support(event) {
-      console.log(this.isPressed(), 2);
-      if (this.isPressed() === false) {
-        this.element.failOrPolyfill(event);
-      }
-    }
-  }, {
     key: "_startPress",
     value: function _startPress(event) {
-      console.log(this.isPressed(), 1);
       if (this.isPressed() === false) {
         this.setPressed(true);
         this.runClosure('start', event);
@@ -245,12 +236,19 @@ var AdapterForceTouch = function (_Adapter) {
     key: "bindEvents",
     value: function bindEvents() {
       this.add('webkitmouseforcewillbegin', this._startPress.bind(this));
-      this.add('mousedown', this._support.bind(this));
+      this.add('mousedown', this.support.bind(this));
       this.add('webkitmouseforcechanged', this.change.bind(this));
       this.add('webkitmouseforcedown', this._startDeepPress.bind(this));
       this.add('webkitmouseforceup', this._endDeepPress.bind(this));
       this.add('mouseleave', this._endPress.bind(this));
       this.add('mouseup', this._endPress.bind(this));
+    }
+  }, {
+    key: "support",
+    value: function support(event) {
+      if (this.isPressed() === false) {
+        this.element.failOrPolyfill(event);
+      }
     }
   }, {
     key: "change",
