@@ -67,7 +67,7 @@ class Adapter{
   }
 
   _endPress(){
-    if(this.isPressed()){
+    if(this.isPressed() && Config.get('polyfill', this.options)){
       this.nativeSupport = false;
       this._endDeepPress();
       this.setPressed(false);
@@ -76,9 +76,12 @@ class Adapter{
   }
 
   runPolyfill(event){
-    this.increment = 10 / Config.get('polyfillSpeed', this.options);
-    this.runClosure('start', event);
-    this.loopPolyfillForce(0, event);
+    // if(this.isPressed() && this.nativeSupport === false){
+      this.increment = 10 / Config.get('polyfillSpeed', this.options);
+      this.setPressed(true);
+      this.runClosure('start', event);
+      this.loopPolyfillForce(0, event);
+    // }
   }
 
   loopPolyfillForce(force, event){

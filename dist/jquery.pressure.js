@@ -24,7 +24,7 @@ if ($ !== false) {
   $.pressureConfig = function (options) {
     Config.set(options);
   }, $.pressureMap = function (x, in_min, in_max, out_min, out_max) {
-    return map(x, in_min, in_max, out_min, out_max);
+    return map.apply(null, arguments);
   };
 } else {
   throw new Error("Pressure jQuery requires jQuery is loaded before your jquery.pressure.min.js file");
@@ -206,7 +206,7 @@ var Adapter = function () {
   }, {
     key: "_endPress",
     value: function _endPress() {
-      if (this.isPressed()) {
+      if (this.isPressed() && Config.get('polyfill', this.options)) {
         this.nativeSupport = false;
         this._endDeepPress();
         this.setPressed(false);
@@ -216,9 +216,12 @@ var Adapter = function () {
   }, {
     key: "runPolyfill",
     value: function runPolyfill(event) {
+      // if(this.isPressed() && this.nativeSupport === false){
       this.increment = 10 / Config.get('polyfillSpeed', this.options);
+      this.setPressed(true);
       this.runClosure('start', event);
       this.loopPolyfillForce(0, event);
+      // }
     }
   }, {
     key: "loopPolyfillForce",
@@ -337,14 +340,11 @@ var Adapter3DTouch = function (_Adapter2) {
   }, {
     key: "support",
     value: function support(iter, event) {
-      this.setPressed(true);
-      if (this.nativeSupport === false) {
-        if (iter > 10) {
-          this.failOrPolyfill(event);
-        } else {
-          iter++;
-          setTimeout(this.support.bind(this), 10, iter, event);
-        }
+      if (iter > 10) {
+        this.failOrPolyfill(event);
+      } else {
+        iter++;
+        setTimeout(this.support.bind(this, iter, event), 10);
       }
     }
   }, {

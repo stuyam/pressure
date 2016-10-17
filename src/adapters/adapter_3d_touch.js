@@ -28,14 +28,11 @@ class Adapter3DTouch extends Adapter{
   }
 
   support(iter, event){
-    this.setPressed(true);
-    if(this.nativeSupport === false){
-      if(iter > 10){
-        this.failOrPolyfill(event);
-      } else {
-        iter++;
-        setTimeout(this.support.bind(this), 10, iter, event);
-      }
+    if(iter > 10){
+      this.failOrPolyfill(event);
+    } else {
+      iter++;
+      setTimeout(this.support.bind(this, iter, event), 10);
     }
   }
 

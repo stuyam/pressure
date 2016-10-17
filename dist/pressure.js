@@ -33,7 +33,7 @@ var Pressure = {
   // the map method allows for interpolating a value from one range of values to another
   // example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
   map: function map(x, in_min, in_max, out_min, out_max) {
-    return _map(x, in_min, in_max, out_min, out_max);
+    return _map.apply(null, arguments);
   }
 };
 
@@ -213,7 +213,7 @@ var Adapter = function () {
   }, {
     key: "_endPress",
     value: function _endPress() {
-      if (this.isPressed()) {
+      if (this.isPressed() && Config.get('polyfill', this.options)) {
         this.nativeSupport = false;
         this._endDeepPress();
         this.setPressed(false);
@@ -223,9 +223,12 @@ var Adapter = function () {
   }, {
     key: "runPolyfill",
     value: function runPolyfill(event) {
+      // if(this.isPressed() && this.nativeSupport === false){
       this.increment = 10 / Config.get('polyfillSpeed', this.options);
+      this.setPressed(true);
       this.runClosure('start', event);
       this.loopPolyfillForce(0, event);
+      // }
     }
   }, {
     key: "loopPolyfillForce",
@@ -344,14 +347,11 @@ var Adapter3DTouch = function (_Adapter2) {
   }, {
     key: "support",
     value: function support(iter, event) {
-      this.setPressed(true);
-      if (this.nativeSupport === false) {
-        if (iter > 10) {
-          this.failOrPolyfill(event);
-        } else {
-          iter++;
-          setTimeout(this.support.bind(this), 10, iter, event);
-        }
+      if (iter > 10) {
+        this.failOrPolyfill(event);
+      } else {
+        iter++;
+        setTimeout(this.support.bind(this, iter, event), 10);
       }
     }
   }, {
