@@ -72,7 +72,6 @@ var Element = function () {
     this.type = Config.get('only', options);
     this.routeEvents();
     this.preventSelect();
-    this.polyfill = new AdapterPolyfill(this);
   }
 
   _createClass(Element, [{
@@ -94,6 +93,17 @@ var Element = function () {
               return _this.runClosure('unsupported', event);
             }, false);
           }
+    }
+
+    // run the closure if the property exists in the object
+
+  }, {
+    key: "runClosure",
+    value: function runClosure(method) {
+      if (this.block.hasOwnProperty(method)) {
+        // call the closure method and apply nth arguments if they exist
+        this.block[method].apply(this.el, Array.prototype.slice.call(arguments, 1));
+      }
     }
 
     // prevent the default action of text selection, "peak & pop", and force touch special feature
@@ -126,6 +136,8 @@ var Adapter = function () {
     this.element = element;
     this.el = element.el;
     this.block = element.block;
+    this.runClosure = element.runClosure;
+    this.options = element.options;
     this.pressed = false;
     this.deepPressed = false;
     this.nativeSupport = false;
@@ -155,17 +167,6 @@ var Adapter = function () {
     key: "isDeepPressed",
     value: function isDeepPressed() {
       return this.deepPressed;
-    }
-
-    // run the closure if the property exists in the object
-
-  }, {
-    key: "runClosure",
-    value: function runClosure(method) {
-      if (this.block.hasOwnProperty(method)) {
-        // call the closure method and apply nth arguments if they exist
-        this.block[method].apply(this.el, Array.prototype.slice.call(arguments, 1));
-      }
     }
   }, {
     key: "failOrPolyfill",
@@ -210,24 +211,23 @@ var Adapter = function () {
         this._endDeepPress();
         this.setPressed(false);
         this.runClosure('end');
-        this.element.polyfill.force = 0;
       }
     }
   }, {
     key: "runPolyfill",
     value: function runPolyfill(event) {
-      this.increment = 10 / Config.get('polyfillSpeed', element.options);
+      this.increment = 10 / Config.get('polyfillSpeed', this.options);
       this.runClosure('start', event);
-      this.loopForce(event, 0);
+      this.loopPolyfillForce(0, event);
     }
   }, {
     key: "loopPolyfillForce",
-    value: function loopPolyfillForce(event, force) {
+    value: function loopPolyfillForce(force, event) {
       if (this.isPressed()) {
         this.runClosure('change', force, event);
         force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
         force = force + this.increment > 1 ? 1 : force + this.increment;
-        setTimeout(this.loopForce.bind(this, force), 10, event);
+        setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
       }
     }
   }]);
@@ -350,6 +350,7 @@ var Adapter3DTouch = function (_Adapter2) {
   }, {
     key: "startLegacyPress",
     value: function startLegacyPress() {
+      this.setPressed(true);
       this.forceValueTest = event.touches[0].force;
       this.supportLegacyPress(0, event);
     }
@@ -366,7 +367,7 @@ var Adapter3DTouch = function (_Adapter2) {
         iter++;
         setTimeout(this.supportLegacyPress.bind(this), 10, iter, event);
       } else {
-        this.element.failOrPolyfill(event);
+        this.failOrPolyfill(event);
       }
     }
   }, {

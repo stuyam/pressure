@@ -8,6 +8,8 @@ class Adapter{
     this.element = element;
     this.el = element.el;
     this.block = element.block;
+    this.runClosure = element.runClosure;
+    this.options = element.options;
     this.pressed = false;
     this.deepPressed = false;
     this.nativeSupport = false;
@@ -31,14 +33,6 @@ class Adapter{
 
   isDeepPressed(){
     return this.deepPressed;
-  }
-
-  // run the closure if the property exists in the object
-  runClosure(method){
-    if(this.block.hasOwnProperty(method)){
-      // call the closure method and apply nth arguments if they exist
-      this.block[method].apply(this.el, Array.prototype.slice.call(arguments, 1));
-    }
   }
 
   failOrPolyfill(event){
@@ -78,22 +72,21 @@ class Adapter{
       this._endDeepPress();
       this.setPressed(false);
       this.runClosure('end');
-      this.element.polyfill.force = 0;
     }
   }
 
   runPolyfill(event){
-    this.increment = 10 / Config.get('polyfillSpeed', element.options);
+    this.increment = 10 / Config.get('polyfillSpeed', this.options);
     this.runClosure('start', event);
-    this.loopForce(event, 0);
+    this.loopPolyfillForce(0, event);
   }
 
-  loopPolyfillForce(event, force){
+  loopPolyfillForce(force, event){
     if(this.isPressed()) {
       this.runClosure('change', force, event);
       force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
       force = force + this.increment > 1 ? 1 : force + this.increment;
-      setTimeout(this.loopForce.bind(this, force), 10, event);
+      setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
     }
   }
 
