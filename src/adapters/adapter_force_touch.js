@@ -20,8 +20,9 @@ class AdapterForceTouch extends Adapter{
   }
 
   support(event){
-    if(this.isPressed() === false){
-      this.element.failOrPolyfill(event);
+    this.setPressed(true);
+    if(this.nativeSupport === false){
+      this.failOrPolyfill(event);
     }
   }
 

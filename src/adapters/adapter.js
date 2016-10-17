@@ -8,7 +8,9 @@ class Adapter{
     this.element = element;
     this.el = element.el;
     this.block = element.block;
-    this.runClosure = element.runClosure;
+    this.pressed = false;
+    this.deepPressed = false;
+    this.nativeSupport = false;
   }
 
   add(event, set){
@@ -16,23 +18,41 @@ class Adapter{
   }
 
   setPressed(boolean){
-    this.element.pressed = boolean;
+    this.pressed = boolean;
   }
 
   setDeepPressed(boolean){
-    this.element.deepPressed = boolean;
+    this.deepPressed = boolean;
   }
 
   isPressed(){
-    return this.element.pressed;
+    return this.pressed;
   }
 
   isDeepPressed(){
-    return this.element.deepPressed;
+    return this.deepPressed;
+  }
+
+  // run the closure if the property exists in the object
+  runClosure(method){
+    if(this.block.hasOwnProperty(method)){
+      // call the closure method and apply nth arguments if they exist
+      this.block[method].apply(this.el, Array.prototype.slice.call(arguments, 1));
+    }
+  }
+
+  failOrPolyfill(event){
+    // is the polyfill option set
+    if(Config.get('polyfill', this.options)){
+      this.runPolyfill(event);
+    } else {
+      this.runClosure('unsupported', event);
+    }
   }
 
   _startPress(event){
     if(this.isPressed() === false){
+      this.nativeSupport = true;
       this.setPressed(true);
       this.runClosure('start', event);
     }
@@ -54,10 +74,26 @@ class Adapter{
 
   _endPress(){
     if(this.isPressed()){
+      this.nativeSupport = false;
       this._endDeepPress();
       this.setPressed(false);
       this.runClosure('end');
       this.element.polyfill.force = 0;
+    }
+  }
+
+  runPolyfill(event){
+    this.increment = 10 / Config.get('polyfillSpeed', element.options);
+    this.runClosure('start', event);
+    this.loopForce(event, 0);
+  }
+
+  loopPolyfillForce(event, force){
+    if(this.isPressed()) {
+      this.runClosure('change', force, event);
+      force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
+      force = force + this.increment > 1 ? 1 : force + this.increment;
+      setTimeout(this.loopForce.bind(this, force), 10, event);
     }
   }
 

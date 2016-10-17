@@ -8,8 +8,6 @@ class Element{
     this.routeEvents();
     this.preventSelect();
     this.polyfill = new AdapterPolyfill(this);
-    this.pressed = false;
-    this.deepPressed = false;
   }
 
   routeEvents(){
@@ -24,23 +22,6 @@ class Element{
     // unsupported if it is requesting a type and your browser is of other type
     else{
       this.el.addEventListener(isMobile ? 'touchstart' : 'mousedown', (event) => this.runClosure('unsupported', event), false);
-    }
-  }
-
-  failOrPolyfill(event){
-    // is the polyfill option set
-    if(Config.get('polyfill', this.options)){
-      this.polyfill.runEvent(event);
-    } else {
-      this.runClosure('unsupported', event);
-    }
-  }
-
-  // run the closure if the property exists in the object
-  runClosure(method){
-    if(this.block.hasOwnProperty(method)){
-      // call the closure method and apply nth arguments if they exist
-      this.block[method].apply(this.el, Array.prototype.slice.call(arguments, 1));
     }
   }
 

@@ -73,8 +73,6 @@ var Element = function () {
     this.routeEvents();
     this.preventSelect();
     this.polyfill = new AdapterPolyfill(this);
-    this.pressed = false;
-    this.deepPressed = false;
   }
 
   _createClass(Element, [{
@@ -96,27 +94,6 @@ var Element = function () {
               return _this.runClosure('unsupported', event);
             }, false);
           }
-    }
-  }, {
-    key: "failOrPolyfill",
-    value: function failOrPolyfill(event) {
-      // is the polyfill option set
-      if (Config.get('polyfill', this.options)) {
-        this.polyfill.runEvent(event);
-      } else {
-        this.runClosure('unsupported', event);
-      }
-    }
-
-    // run the closure if the property exists in the object
-
-  }, {
-    key: "runClosure",
-    value: function runClosure(method) {
-      if (this.block.hasOwnProperty(method)) {
-        // call the closure method and apply nth arguments if they exist
-        this.block[method].apply(this.el, Array.prototype.slice.call(arguments, 1));
-      }
     }
 
     // prevent the default action of text selection, "peak & pop", and force touch special feature
@@ -149,7 +126,9 @@ var Adapter = function () {
     this.element = element;
     this.el = element.el;
     this.block = element.block;
-    this.runClosure = element.runClosure;
+    this.pressed = false;
+    this.deepPressed = false;
+    this.nativeSupport = false;
   }
 
   _createClass(Adapter, [{
@@ -160,27 +139,49 @@ var Adapter = function () {
   }, {
     key: "setPressed",
     value: function setPressed(boolean) {
-      this.element.pressed = boolean;
+      this.pressed = boolean;
     }
   }, {
     key: "setDeepPressed",
     value: function setDeepPressed(boolean) {
-      this.element.deepPressed = boolean;
+      this.deepPressed = boolean;
     }
   }, {
     key: "isPressed",
     value: function isPressed() {
-      return this.element.pressed;
+      return this.pressed;
     }
   }, {
     key: "isDeepPressed",
     value: function isDeepPressed() {
-      return this.element.deepPressed;
+      return this.deepPressed;
+    }
+
+    // run the closure if the property exists in the object
+
+  }, {
+    key: "runClosure",
+    value: function runClosure(method) {
+      if (this.block.hasOwnProperty(method)) {
+        // call the closure method and apply nth arguments if they exist
+        this.block[method].apply(this.el, Array.prototype.slice.call(arguments, 1));
+      }
+    }
+  }, {
+    key: "failOrPolyfill",
+    value: function failOrPolyfill(event) {
+      // is the polyfill option set
+      if (Config.get('polyfill', this.options)) {
+        this.runPolyfill(event);
+      } else {
+        this.runClosure('unsupported', event);
+      }
     }
   }, {
     key: "_startPress",
     value: function _startPress(event) {
       if (this.isPressed() === false) {
+        this.nativeSupport = true;
         this.setPressed(true);
         this.runClosure('start', event);
       }
@@ -205,10 +206,28 @@ var Adapter = function () {
     key: "_endPress",
     value: function _endPress() {
       if (this.isPressed()) {
+        this.nativeSupport = false;
         this._endDeepPress();
         this.setPressed(false);
         this.runClosure('end');
         this.element.polyfill.force = 0;
+      }
+    }
+  }, {
+    key: "runPolyfill",
+    value: function runPolyfill(event) {
+      this.increment = 10 / Config.get('polyfillSpeed', element.options);
+      this.runClosure('start', event);
+      this.loopForce(event, 0);
+    }
+  }, {
+    key: "loopPolyfillForce",
+    value: function loopPolyfillForce(event, force) {
+      if (this.isPressed()) {
+        this.runClosure('change', force, event);
+        force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
+        force = force + this.increment > 1 ? 1 : force + this.increment;
+        setTimeout(this.loopForce.bind(this, force), 10, event);
       }
     }
   }]);
@@ -246,8 +265,9 @@ var AdapterForceTouch = function (_Adapter) {
   }, {
     key: "support",
     value: function support(event) {
-      if (this.isPressed() === false) {
-        this.element.failOrPolyfill(event);
+      this.setPressed(true);
+      if (this.nativeSupport === false) {
+        this.failOrPolyfill(event);
       }
     }
   }, {
@@ -307,23 +327,24 @@ var Adapter3DTouch = function (_Adapter2) {
       }
     }
   }, {
-    key: "support",
-    value: function support(iter, event) {
-      if (this.isPressed() === false) {
-        if (iter > 10) {
-          this.element.failOrPolyfill(event);
-        } else {
-          iter++;
-          setTimeout(this.support.bind(this), 10, iter, event);
-        }
-      }
-    }
-  }, {
     key: "start",
     value: function start(event) {
       if (event.touches.length > 0) {
         this._startPress(event);
         this.runClosure('change', this.selectTouch(event).force, event);
+      }
+    }
+  }, {
+    key: "support",
+    value: function support(iter, event) {
+      this.setPressed(true);
+      if (this.nativeSupport === false) {
+        if (iter > 10) {
+          this.failOrPolyfill(event);
+        } else {
+          iter++;
+          setTimeout(this.support.bind(this), 10, iter, event);
+        }
       }
     }
   }, {
@@ -386,45 +407,6 @@ var Adapter3DTouch = function (_Adapter2) {
   }]);
 
   return Adapter3DTouch;
-}(Adapter);
-
-/*
-This adapter is for devices that don't have Force Touch or 3D Touch
-support and have the 'polyfill' option turned on.
-*/
-
-var AdapterPolyfill = function (_Adapter3) {
-  _inherits(AdapterPolyfill, _Adapter3);
-
-  function AdapterPolyfill(element) {
-    _classCallCheck(this, AdapterPolyfill);
-
-    var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterPolyfill).call(this, element, 0));
-
-    _this4.increment = 10 / Config.get('polyfillSpeed', element.options);
-    _this4.force = 0;
-    return _this4;
-  }
-
-  _createClass(AdapterPolyfill, [{
-    key: "runEvent",
-    value: function runEvent(event) {
-      this._startPress(event);
-      this.loopForce(event);
-    }
-  }, {
-    key: "loopForce",
-    value: function loopForce(event) {
-      if (this.isPressed()) {
-        this.runClosure('change', this.force, event);
-        this.force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
-        this.force = this.force + this.increment > 1 ? 1 : this.force + this.increment;
-        setTimeout(this.loopForce.bind(this), 10, event);
-      }
-    }
-  }]);
-
-  return AdapterPolyfill;
 }(Adapter);
 
 // This class holds the states of the the Pressure config

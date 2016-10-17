@@ -20,21 +20,22 @@ class Adapter3DTouch extends Adapter{
     }
   }
 
-  support(iter, event){
-    if(this.isPressed() === false){
-      if(iter > 10){
-        this.element.failOrPolyfill(event);
-      } else {
-        iter++;
-        setTimeout(this.support.bind(this), 10, iter, event);
-      }
-    }
-  }
-
   start(event){
     if(event.touches.length > 0){
       this._startPress(event);
       this.runClosure('change', this.selectTouch(event).force, event);
+    }
+  }
+
+  support(iter, event){
+    this.setPressed(true);
+    if(this.nativeSupport === false){
+      if(iter > 10){
+        this.failOrPolyfill(event);
+      } else {
+        iter++;
+        setTimeout(this.support.bind(this), 10, iter, event);
+      }
     }
   }
 
