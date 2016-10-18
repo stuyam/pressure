@@ -11,6 +11,7 @@ class Adapter{
     this.options = element.options;
     this.pressed = false;
     this.deepPressed = false;
+    this.runKey = Math.random();
   }
 
   add(event, set){

@@ -27,7 +27,7 @@ class Adapter3DTouch extends Adapter{
     }
   }
 
-  supportTest(iter, event, runKey = Math.random()){
+  supportTest(iter, event, runKey = this.runKey){
     if(this.isPressed() === false){
       if(iter <= 6){
         iter++;
@@ -41,7 +41,7 @@ class Adapter3DTouch extends Adapter{
   // this checks up to 6 times on a touch to see if the touch can read a force value
   // if the force value has changed it means the device supports pressure
   // more info from this issue https://github.com/yamartino/pressure/issues/15
-  supportLegacyTest(iter, event, runKey = Math.random(), force = event.touches[0].force){
+  supportLegacyTest(iter, event, runKey = this.runKey, force = event.touches[0].force){
     if(force !== this.forceValueTest){
       this._startPress(event);
       this.loopForce(event);
