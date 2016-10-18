@@ -414,17 +414,17 @@ var Adapter3DTouch = function (_Adapter2) {
 
 var Config = {
 
-  // 'true' prevents the selecting of text and images via css properties
-  preventSelect: true,
-
-  // 'mobile' or 'desktop' will make it run only on that type of device
-  only: null,
-
   // 'false' will make polyfill not run when pressure is not supported and the 'unsupported' method will be called
   polyfill: true,
 
   // milliseconds it takes to go from 0 to 1 for the polyfill
   polyfillSpeed: 1000,
+
+  // 'true' prevents the selecting of text and images via css properties
+  preventSelect: true,
+
+  // 'mobile' or 'desktop' will make it run only on that type of device
+  only: null,
 
   // this will get the correct config / option settings for the current pressure check
   get: function get(option, options) {
