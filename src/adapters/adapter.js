@@ -48,31 +48,31 @@ class Adapter{
 
   _startPress(event){
     if(this.isPressed() === false){
+      this.setPressed(true);
       this.runClosure('start', event);
     }
-    this.setPressed(true);
   }
 
   _startDeepPress(event){
     if(this.isPressed() && this.isDeepPressed() === false){
+      this.setDeepPressed(true);
       this.runClosure('startDeepPress', event);
     }
-    this.setDeepPressed(true);
   }
 
   _endDeepPress(){
     if(this.isPressed() && this.isDeepPressed()){
+      this.setDeepPressed(false);
       this.runClosure('endDeepPress');
     }
-    this.setDeepPressed(false);
   }
 
   _endPress(){
     if(this.isPressed()){
       this._endDeepPress();
+      this.setPressed(false);
       this.runClosure('end');
     }
-    this.setPressed(false);
     this.runKey = Math.random();
   }
 

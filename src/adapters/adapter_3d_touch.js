@@ -12,10 +12,10 @@ class Adapter3DTouch extends Adapter{
   bindEvents(){
     if(supportsTouchForceChange){
       this.add('touchforcechange', this.start.bind(this));
-      this.add('touchstart', this.support.bind(this, 0));
+      this.add('touchstart', this.supportTest.bind(this, 0));
       this.add('touchend', this._endPress.bind(this));
     } else {
-      this.add('touchstart', this.startLegacyPress.bind(this));
+      this.add('touchstart', this.supportLegacyTest.bind(this, 0));
       this.add('touchend', this._endPress.bind(this));
     }
   }
@@ -27,32 +27,27 @@ class Adapter3DTouch extends Adapter{
     }
   }
 
-  support(iter, event, runKey = this.runKey){
+  supportTest(iter, event, runKey = this.runKey){
     if(this.isPressed() === false){
-      if(iter > 5){
-        this.failOrPolyfill(event, runKey);
-      } else {
+      if(iter <= 6){
         iter++;
         setTimeout(this.support.bind(this, iter, runKey, event), 10);
+      } else {
+        this.failOrPolyfill(event, runKey);
       }
     }
   }
 
-  startLegacyPress(){
-    this.forceValueTest = event.touches[0].force;
-    this.supportLegacyPress(0, event);
-  }
-
-  supportLegacyPress(iter, event, runKey = this.runKey){
-    // this checks up to 10 times on a touch to see if the touch can read a force value
-    // if the force value has changed it means the device supports pressure
-    // more info from this issue https://github.com/yamartino/pressure/issues/15
-    if(event.touches[0].force !== this.forceValueTest){
+  // this checks up to 6 times on a touch to see if the touch can read a force value
+  // if the force value has changed it means the device supports pressure
+  // more info from this issue https://github.com/yamartino/pressure/issues/15
+  supportLegacyTest(iter, event, runKey = this.runKey, force = event.touches[0].force){
+    if(force !== this.forceValueTest){
       this._startPress(event);
       this.loopForce(event);
-    } else if(iter <= 10) {
+    } else if(iter <= 6) {
       iter++
-      setTimeout(this.supportLegacyPress.bind(this, iter, event, runKey), 10);
+      setTimeout(this.supportLegacyPress.bind(this, iter, event, runKey, force), 10);
     } else{
       this.failOrPolyfill(event, runKey);
     }

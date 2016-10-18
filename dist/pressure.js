@@ -191,34 +191,34 @@ var Adapter = function () {
     key: "_startPress",
     value: function _startPress(event) {
       if (this.isPressed() === false) {
+        this.setPressed(true);
         this.runClosure('start', event);
       }
-      this.setPressed(true);
     }
   }, {
     key: "_startDeepPress",
     value: function _startDeepPress(event) {
       if (this.isPressed() && this.isDeepPressed() === false) {
+        this.setDeepPressed(true);
         this.runClosure('startDeepPress', event);
       }
-      this.setDeepPressed(true);
     }
   }, {
     key: "_endDeepPress",
     value: function _endDeepPress() {
       if (this.isPressed() && this.isDeepPressed()) {
+        this.setDeepPressed(false);
         this.runClosure('endDeepPress');
       }
-      this.setDeepPressed(false);
     }
   }, {
     key: "_endPress",
     value: function _endPress() {
       if (this.isPressed()) {
         this._endDeepPress();
+        this.setPressed(false);
         this.runClosure('end');
       }
-      this.setPressed(false);
       this.runKey = Math.random();
     }
   }, {
@@ -327,10 +327,10 @@ var Adapter3DTouch = function (_Adapter2) {
     value: function bindEvents() {
       if (supportsTouchForceChange) {
         this.add('touchforcechange', this.start.bind(this));
-        this.add('touchstart', this.support.bind(this, 0));
+        this.add('touchstart', this.supportTest.bind(this, 0));
         this.add('touchend', this._endPress.bind(this));
       } else {
-        this.add('touchstart', this.startLegacyPress.bind(this));
+        this.add('touchstart', this.supportLegacyTest.bind(this, 0));
         this.add('touchend', this._endPress.bind(this));
       }
     }
@@ -343,39 +343,36 @@ var Adapter3DTouch = function (_Adapter2) {
       }
     }
   }, {
-    key: "support",
-    value: function support(iter, event) {
+    key: "supportTest",
+    value: function supportTest(iter, event) {
       var runKey = arguments.length <= 2 || arguments[2] === undefined ? this.runKey : arguments[2];
 
       if (this.isPressed() === false) {
-        if (iter > 5) {
-          this.failOrPolyfill(event, runKey);
-        } else {
+        if (iter <= 6) {
           iter++;
           setTimeout(this.support.bind(this, iter, runKey, event), 10);
+        } else {
+          this.failOrPolyfill(event, runKey);
         }
       }
     }
-  }, {
-    key: "startLegacyPress",
-    value: function startLegacyPress() {
-      this.forceValueTest = event.touches[0].force;
-      this.supportLegacyPress(0, event);
-    }
-  }, {
-    key: "supportLegacyPress",
-    value: function supportLegacyPress(iter, event) {
-      var runKey = arguments.length <= 2 || arguments[2] === undefined ? this.runKey : arguments[2];
 
-      // this checks up to 10 times on a touch to see if the touch can read a force value
-      // if the force value has changed it means the device supports pressure
-      // more info from this issue https://github.com/yamartino/pressure/issues/15
-      if (event.touches[0].force !== this.forceValueTest) {
+    // this checks up to 6 times on a touch to see if the touch can read a force value
+    // if the force value has changed it means the device supports pressure
+    // more info from this issue https://github.com/yamartino/pressure/issues/15
+
+  }, {
+    key: "supportLegacyTest",
+    value: function supportLegacyTest(iter, event) {
+      var runKey = arguments.length <= 2 || arguments[2] === undefined ? this.runKey : arguments[2];
+      var force = arguments.length <= 3 || arguments[3] === undefined ? event.touches[0].force : arguments[3];
+
+      if (force !== this.forceValueTest) {
         this._startPress(event);
         this.loopForce(event);
-      } else if (iter <= 10) {
+      } else if (iter <= 6) {
         iter++;
-        setTimeout(this.supportLegacyPress.bind(this, iter, event, runKey), 10);
+        setTimeout(this.supportLegacyPress.bind(this, iter, event, runKey, force), 10);
       } else {
         this.failOrPolyfill(event, runKey);
       }
