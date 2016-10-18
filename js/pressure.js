@@ -142,7 +142,6 @@ var Adapter = function () {
 
     this.element = element;
     this.el = element.el;
-    this.block = element.block;
     this.runClosure = element.runClosure;
     this.options = element.options;
     this.pressed = false;
@@ -428,8 +427,8 @@ var Config = {
   // 'mobile' or 'desktop' will make it run only on that type of device
   only: null,
 
-  // 'true' will make polyfill run when pressure is not supported
-  polyfill: false,
+  // 'false' will make polyfill not run when pressure is not supported and the 'unsupported' method will be called
+  polyfill: true,
 
   // milliseconds it takes to go from 0 to 1 for the polyfill
   polyfillSpeed: 1000,
