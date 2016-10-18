@@ -88,7 +88,7 @@
         </div>
 
         <div class="text-xs-center">Click the Circles Above to Test Pressure</div>
-        <div class="pressure-failed text-xs-center alert alert-danger">Your device does not support force touch or 3d touch so Pressure.js has fallen back to the optional polyfill.</div>
+        <div class="pressure-failed text-xs-center alert alert-danger">Your device does not support force touch or 3d touch so Pressure.js has fallen back to the polyfill.</div>
       </div>
     </header>
     <div class="container">
@@ -100,7 +100,7 @@
           <div class="why-pressure-item">
             <img src="img/icons/devices.svg">
             <h3>All Devices</h3>
-            <p class="text-left">Devices implement force differently from one another. Pressure has a simple to use API that works across all devices by default.</p>
+            <p class="text-left">Devices implement force differently from one another. Pressure has a simple to use API that works across all devices.</p>
           </div>
         </div>
         <div class="col-sm-6">
@@ -121,7 +121,7 @@
           <div class="why-pressure-item">
             <img src="img/icons/stopwatch.svg">
             <h3>Polyfill</h3>
-            <p class="text-left">Don't have a force sensitive device? Not a problem, use the optional polyfill to use time as a replacement for force.</p>
+            <p class="text-left">Don't have a force sensitive device? Not a problem, use the polyfill to use time as a replacement for force.</p>
           </div>
         </div>
       </div>
@@ -154,7 +154,7 @@
       <a name="examples"></a>
       <h3>Examples</h3>
       <div class="alert alert-success">
-        <strong>Note:</strong> This page is using the "polyfill" option on most of the Pressure elements to give support for browsers that do not support Force or 3D touch. The "polyfill" option is disabled by default but can be useful in lots of situations where time is an ok replacement for force. <strong>For Example:</strong> The Instagram app uses 3D touch to allow users to quick look images, however if you do not have 3D touchs support, you can simply hold down on the image for a second and it will have the same affect.
+        <strong>Note:</strong> This page is using the "polyfill" option on most of the Pressure elements to give support for browsers that do not support Force or 3D touch. The "polyfill" option is enabled by default but can be useful in lots of situations where time is an ok replacement for force. <strong>For Example:</strong> The Instagram app uses 3D touch to allow users to quick look images, however if you do not have 3D touchs support, you can simply hold down on the image for a second and it will have the same affect.
       </div>
       <div class="h4 doc-title">1. Pressure Change</div>
       <p>The best part about Pressure is that is uses a single API that works on both Force Touch and 3D Touch. (note: Apple currently only has support for desktop and mobile safari, but luckily with pressure you can test for that)</p>
@@ -201,7 +201,7 @@
       <p>Press hard on the button, a "Deep" or Force press will occur and launch a bootstrap popover.
       <div class="doc-section">
         <div class="doc-top">
-          <button id="popover" type="button" class="btn btn-lg btn-danger" data-placement="top" data-toggle="popover" title="Deep Press Popover!" data-content='This popover was triggered because you pressed over 50% pressure on iOS or OSX. On OSX this is called a "force touch"'>Press hard to toggle popover</button>
+          <button id="popover" type="button" class="btn btn-lg btn-danger" data-placement="top" data-toggle="popover" title="Deep Press Popover!" data-content='This popover was triggered because you pressed over 50% pressure on iOS or macOS. On macOS this is called a "force touch"'>Press hard to toggle popover</button>
         </div>
       </div>
       <hr>

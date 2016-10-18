@@ -223,6 +223,7 @@ Pressure.set('#stuart', {
     // 'force' is a value ranging from 0 to 1
   },
   unsupported: function(){
+    // NOTE: this is only called if the polyfill option is disabled!
     // this is called once there is a touch on the element and the device or browser does not support Force or 3D touch
   }
 });</code></pre>
@@ -254,6 +255,7 @@ Pressure.set('#stuart', {
     // 'force' is a value ranging from 0 to 1
   },
   unsupported: function(){
+    // NOTE: this is only called if the polyfill option is disabled!
     // this is called once there is a touch on the element and the device or browser does not support Force or 3D touch
   }
 });
@@ -265,8 +267,9 @@ Pressure.set('#stuart', {
           <hr class="m-y-3">
 
           <div class="h4 doc-title">5. Options</div>
+          <p>With Pressure, the third paramater is an optional object of options that can be passed in.</p>
           <h4 class="text-light">Polyfill Support</h4>
-          <p>With Pressure, the third paramater is an optional object of options that can be passed in. Using the "polyfill" keyword, you can enable polyfill support for the element. What this means is that if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support force or 3D touch and see for yourself how it works.</p>
+          <p>Using the "polyfill" keyword, you can disable polyfill support for the element. The polyfill is enabled by defauly and is useful if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support force or 3D touch and see for yourself how it works.</p>
           <div class="doc-section">
             <div class="doc-top">
               <div id="polyfill-example" style="width: 100%;padding: 10px;">Click on me on any device :)</div>
@@ -275,13 +278,16 @@ Pressure.set('#stuart', {
               <pre class="language-javascript"><code>Pressure.set('#polyfill-example', {
   change: function(force, event){
     this.innerHTML = force;
+  },
+  unsupported: function(){
+    alert("Oh no, this device does not support pressure.")
   }
-}, {polyfill: true});</code></pre>
+}, {polyfill: false});</code></pre>
             </div>
           </div>
 
           <h4 class="text-light">Polyfill Speed</h4>
-          <p>If you are using the polyfill option, you can see the "polyfillSpeed" speed to determine how fast the polyfill takes to go from 0 to 1. The value is an integer in milliseconds and the default is 1000 (1 second).</p>
+          <p>If you are using the polyfill, you can see the "polyfillSpeed" speed to determine how fast the polyfill takes to go from 0 to 1. The value is an integer in milliseconds and the default is 1000 (1 second).</p>
           <div class="doc-section">
             <div class="doc-top">
               <div id="polyfill-speed-example" style="width: 100%;padding: 10px;">Click on me on any device :)</div>
@@ -291,7 +297,7 @@ Pressure.set('#stuart', {
   change: function(force, event){
     this.innerHTML = force;
   }
-}, {polyfill: true, polyfillSpeed: 5000});
+}, {polyfillSpeed: 5000});
 // takes 5 seconds to go from a force value of 0 to 1
 // only on devices that do not support force touch or 3d touch</code></pre>
             </div>
@@ -369,7 +375,7 @@ Pressure.set('#stuart', {
             <div class="doc-bottom">
               <pre class="language-javascript"><code>// These are the default configs set by Pressure
 Pressure.config({
-  polyfill: false,
+  polyfill: true,
   polyfillSpeed: 1000,
   preventSelect: true,
   only: null

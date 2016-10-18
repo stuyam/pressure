@@ -22,7 +22,7 @@ Pressure.set('.device-circle', {
     this.style.marginTop = '-5em';
     this.style.marginLeft = '-5em';
   }
-}, {polyfill: true});
+});
 
 Pressure.set('.device-circle', {
   unsupported: function(){
@@ -53,9 +53,9 @@ var block = {
   }
 }
 
-Pressure.set('#el1', block, {polyfill: true});
-Pressure.set('#el2', block, {only: 'desktop', polyfill: true});
-Pressure.set('#el3', block, {only: 'mobile', polyfill: true});
+Pressure.set('#el1', block);
+Pressure.set('#el2', block, {only: 'desktop'});
+Pressure.set('#el3', block, {only: 'mobile'});
 
 Pressure.set('#pressure-test', {
   start: function(){
@@ -64,7 +64,7 @@ Pressure.set('#pressure-test', {
   unsupported: function(){
     this.innerHTML = 'Pressure is NOT Supported!';
   }
-}, {polyfill: false});
+});
 
 
 Pressure.set('#peanuts', {
@@ -79,7 +79,7 @@ Pressure.set('#peanuts', {
   unsupported: function(){
     this.innerHTML = 'Your device / browser does not support this :(';
   }
-}, {polyfill: true});
+});
 
 Pressure.set('#text-sizer', {
   change: function(force){
@@ -88,7 +88,7 @@ Pressure.set('#text-sizer', {
   end: function(){
     this.style.fontSize = 16;
   }
-}, {polyfill: true});
+});
 
 Pressure.set('#cube-btn', {
   change: function(force){
@@ -97,7 +97,7 @@ Pressure.set('#cube-btn', {
   end: function(){
     document.getElementById('spinning-cube').style.webkitTransform = 'rotateZ(0deg)';
   }
-}, {polyfill: true});
+});
 
 Pressure.set('#popover', {
   startDeepPress: function(force){
@@ -106,26 +106,26 @@ Pressure.set('#popover', {
   endDeepPress: function(){
     $(this).popover('hide');
   }
-}, {polyfill: true});
+});
 
 // docs
 Pressure.set('#output-element', {
   change: function(force, event){
     this.innerHTML = force;
   }
-});
+}, {polyfill: false});
 
 Pressure.set('#element-3d', {
   change: function(force, event){
     this.innerHTML = force + 'on an iphone';
   }
-}, {only: 'mobile'});
+}, {only: 'mobile', polyfill: false});
 
 Pressure.set('#element-force', {
   change: function(force, event){
     this.innerHTML = force + 'on a Mac';
   }
-}, {only: 'force'});
+}, {only: 'force', polyfill: false});
 
 Pressure.set('#element-3d-prevent', {}, {only: 'mobile', preventDefault: false});
 
@@ -137,8 +137,11 @@ Pressure.set('#polyfill-example', {
   },
   end: function(){
     this.innerHTML = 0;
+  },
+  unsupported: function(){
+    alert("Oh no, this device does not support pressure.")
   }
-}, {polyfill: true});
+});
 
 Pressure.set('#polyfill-speed-example', {
   change: function(force, event){
@@ -147,7 +150,7 @@ Pressure.set('#polyfill-speed-example', {
   end: function(){
     this.innerHTML = 0;
   }
-}, {polyfill: true, polyfillSpeed: 5000});
+}, {polyfillSpeed: 5000});
 
 // Twitter BTN
 window.twttr = (function(d, s, id) {
