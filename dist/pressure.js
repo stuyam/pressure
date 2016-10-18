@@ -214,7 +214,7 @@ var Adapter = function () {
   }, {
     key: "_endPress",
     value: function _endPress() {
-      if (this.isPressed() && Config.get('polyfill', this.options)) {
+      if (this.isPressed()) {
         this._endDeepPress();
         this.runClosure('end');
       }
@@ -359,7 +359,6 @@ var Adapter3DTouch = function (_Adapter2) {
   }, {
     key: "startLegacyPress",
     value: function startLegacyPress() {
-      this.setPressed(true);
       this.forceValueTest = event.touches[0].force;
       this.supportLegacyPress(0, event);
     }
@@ -378,7 +377,7 @@ var Adapter3DTouch = function (_Adapter2) {
         iter++;
         setTimeout(this.supportLegacyPress.bind(this, iter, event, runKey), 10);
       } else {
-        this.failOrPolyfill(event);
+        this.failOrPolyfill(event, runKey);
       }
     }
   }, {

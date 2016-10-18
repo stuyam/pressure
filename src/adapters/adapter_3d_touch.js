@@ -39,7 +39,6 @@ class Adapter3DTouch extends Adapter{
   }
 
   startLegacyPress(){
-    this.setPressed(true);
     this.forceValueTest = event.touches[0].force;
     this.supportLegacyPress(0, event);
   }
@@ -55,7 +54,7 @@ class Adapter3DTouch extends Adapter{
       iter++
       setTimeout(this.supportLegacyPress.bind(this, iter, event, runKey), 10);
     } else{
-      this.failOrPolyfill(event);
+      this.failOrPolyfill(event, runKey);
     }
   }
 

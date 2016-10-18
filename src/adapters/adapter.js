@@ -68,7 +68,7 @@ class Adapter{
   }
 
   _endPress(){
-    if(this.isPressed() && Config.get('polyfill', this.options)){
+    if(this.isPressed()){
       this._endDeepPress();
       this.runClosure('end');
     }
