@@ -63,6 +63,7 @@ Pressure.set('#element', {
     // force will always be a value from 0 to 1 on mobile and desktop
   },
   unsupported: function(){
+    // NOTE: this is only called if the polyfill option is disabled!
     // this is called once there is a touch on the element and the device or browser does not support Force or 3D touch
   }
 });
@@ -90,31 +91,36 @@ $('#element').pressure({
     // force will always be a value from 0 to 1 on mobile and desktop
   },
   unsupported: function(){
+    // NOTE: this is only called if the polyfill option is disabled!
     // this is called once there is a touch on the element and the device or browser does not support Force or 3D touch
   }
 });
 ```
 
 ## Options
+With Pressure, the third paramater is an optional object of options that can be passed in.
 
 ###Polyfill Support
-With Pressure, the third paramater is an optional object of options that can be passed in. Using the "polyfill" keyword, you can enable polyfill support for the element. What this means is that if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the [main page](http://pressurejs.com) on a devices that does not support force or 3D touch and see for yourself how it works.
+Using the "polyfill" keyword, you can disable polyfill support for the element. The polyfill is enabled by defauly and is useful if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support force or 3D touch and see for yourself how it works.
 ```javascript
 Pressure.set('#example', {
   change: function(force, event){
     this.innerHTML = force;
+  },
+  unsupported: function(){
+    alert("Oh no, this device does not support pressure.");
   }
-}, {polyfill: true});
+}, {polyfill: false});
 ```
 
 ###Polyfill Speed
-If you are using the polyfill option, you can see the "polyfillSpeed" speed to determine how fast the polyfill takes to go from 0 to 1. The value is an integer in milliseconds and the default is 1000 (1 second).
+If you are using the polyfill (on by default), you can see the "polyfillSpeed" speed to determine how fast the polyfill takes to go from 0 to 1. The value is an integer in milliseconds and the default is 1000 (1 second).
 ```javascript
 Pressure.set('#example', {
   change: function(force, event){
     this.innerHTML = force;
   }
-}, {polyfill: true, polyfillSpeed: 5000});
+}, {polyfillSpeed: 5000});
 // takes 5 seconds to go from a force value of 0 to 1
 // only on devices that do not support force touch or 3d touch
 ```
@@ -158,7 +164,7 @@ You can use ```Pressure.config()``` to set default configurations for site wide 
 ```javascript
 // These are the default configs set by Pressure
 Pressure.config({
-  polyfill: false,
+  polyfill: true,
   polyfillSpeed: 1000,
   preventDefault: true,
   only: null
