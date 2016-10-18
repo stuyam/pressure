@@ -7,6 +7,7 @@ class Adapter{
   constructor(element){
     this.element = element;
     this.el = element.el;
+    this.block = block;
     this.runClosure = element.runClosure;
     this.options = element.options;
     this.pressed = false;
