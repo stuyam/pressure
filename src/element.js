@@ -26,7 +26,7 @@ class Element{
 
   // run the closure if the property exists in the object
   runClosure(method){
-    if(this.block.hasOwnProperty(method)){
+    if(method in this.block){
       // call the closure method and apply nth arguments if they exist
       this.block[method].apply(this.el, Array.prototype.slice.call(arguments, 1));
     }

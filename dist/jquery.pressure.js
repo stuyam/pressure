@@ -100,7 +100,7 @@ var Element = function () {
   }, {
     key: "runClosure",
     value: function runClosure(method) {
-      if (this.block.hasOwnProperty(method)) {
+      if (method in this.block) {
         // call the closure method and apply nth arguments if they exist
         this.block[method].apply(this.el, Array.prototype.slice.call(arguments, 1));
       }
@@ -140,7 +140,7 @@ var Adapter = function () {
     this.options = element.options;
     this.pressed = false;
     this.deepPressed = false;
-    this.nativeSupport = false;
+    this.runKey = Math.random();
   }
 
   _createClass(Adapter, [{
@@ -170,10 +170,12 @@ var Adapter = function () {
     }
   }, {
     key: "failOrPolyfill",
-    value: function failOrPolyfill(event) {
+    value: function failOrPolyfill(event, runKey) {
       // is the polyfill option set
       if (Config.get('polyfill', this.options)) {
-        this.runPolyfill(event);
+        if (this.runKey === runKey) {
+          this.runPolyfill(event);
+        }
       } else {
         this.runClosure('unsupported', event);
       }
@@ -182,46 +184,43 @@ var Adapter = function () {
     key: "_startPress",
     value: function _startPress(event) {
       if (this.isPressed() === false) {
-        this.nativeSupport = true;
-        this.setPressed(true);
         this.runClosure('start', event);
       }
+      this.setPressed(true);
     }
   }, {
     key: "_startDeepPress",
     value: function _startDeepPress(event) {
       if (this.isPressed() && this.isDeepPressed() === false) {
-        this.setDeepPressed(true);
         this.runClosure('startDeepPress', event);
       }
+      this.setDeepPressed(true);
     }
   }, {
     key: "_endDeepPress",
     value: function _endDeepPress() {
       if (this.isPressed() && this.isDeepPressed()) {
-        this.setDeepPressed(false);
         this.runClosure('endDeepPress');
       }
+      this.setDeepPressed(false);
     }
   }, {
     key: "_endPress",
     value: function _endPress() {
       if (this.isPressed() && Config.get('polyfill', this.options)) {
-        this.nativeSupport = false;
         this._endDeepPress();
-        this.setPressed(false);
         this.runClosure('end');
       }
+      this.setPressed(false);
+      this.runKey = Math.random();
     }
   }, {
     key: "runPolyfill",
     value: function runPolyfill(event) {
-      // if(this.isPressed() && this.nativeSupport === false){
       this.increment = 10 / Config.get('polyfillSpeed', this.options);
       this.setPressed(true);
       this.runClosure('start', event);
       this.loopPolyfillForce(0, event);
-      // }
     }
   }, {
     key: "loopPolyfillForce",
@@ -268,9 +267,8 @@ var AdapterForceTouch = function (_Adapter) {
   }, {
     key: "support",
     value: function support(event) {
-      this.setPressed(true);
-      if (this.nativeSupport === false) {
-        this.failOrPolyfill(event);
+      if (this.isPressed() === false) {
+        this.failOrPolyfill(event, this.runKey);
       }
     }
   }, {
@@ -340,11 +338,15 @@ var Adapter3DTouch = function (_Adapter2) {
   }, {
     key: "support",
     value: function support(iter, event) {
-      if (iter > 10) {
-        this.failOrPolyfill(event);
-      } else {
-        iter++;
-        setTimeout(this.support.bind(this, iter, event), 10);
+      var runKey = arguments.length <= 2 || arguments[2] === undefined ? this.runKey : arguments[2];
+
+      if (this.isPressed() === false) {
+        if (iter > 5) {
+          this.failOrPolyfill(event, runKey);
+        } else {
+          iter++;
+          setTimeout(this.support.bind(this, iter, runKey, event), 10);
+        }
       }
     }
   }, {
@@ -357,6 +359,8 @@ var Adapter3DTouch = function (_Adapter2) {
   }, {
     key: "supportLegacyPress",
     value: function supportLegacyPress(iter, event) {
+      var runKey = arguments.length <= 2 || arguments[2] === undefined ? this.runKey : arguments[2];
+
       // this checks up to 10 times on a touch to see if the touch can read a force value
       // if the force value has changed it means the device supports pressure
       // more info from this issue https://github.com/yamartino/pressure/issues/15
@@ -365,7 +369,7 @@ var Adapter3DTouch = function (_Adapter2) {
         this.loopForce(event);
       } else if (iter <= 10) {
         iter++;
-        setTimeout(this.supportLegacyPress.bind(this), 10, iter, event);
+        setTimeout(this.supportLegacyPress.bind(this, iter, event, runKey), 10);
       } else {
         this.failOrPolyfill(event);
       }

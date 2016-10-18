@@ -27,12 +27,14 @@ class Adapter3DTouch extends Adapter{
     }
   }
 
-  support(iter, event){
-    if(iter > 10){
-      this.failOrPolyfill(event);
-    } else {
-      iter++;
-      setTimeout(this.support.bind(this, iter, event), 10);
+  support(iter, event, runKey = this.runKey){
+    if(this.isPressed() === false){
+      if(iter > 5){
+        this.failOrPolyfill(event, runKey);
+      } else {
+        iter++;
+        setTimeout(this.support.bind(this, iter, runKey, event), 10);
+      }
     }
   }
 
@@ -42,7 +44,7 @@ class Adapter3DTouch extends Adapter{
     this.supportLegacyPress(0, event);
   }
 
-  supportLegacyPress(iter, event){
+  supportLegacyPress(iter, event, runKey = this.runKey){
     // this checks up to 10 times on a touch to see if the touch can read a force value
     // if the force value has changed it means the device supports pressure
     // more info from this issue https://github.com/yamartino/pressure/issues/15
@@ -51,7 +53,7 @@ class Adapter3DTouch extends Adapter{
       this.loopForce(event);
     } else if(iter <= 10) {
       iter++
-      setTimeout(this.supportLegacyPress.bind(this), 10, iter, event);
+      setTimeout(this.supportLegacyPress.bind(this, iter, event, runKey), 10);
     } else{
       this.failOrPolyfill(event);
     }

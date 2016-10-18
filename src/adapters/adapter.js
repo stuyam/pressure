@@ -12,7 +12,7 @@ class Adapter{
     this.options = element.options;
     this.pressed = false;
     this.deepPressed = false;
-    this.nativeSupport = false;
+    this.runKey = Math.random();
   }
 
   add(event, set){
@@ -35,10 +35,12 @@ class Adapter{
     return this.deepPressed;
   }
 
-  failOrPolyfill(event){
+  failOrPolyfill(event, runKey){
     // is the polyfill option set
     if(Config.get('polyfill', this.options)){
-      this.runPolyfill(event);
+      if(this.runKey === runKey){
+        this.runPolyfill(event);
+      }
     } else {
       this.runClosure('unsupported', event);
     }
@@ -46,42 +48,39 @@ class Adapter{
 
   _startPress(event){
     if(this.isPressed() === false){
-      this.nativeSupport = true;
-      this.setPressed(true);
       this.runClosure('start', event);
     }
+    this.setPressed(true);
   }
 
   _startDeepPress(event){
     if(this.isPressed() && this.isDeepPressed() === false){
-      this.setDeepPressed(true);
       this.runClosure('startDeepPress', event);
     }
+    this.setDeepPressed(true);
   }
 
   _endDeepPress(){
     if(this.isPressed() && this.isDeepPressed()){
-      this.setDeepPressed(false);
       this.runClosure('endDeepPress');
     }
+    this.setDeepPressed(false);
   }
 
   _endPress(){
     if(this.isPressed() && Config.get('polyfill', this.options)){
-      this.nativeSupport = false;
       this._endDeepPress();
-      this.setPressed(false);
       this.runClosure('end');
     }
+    this.setPressed(false);
+    this.runKey = Math.random();
   }
 
   runPolyfill(event){
-    // if(this.isPressed() && this.nativeSupport === false){
-      this.increment = 10 / Config.get('polyfillSpeed', this.options);
-      this.setPressed(true);
-      this.runClosure('start', event);
-      this.loopPolyfillForce(0, event);
-    // }
+    this.increment = 10 / Config.get('polyfillSpeed', this.options);
+    this.setPressed(true);
+    this.runClosure('start', event);
+    this.loopPolyfillForce(0, event);
   }
 
   loopPolyfillForce(force, event){
