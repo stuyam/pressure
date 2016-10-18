@@ -142,12 +142,10 @@ var Adapter = function () {
 
     this.element = element;
     this.el = element.el;
-    this.block = element.block;
     this.runClosure = element.runClosure;
     this.options = element.options;
     this.pressed = false;
     this.deepPressed = false;
-    this.runKey = Math.random();
   }
 
   _createClass(Adapter, [{
@@ -345,7 +343,7 @@ var Adapter3DTouch = function (_Adapter2) {
   }, {
     key: "supportTest",
     value: function supportTest(iter, event) {
-      var runKey = arguments.length <= 2 || arguments[2] === undefined ? this.runKey : arguments[2];
+      var runKey = arguments.length <= 2 || arguments[2] === undefined ? Math.random() : arguments[2];
 
       if (this.isPressed() === false) {
         if (iter <= 6) {
@@ -364,7 +362,7 @@ var Adapter3DTouch = function (_Adapter2) {
   }, {
     key: "supportLegacyTest",
     value: function supportLegacyTest(iter, event) {
-      var runKey = arguments.length <= 2 || arguments[2] === undefined ? this.runKey : arguments[2];
+      var runKey = arguments.length <= 2 || arguments[2] === undefined ? Math.random() : arguments[2];
       var force = arguments.length <= 3 || arguments[3] === undefined ? event.touches[0].force : arguments[3];
 
       if (force !== this.forceValueTest) {

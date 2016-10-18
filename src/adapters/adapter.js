@@ -7,12 +7,10 @@ class Adapter{
   constructor(element){
     this.element = element;
     this.el = element.el;
-    this.block = element.block;
     this.runClosure = element.runClosure;
     this.options = element.options;
     this.pressed = false;
     this.deepPressed = false;
-    this.runKey = Math.random();
   }
 
   add(event, set){
