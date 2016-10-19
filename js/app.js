@@ -81,12 +81,17 @@ Pressure.set('#peanuts', {
   }
 });
 
+var saveForce = 0;
 Pressure.set('#text-sizer', {
   change: function(force){
-    this.style.fontSize = Pressure.map(force, 0, 1, 16, 30);
+    if(force > saveForce){
+      this.style.fontSize = Pressure.map(force, 0, 1, 16, 30);
+      saveForce = force;
+    }
   },
+
   end: function(){
-    this.style.fontSize = 16;
+    saveForce = 0;
   }
 });
 
