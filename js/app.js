@@ -28,7 +28,7 @@ Pressure.set('.device-circle', {
   unsupported: function(){
     $('.pressure-failed').show();
   }
-});
+}, {polyfill: false});
 
 var block = {
   start: function(){
