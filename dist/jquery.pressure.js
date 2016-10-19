@@ -313,7 +313,7 @@ var Adapter3DTouch = function (_Adapter2) {
         this.add('touchstart', this.supportTest.bind(this, 0));
         this.add('touchend', this._endPress.bind(this));
       } else {
-        this.add('touchstart', this.supportLegacyTest.bind(this, 0));
+        this.add('touchstart', this.startLegacyTest.bind(this));
         this.add('touchend', this._endPress.bind(this));
       }
     }
@@ -333,11 +333,17 @@ var Adapter3DTouch = function (_Adapter2) {
       if (this.isPressed() === false) {
         if (iter <= 6) {
           iter++;
-          setTimeout(this.support.bind(this, iter, runKey, event), 10);
+          setTimeout(this.supportTest.bind(this, iter, event, runKey), 10);
         } else {
           this.fail(event, runKey);
         }
       }
+    }
+  }, {
+    key: "startLegacyTest",
+    value: function startLegacyTest(event) {
+      this.initialForce = event.touches[0].force;
+      this.supportLegacyTest(0, event, this.runKey, this.initialForce);
     }
 
     // this checks up to 6 times on a touch to see if the touch can read a force value
@@ -346,16 +352,13 @@ var Adapter3DTouch = function (_Adapter2) {
 
   }, {
     key: "supportLegacyTest",
-    value: function supportLegacyTest(iter, event) {
-      var runKey = arguments.length <= 2 || arguments[2] === undefined ? this.runKey : arguments[2];
-      var force = arguments.length <= 3 || arguments[3] === undefined ? event.touches[0].force : arguments[3];
-
-      if (force !== this.forceValueTest) {
+    value: function supportLegacyTest(iter, event, runKey, force) {
+      if (force !== this.initialForce) {
         this._startPress(event);
         this.loopForce(event);
       } else if (iter <= 6) {
         iter++;
-        setTimeout(this.supportLegacyPress.bind(this, iter, event, runKey, force), 10);
+        setTimeout(this.supportLegacyTest.bind(this, iter, event, runKey, force), 10);
       } else {
         this.fail(event, runKey);
       }
