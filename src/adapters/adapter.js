@@ -50,6 +50,10 @@ class Adapter{
     }
   }
 
+  bindUnsupportedEvent(){
+    this.add(isMobile ? 'touchstart' : 'mousedown', (event) => this.runClosure('unsupported', event));
+  }
+
   _startPress(event){
     if(this.isPressed() === false){
       this.setPressed(true);

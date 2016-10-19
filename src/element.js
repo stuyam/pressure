@@ -17,7 +17,7 @@ class Element{
     }
     // unsupported if it is requesting a type and your browser is of other type
     else{
-      this.adapter = new AdapterUnsupported(el).bindEvents();
+      this.adapter = new Adapter(el, block).bindUnsupportedEvent();
     }
   }
 

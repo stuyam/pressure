@@ -19,7 +19,6 @@ gulp.task('pressure', function() {
     './src/adapters/adapter.js',
     './src/adapters/adapter_force_touch.js',
     './src/adapters/adapter_3d_touch.js',
-    './src/adapters/adapter_unsupported.js',
     './src/config.js',
     './src/helpers.js',
   ])
@@ -52,7 +51,6 @@ gulp.task('jquery-pressure', function() {
     './src/adapters/adapter.js',
     './src/adapters/adapter_force_touch.js',
     './src/adapters/adapter_3d_touch.js',
-    './src/adapters/adapter_unsupported.js',
     './src/config.js',
     './src/helpers.js',
   ])

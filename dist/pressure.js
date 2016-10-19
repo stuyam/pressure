@@ -91,7 +91,7 @@ var Element = function () {
         }
         // unsupported if it is requesting a type and your browser is of other type
         else {
-            this.adapter = new AdapterUnsupported(el).bindEvents();
+            this.adapter = new Adapter(el, block).bindUnsupportedEvent();
           }
     }
 
@@ -173,6 +173,15 @@ var Adapter = function () {
       } else {
         this.runClosure('unsupported', event);
       }
+    }
+  }, {
+    key: "bindUnsupportedEvent",
+    value: function bindUnsupportedEvent() {
+      var _this = this;
+
+      this.add(isMobile ? 'touchstart' : 'mousedown', function (event) {
+        return _this.runClosure('unsupported', event);
+      });
     }
   }, {
     key: "_startPress",
@@ -396,33 +405,6 @@ var Adapter3DTouch = function (_Adapter2) {
   }]);
 
   return Adapter3DTouch;
-}(Adapter);
-
-/*
-This adapter is called when an unsupported device is being triggered
-*/
-
-var AdapterUnsupported = function (_Adapter3) {
-  _inherits(AdapterUnsupported, _Adapter3);
-
-  function AdapterUnsupported(el) {
-    _classCallCheck(this, AdapterUnsupported);
-
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterUnsupported).call(this, el));
-  }
-
-  _createClass(AdapterUnsupported, [{
-    key: "bindEvents",
-    value: function bindEvents() {
-      var _this4 = this;
-
-      this.add(isMobile ? 'touchstart' : 'mousedown', function (event) {
-        return _this4.runClosure('unsupported', event);
-      });
-    }
-  }]);
-
-  return AdapterUnsupported;
 }(Adapter);
 
 // This class holds the states of the the Pressure config
