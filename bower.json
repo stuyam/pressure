@@ -1,6 +1,6 @@
 {
   "name": "pressure",
-  "description": "Pressure is a JavaScript library for handling both Force Touch and 3D Touch through a single API",
+  "description": "Pressure is a lightweight JavaScript library for both Force Touch and 3D Touch through a single API.",
   "main": "dist/pressure.min.js",
   "authors": [
     "Stuart Yamartino"
@@ -14,7 +14,11 @@
     "pressure",
     "pressurejs",
     "iphone6s",
-    "iphone6splus"
+    "iphone6splus",
+    "iphone7",
+    "iphone7plus",
+    "magic-trackpad",
+    "apple-pencil"
   ],
   "homepage": "https://github.com/yamartino/pressure",
   "moduleType": [],
@@ -25,5 +29,5 @@
     "test",
     "tests"
   ],
-  "version": "1.0.1"
+  "version": "2.0.0"
 }
