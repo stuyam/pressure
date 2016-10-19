@@ -7,7 +7,7 @@ var rename     = require('gulp-rename');
 var uglify     = require('gulp-uglify');
 var babel      = require('gulp-babel');
 
-var HEADER_COMMENT = '// Pressure v1.0.1 | Created By Stuart Yamartino | MIT License | 2015-Present\n';
+var HEADER_COMMENT = '// Pressure v2.0.0 | Created By Stuart Yamartino | MIT License | 2015 - 2016\n';
 var DESTINATION = '.';
 
 // JS concat, strip debugging and minify
@@ -16,12 +16,10 @@ gulp.task('pressure', function() {
     './src/pressure.js',
     './src/globalize.js',
     './src/element.js',
-    './src/adapter.js',
-    './src/adapter_3d_touch.js',
-    './src/adapter_force_touch.js',
-    './src/adapter_polyfill.js',
+    './src/adapters/adapter.js',
+    './src/adapters/adapter_force_touch.js',
+    './src/adapters/adapter_3d_touch.js',
     './src/config.js',
-    './src/support.js',
     './src/helpers.js',
   ])
   .pipe(concat('dist/pressure.js'))
@@ -50,12 +48,10 @@ gulp.task('jquery-pressure', function() {
     './src/jquery_pressure.js',
     './src/globalize.js',
     './src/element.js',
-    './src/adapter.js',
-    './src/adapter_3d_touch.js',
-    './src/adapter_force_touch.js',
-    './src/adapter_polyfill.js',
+    './src/adapters/adapter.js',
+    './src/adapters/adapter_force_touch.js',
+    './src/adapters/adapter_3d_touch.js',
     './src/config.js',
-    './src/support.js',
     './src/helpers.js',
   ])
   .pipe(concat('dist/jquery.pressure.js'))
@@ -80,5 +76,5 @@ gulp.task('jquery-pressure', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('src/*', ['pressure', 'jquery-pressure']);
+  gulp.watch(['src/*', 'src/adapters/*'], ['pressure', 'jquery-pressure']);
 });

@@ -1,4 +1,4 @@
-//------------------- Helpers Section -------------------//
+//------------------- Helpers -------------------//
 
 // accepts jQuery object, node list, string selector, then called a setup for each element
 var loopPressureElements = function(selector, closure, options = {}){
@@ -27,16 +27,17 @@ var isElement = function(o){
   );
 }
 
-// run the closure if the property exists in the object
-var runClosure = function(closure, method, element){
-  if(closure.hasOwnProperty(method)){
-    // call the closure method and apply nth arguments if they exist
-    closure[method].apply(element || this, Array.prototype.slice.call(arguments, 3));
-  }
-}
-
 // the map method allows for interpolating a value from one range of values to another
 // example from the Arduino documentation: https://www.arduino.cc/en/Reference/Map
 var map = function(x, in_min, in_max, out_min, out_max){
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+
+// check if device is desktop device
+var isDesktop = 'ontouchstart' in document === false;
+
+// check if device is regular mobile device
+var isMobile = 'ontouchstart' in document === true;
+
+// check if device is an Apple iOS 10+ device
+var supportsTouchForceChange = 'ontouchforcechange' in document;

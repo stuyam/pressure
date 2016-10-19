@@ -1,30 +1,36 @@
 class Element{
 
-  constructor(element, block, options){
-    this.element = element;
-    this.block = block;
-    this.type = Config.get('only', options);
-    this.options = options;
-    this.routeEvents();
+  constructor(el, block, options){
+    this.routeEvents(el, block, options);
+    this.preventSelect(el, options);
   }
 
-  routeEvents(){
+  routeEvents(el, block, options){
+    var type = Config.get('only', options);
     // if on desktop and requesting Force Touch or not requesting 3D Touch
-    if(Support.mobile === false && (this.type === 'force' || this.type !== '3d')){
-      new AdapterForceTouch(this);
+    if(isDesktop && (type === 'desktop' || type !== 'mobile')){
+      this.adapter = new AdapterForceTouch(el, block, options).bindEvents();
     }
     // if on mobile and requesting 3D Touch or not requestion Force Touch
-    else if(Support.mobile === true && (this.type === '3d' || this.type !== 'force')){
-      new Adapter3DTouch(this);
+    else if(isMobile && (type === 'mobile' || type !== 'desktop')){
+      this.adapter = new Adapter3DTouch(el, block, options).bindEvents();
     }
-    // if it is requesting a type and your browser is of other type
+    // unsupported if it is requesting a type and your browser is of other type
     else{
-      this.instantFail();
+      this.adapter = new Adapter(el, block).bindUnsupportedEvent();
     }
   }
 
-  instantFail(){
-    this.element.addEventListener(Support.mobile ? 'touchstart' : 'mousedown', () => runClosure(this.block, 'unsupported', this.element), false);
+  // prevent the default action of text selection, "peak & pop", and force touch special feature
+  preventSelect(el, options){
+    if(Config.get('preventSelect', options)){
+      el.style.webkitTouchCallout = "none";
+      el.style.webkitUserSelect = "none";
+      el.style.khtmlUserSelect = "none";
+      el.style.MozUserSelect = "none";
+      el.style.msUserSelect = "none";
+      el.style.userSelect = "none";
+    }
   }
 
 }

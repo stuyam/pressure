@@ -2,12 +2,8 @@
 // This structure can be used in any methods of Pressure
 // The failure block will return with an "error" and message showing why the device doesn't support 3D Touch and Force Touch
 
-Pressure.config({
-  polyfill: true
-});
-
 $.pressureConfig({
-  preventDefault: false
+  polyfill: false
 });
 
 var block = {
@@ -16,17 +12,20 @@ var block = {
   },
 
   change: function(force, event){
-    this.style.width = $.pressureMap(force, 0, 1, 200, 300) + 'px';
+    // event.preventDefault();
+    this.style.width = Pressure.map(force, 0, 1, 200, 300) + 'px';
     this.innerHTML = force;
     console.log('change', force);
   },
 
   startDeepPress: function(event){
     console.log('start deep press', event);
+    this.style.backgroundColor = '#FF0040';
   },
 
   endDeepPress: function(){
     console.log('end deep press');
+    this.style.backgroundColor = '#0080FF';
   },
 
   end: function(){
@@ -41,16 +40,16 @@ var block = {
   }
 }
 
-Pressure.set(document.querySelectorAll('#el1'), block, {polyfill: true});
-Pressure.set($('#el2'), block, {only: 'force'});
-Pressure.set('#el3', block, {only: '3d', polyfill: true});
+Pressure.set(document.querySelectorAll('#el1'), block);
+Pressure.set($('#el2'), block, {only: 'desktop', polyfill: true, polyfillSpeed: 5000});
+Pressure.set('#el3', block, {only: 'mobile'});
 
 $('#el1-jquery').pressure(block);
-$('#el2-jquery').pressure(block, {only: 'force', preventDefault: false});
-$('#el3-jquery').pressure(block, {only: '3d'});
+$('#el2-jquery').pressure(block, {only: 'desktop'});
+$('#el3-jquery').pressure(block, {only: 'mobile'});
 
-// $('h3').pressure({
-//   start: function(){
-//     console.log('preventDefault text');
-//   }
-// }, {preventDefault: false});
+$('img').pressure({
+  change: function(force, event){
+    console.log(force);
+  }
+});
