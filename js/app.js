@@ -1,14 +1,34 @@
-// if(window.location.href !== 'http://pressurejs.com/'){
-//   window.location.href = "http://pressurejs.com";
-// }
-
 $(function () {
   $('[data-toggle="popover"]').popover({trigger: 'manual'});
 });
 
-// Pressure.config({
-//   polyfill: true
-// });
+Pressure.set('.device-circle', {
+  change: function(force){
+    console.log(force);
+    this.style.width = Pressure.map(force, 0, 1, 10, $(this).data('size')) + 'em';
+    this.style.height = Pressure.map(force, 0, 1, 10, $(this).data('size')) + 'em';
+    this.style.marginTop = '-' + Pressure.map(force, 0, 1, 10, $(this).data('size'))/2 + 'em';
+    this.style.marginLeft = '-' + Pressure.map(force, 0, 1, 10, $(this).data('size'))/2 + 'em';
+  },
+  startDeepPress: function(){
+    this.style.backgroundColor = '#5bc0de';
+  },
+  endDeepPress: function(){
+    this.style.backgroundColor = '#d9534f';
+  },
+  end: function(){
+    this.style.width = '10em';
+    this.style.height = '10em';
+    this.style.marginTop = '-5em';
+    this.style.marginLeft = '-5em';
+  }
+});
+
+Pressure.set('.device-circle', {
+  unsupported: function(){
+    $('.pressure-failed').show();
+  }
+});
 
 var block = {
   start: function(){
@@ -17,14 +37,14 @@ var block = {
   change: function(force, event){
     this.style.width = ((200 * force) + 200) + 'px';
     this.innerHTML = force;
-    this.style.backgroundColor = "rgb(" + parseInt(Pressure.map(force, 0, 1, 255, 0)) + ",200," + parseInt(Pressure.map(force, 0, 1, 0, 255)) +")";
-    this.style.color = force > 0.4 ? 'white' : 'black';
+    this.style.backgroundColor = "rgb(" + parseInt(Pressure.map(force, 0, 1, 255, 0)) + ",100," + parseInt(Pressure.map(force, 0, 1, 0, 255)) +")";
+    this.style.color = force > 0.3 ? 'white' : 'black';
   },
 
   end: function(){
     this.style.width = '200px';
     this.innerHTML = 0;
-    this.style.backgroundColor = '#FFC800';
+    this.style.backgroundColor = 'rgb(255,100,0)';
     this.style.color = 'black';
   },
 
@@ -33,9 +53,9 @@ var block = {
   }
 }
 
-Pressure.set('#el1', block, {polyfill: true});
-Pressure.set('#el2', block, {only: 'force', polyfill: true});
-Pressure.set('#el3', block, {only: '3d', polyfill: true});
+Pressure.set('#el1', block);
+Pressure.set('#el2', block, {only: 'desktop'});
+Pressure.set('#el3', block, {only: 'mobile'});
 
 Pressure.set('#pressure-test', {
   start: function(){
@@ -44,7 +64,7 @@ Pressure.set('#pressure-test', {
   unsupported: function(){
     this.innerHTML = 'Pressure is NOT Supported!';
   }
-}, {polyfill: false});
+});
 
 
 Pressure.set('#peanuts', {
@@ -59,16 +79,21 @@ Pressure.set('#peanuts', {
   unsupported: function(){
     this.innerHTML = 'Your device / browser does not support this :(';
   }
-}, {polyfill: true});
+});
 
+var saveForce = 0;
 Pressure.set('#text-sizer', {
   change: function(force){
-    this.style.fontSize = Pressure.map(force, 0, 1, 16, 30);
+    if(force > saveForce){
+      this.style.fontSize = Pressure.map(force, 0, 1, 16, 30);
+      saveForce = force;
+    }
   },
+
   end: function(){
-    this.style.fontSize = 16;
+    saveForce = 0;
   }
-}, {polyfill: true});
+});
 
 Pressure.set('#cube-btn', {
   change: function(force){
@@ -77,7 +102,7 @@ Pressure.set('#cube-btn', {
   end: function(){
     document.getElementById('spinning-cube').style.webkitTransform = 'rotateZ(0deg)';
   }
-}, {polyfill: true});
+});
 
 Pressure.set('#popover', {
   startDeepPress: function(force){
@@ -86,30 +111,30 @@ Pressure.set('#popover', {
   endDeepPress: function(){
     $(this).popover('hide');
   }
-}, {polyfill: true});
+});
 
 // docs
 Pressure.set('#output-element', {
   change: function(force, event){
     this.innerHTML = force;
   }
-});
+}, {polyfill: false});
 
 Pressure.set('#element-3d', {
   change: function(force, event){
     this.innerHTML = force + 'on an iphone';
   }
-}, {only: '3d'});
+}, {only: 'mobile', polyfill: false});
 
 Pressure.set('#element-force', {
   change: function(force, event){
     this.innerHTML = force + 'on a Mac';
   }
-}, {only: 'force'});
+}, {only: 'force', polyfill: false});
 
-Pressure.set('#element-3d-prevent', {}, {only: '3d', preventDefault: false});
+Pressure.set('#element-3d-prevent', {}, {only: 'mobile', preventDefault: false});
 
-Pressure.set('#element-force-prevent', {}, {only: 'force', preventDefault: false});
+Pressure.set('#element-force-prevent', {}, {only: 'desktop', preventDefault: false});
 
 Pressure.set('#polyfill-example', {
   change: function(force, event){
@@ -117,8 +142,20 @@ Pressure.set('#polyfill-example', {
   },
   end: function(){
     this.innerHTML = 0;
+  },
+  unsupported: function(){
+    alert("Oh no, this device does not support pressure.")
   }
-}, {polyfill: true});
+});
+
+Pressure.set('#polyfill-speed-example', {
+  change: function(force, event){
+    this.innerHTML = force;
+  },
+  end: function(){
+    this.innerHTML = 0;
+  }
+}, {polyfillSpeed: 5000});
 
 // Twitter BTN
 window.twttr = (function(d, s, id) {

@@ -3,42 +3,103 @@
 }
 
 html, body{
-  font-family: "myriad-pro", sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 header{
-  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#0081af+0,72238e+100 */
-  background: #0081af; /* Old browsers */
-  background: -moz-linear-gradient(left,  #0081af 0%, #72238e 100%); /* FF3.6-15 */
-  background: -webkit-linear-gradient(left,  #0081af 0%,#72238e 100%); /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to right,  #0081af 0%,#72238e 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0081af', endColorstr='#72238e',GradientType=1 ); /* IE6-9 */
-
   color: white;
   padding: 20px;
   margin-bottom: 40px;
 }
 
-.container{
-  display: block;
-  width: 100%;
-  max-width: 900px;
-  position: relative;
-  margin: auto;
-  padding: 0 20px;
+.device-container{
+  background: white;
 }
 
-.download{
-  border-radius: 5px;
-  padding: 10px;
-  background: #FFC800;
-  color: black !important;
-  width: 100%;
-  max-width: 300px;
-  margin: 5px auto 10px auto;
-  font-weight: 400;
-  border: 0;
+.device-circle{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -5em;
+  margin-left: -5em;
+  width: 10em;
+  height: 10em;
+  border-radius: 50%;
   cursor: pointer;
+}
+
+.iphone-circle{
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#8921a5+0,7db9e8+100&1+0,0+100 */
+  background: -moz-linear-gradient(top,  rgba(137,33,165,1) 0%, rgba(125,185,232,0) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top,  rgba(137,33,165,1) 0%,rgba(125,185,232,0) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(top bottom,  rgba(137,33,165,1) 0%,rgba(125,185,232,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  background-color: #d9534f;
+}
+
+.mac-circle{
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#3e54ad+0,7db9e8+100&1+0,0+100 */
+  background: -moz-linear-gradient(top,  rgba(62,84,173,1) 0%, rgba(125,185,232,0) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top,  rgba(62,84,173,1) 0%,rgba(125,185,232,0) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom,  rgba(62,84,173,1) 0%,rgba(125,185,232,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  background-color: #d9534f;
+}
+
+.pressure-failed{
+  display: none;
+  margin: 10px 0 0 0;
+}
+
+.supported-device{
+  width: 100%;
+  padding: 0.5rem;
+}
+
+.supported-device .device-name{
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.fixed-docs-nav{
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: white;
+  width: 100%;
+  padding: 5px;
+  display: none;
+  border-bottom: 1px solid #eee;
+}
+
+.navbar-toggler{
+  color: white;
+}
+
+.nav-pills .nav-link:hover{
+  color: #fff;
+  cursor: default;
+  background-color: #0275d8;
+  cursor: pointer;
+}
+
+.why-pressure-item{
+  width: 100%;
+  border: 1px solid #eee;
+  text-align: center;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+.why-pressure-item img{
+  max-width: 100px;
+  padding-bottom: 1rem;
+}
+
+.mighty-2{
+  margin: 0;
+}
+
+.container{
+  max-width: 900px;
 }
 
 .doc-section{
@@ -59,14 +120,8 @@ header{
 }
 
 .doc-title{
-  font-weight: 400 !important;
+  font-weight: 600 !important;
   margin-bottom: 0.6rem;
-}
-
-#pressure-test{
-  background: #EF2155;
-  color: white !important;
-  font-weight: bold;
 }
 
 pre{
@@ -88,11 +143,6 @@ hr{
   position: relative;
 }
 
-.social-buttons > iframe{
-/*  margin-left: 5px;
-  margin-right: 5px;*/
-}
-
 footer{
   padding: 20px 0;
   border-top: 1px solid #f7f7f9;
@@ -104,9 +154,9 @@ footer{
 .element{
   width: 200px;
   padding: 20px;
-  background: #FFC800;
+  background: rgb(255,100,0);
   margin-bottom: 10px;
-  border-radius: 30px;
+  border-radius: 5px;
 }
 h3{
   margin-top: 0;
@@ -123,14 +173,6 @@ h3{
   -moz-filter: blur(20px);
   -webkit-filter: blur(20px);
   filter: blur(20px);
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-drag: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  user-drag: none;
   cursor: default;
 }
 
@@ -138,13 +180,5 @@ h3{
   width: 200px;
   height: 200px;
   -webkit-transform: rotateY(0deg);
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-drag: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  user-drag: none;
   cursor: default;
 }
