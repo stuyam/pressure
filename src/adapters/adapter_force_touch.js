@@ -4,9 +4,8 @@ This adapter is for Macs with Force Touch trackpads.
 
 class AdapterForceTouch extends Adapter{
 
-  constructor(element){
-    super(element);
-    this.bindEvents();
+  constructor(el, block, options){
+    super(el, block, options);
   }
 
   bindEvents(){
@@ -21,7 +20,7 @@ class AdapterForceTouch extends Adapter{
 
   support(event){
     if(this.isPressed() === false){
-      this.failOrPolyfill(event, this.runKey);
+      this.fail(event, this.runKey);
     }
   }
 

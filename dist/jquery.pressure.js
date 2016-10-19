@@ -63,61 +63,43 @@ if (window !== false) {
 }
 
 var Element = function () {
-  function Element(element, block, options) {
+  function Element(el, block, options) {
     _classCallCheck(this, Element);
 
-    this.el = element;
-    this.block = block;
-    this.options = options;
-    this.type = Config.get('only', options);
-    this.routeEvents();
-    this.preventSelect();
+    this.routeEvents(el, block, options);
+    this.preventSelect(el, options);
   }
 
   _createClass(Element, [{
     key: "routeEvents",
-    value: function routeEvents() {
-      var _this = this;
-
+    value: function routeEvents(el, block, options) {
+      var type = Config.get('only', options);
       // if on desktop and requesting Force Touch or not requesting 3D Touch
-      if (isDesktop && (this.type === 'desktop' || this.type !== 'mobile')) {
-        new AdapterForceTouch(this);
+      if (isDesktop && (type === 'desktop' || type !== 'mobile')) {
+        this.adapter = new AdapterForceTouch(el, block, options).bindEvents();
       }
       // if on mobile and requesting 3D Touch or not requestion Force Touch
-      else if (isMobile && (this.type === 'mobile' || this.type !== 'desktop')) {
-          new Adapter3DTouch(this);
+      else if (isMobile && (type === 'mobile' || type !== 'desktop')) {
+          this.adapter = new Adapter3DTouch(el, block, options).bindEvents();
         }
         // unsupported if it is requesting a type and your browser is of other type
         else {
-            this.el.addEventListener(isMobile ? 'touchstart' : 'mousedown', function (event) {
-              return _this.runClosure('unsupported', event);
-            }, false);
+            this.adapter = new AdapterUnsupported(el).bindEvents();
           }
-    }
-
-    // run the closure if the property exists in the object
-
-  }, {
-    key: "runClosure",
-    value: function runClosure(method) {
-      if (method in this.block) {
-        // call the closure method and apply nth arguments if they exist
-        this.block[method].apply(this.el, Array.prototype.slice.call(arguments, 1));
-      }
     }
 
     // prevent the default action of text selection, "peak & pop", and force touch special feature
 
   }, {
     key: "preventSelect",
-    value: function preventSelect() {
-      if (Config.get('preventSelect', this.options)) {
-        this.el.style.webkitTouchCallout = "none";
-        this.el.style.webkitUserSelect = "none";
-        this.el.style.khtmlUserSelect = "none";
-        this.el.style.MozUserSelect = "none";
-        this.el.style.msUserSelect = "none";
-        this.el.style.userSelect = "none";
+    value: function preventSelect(el, options) {
+      if (Config.get('preventSelect', options)) {
+        el.style.webkitTouchCallout = "none";
+        el.style.webkitUserSelect = "none";
+        el.style.khtmlUserSelect = "none";
+        el.style.MozUserSelect = "none";
+        el.style.msUserSelect = "none";
+        el.style.userSelect = "none";
       }
     }
   }]);
@@ -130,25 +112,18 @@ This is the base adapter from which all the other adapters extend.
 */
 
 var Adapter = function () {
-  function Adapter(element) {
+  function Adapter(el, block, options) {
     _classCallCheck(this, Adapter);
 
-    this.element = element;
-    this.el = element.el;
+    this.el = el;
     this.block = block;
-    this.runClosure = element.runClosure;
-    this.options = element.options;
+    this.options = options;
     this.pressed = false;
     this.deepPressed = false;
     this.runKey = Math.random();
   }
 
   _createClass(Adapter, [{
-    key: "add",
-    value: function add(event, set) {
-      this.el.addEventListener(event, set, false);
-    }
-  }, {
     key: "setPressed",
     value: function setPressed(boolean) {
       this.pressed = boolean;
@@ -169,9 +144,21 @@ var Adapter = function () {
       return this.deepPressed;
     }
   }, {
-    key: "failOrPolyfill",
-    value: function failOrPolyfill(event, runKey) {
-      // is the polyfill option set
+    key: "add",
+    value: function add(event, set) {
+      this.el.addEventListener(event, set, false);
+    }
+  }, {
+    key: "runClosure",
+    value: function runClosure(method) {
+      if (method in this.block) {
+        // call the closure method and apply nth arguments if they exist
+        this.block[method].apply(this.el, Array.prototype.slice.call(arguments, 1));
+      }
+    }
+  }, {
+    key: "fail",
+    value: function fail(event, runKey) {
       if (Config.get('polyfill', this.options)) {
         if (this.runKey === runKey) {
           this.runPolyfill(event);
@@ -244,13 +231,10 @@ This adapter is for Macs with Force Touch trackpads.
 var AdapterForceTouch = function (_Adapter) {
   _inherits(AdapterForceTouch, _Adapter);
 
-  function AdapterForceTouch(element) {
+  function AdapterForceTouch(el, block, options) {
     _classCallCheck(this, AdapterForceTouch);
 
-    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterForceTouch).call(this, element));
-
-    _this2.bindEvents();
-    return _this2;
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterForceTouch).call(this, el, block, options));
   }
 
   _createClass(AdapterForceTouch, [{
@@ -268,7 +252,7 @@ var AdapterForceTouch = function (_Adapter) {
     key: "support",
     value: function support(event) {
       if (this.isPressed() === false) {
-        this.failOrPolyfill(event, this.runKey);
+        this.fail(event, this.runKey);
       }
     }
   }, {
@@ -306,13 +290,10 @@ This adapter is more mobile devices that support 3D Touch.
 var Adapter3DTouch = function (_Adapter2) {
   _inherits(Adapter3DTouch, _Adapter2);
 
-  function Adapter3DTouch(element) {
+  function Adapter3DTouch(el, block, options) {
     _classCallCheck(this, Adapter3DTouch);
 
-    var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(Adapter3DTouch).call(this, element));
-
-    _this3.bindEvents();
-    return _this3;
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Adapter3DTouch).call(this, el, block, options));
   }
 
   _createClass(Adapter3DTouch, [{
@@ -345,7 +326,7 @@ var Adapter3DTouch = function (_Adapter2) {
           iter++;
           setTimeout(this.support.bind(this, iter, runKey, event), 10);
         } else {
-          this.failOrPolyfill(event, runKey);
+          this.fail(event, runKey);
         }
       }
     }
@@ -367,7 +348,7 @@ var Adapter3DTouch = function (_Adapter2) {
         iter++;
         setTimeout(this.supportLegacyPress.bind(this, iter, event, runKey, force), 10);
       } else {
-        this.failOrPolyfill(event, runKey);
+        this.fail(event, runKey);
       }
     }
   }, {
@@ -408,6 +389,33 @@ var Adapter3DTouch = function (_Adapter2) {
   }]);
 
   return Adapter3DTouch;
+}(Adapter);
+
+/*
+This adapter is called when an unsupported device is being triggered
+*/
+
+var AdapterUnsupported = function (_Adapter3) {
+  _inherits(AdapterUnsupported, _Adapter3);
+
+  function AdapterUnsupported(el) {
+    _classCallCheck(this, AdapterUnsupported);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(AdapterUnsupported).call(this, el));
+  }
+
+  _createClass(AdapterUnsupported, [{
+    key: "bindEvents",
+    value: function bindEvents() {
+      var _this4 = this;
+
+      this.add(isMobile ? 'touchstart' : 'mousedown', function (event) {
+        return _this4.runClosure('unsupported', event);
+      });
+    }
+  }]);
+
+  return AdapterUnsupported;
 }(Adapter);
 
 // This class holds the states of the the Pressure config

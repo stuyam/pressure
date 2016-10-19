@@ -4,19 +4,13 @@ This is the base adapter from which all the other adapters extend.
 
 class Adapter{
 
-  constructor(element){
-    this.element = element;
-    this.el = element.el;
+  constructor(el, block, options){
+    this.el = el;
     this.block = block;
-    this.runClosure = element.runClosure;
-    this.options = element.options;
+    this.options = options;
     this.pressed = false;
     this.deepPressed = false;
     this.runKey = Math.random();
-  }
-
-  add(event, set){
-    this.el.addEventListener(event, set, false);
   }
 
   setPressed(boolean){
@@ -35,8 +29,18 @@ class Adapter{
     return this.deepPressed;
   }
 
-  failOrPolyfill(event, runKey){
-    // is the polyfill option set
+  add(event, set){
+    this.el.addEventListener(event, set, false);
+  }
+
+  runClosure(method){
+    if(method in this.block){
+      // call the closure method and apply nth arguments if they exist
+      this.block[method].apply(this.el, Array.prototype.slice.call(arguments, 1));
+    }
+  }
+
+  fail(event, runKey){
     if(Config.get('polyfill', this.options)){
       if(this.runKey === runKey){
         this.runPolyfill(event);

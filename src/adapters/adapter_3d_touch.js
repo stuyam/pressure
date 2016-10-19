@@ -4,9 +4,8 @@ This adapter is more mobile devices that support 3D Touch.
 
 class Adapter3DTouch extends Adapter{
 
-  constructor(element){
-    super(element);
-    this.bindEvents();
+  constructor(el, block, options){
+    super(el, block, options);
   }
 
   bindEvents(){
@@ -33,7 +32,7 @@ class Adapter3DTouch extends Adapter{
         iter++;
         setTimeout(this.support.bind(this, iter, runKey, event), 10);
       } else {
-        this.failOrPolyfill(event, runKey);
+        this.fail(event, runKey);
       }
     }
   }
@@ -49,7 +48,7 @@ class Adapter3DTouch extends Adapter{
       iter++
       setTimeout(this.supportLegacyPress.bind(this, iter, event, runKey, force), 10);
     } else{
-      this.failOrPolyfill(event, runKey);
+      this.fail(event, runKey);
     }
   }
 
