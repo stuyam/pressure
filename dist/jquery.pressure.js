@@ -120,6 +120,7 @@ var Adapter = function () {
     this.options = options;
     this.pressed = false;
     this.deepPressed = false;
+    this.nativeSupport = false;
     this.runKey = Math.random();
   }
 
@@ -193,6 +194,12 @@ var Adapter = function () {
       }
     }
   }, {
+    key: "_changePress",
+    value: function _changePress(force, event) {
+      this.nativeSupport = true;
+      this.runClosure('change', force, event);
+    }
+  }, {
     key: "_endDeepPress",
     value: function _endDeepPress() {
       if (this.isPressed() && this.isDeepPressed()) {
@@ -209,6 +216,7 @@ var Adapter = function () {
         this.runClosure('end');
       }
       this.runKey = Math.random();
+      this.nativeSupport = false;
     }
   }, {
     key: "runPolyfill",
@@ -221,7 +229,7 @@ var Adapter = function () {
   }, {
     key: "loopPolyfillForce",
     value: function loopPolyfillForce(force, event) {
-      if (this.isPressed()) {
+      if (this.isPressed() && this.nativeSupport === false) {
         this.runClosure('change', force, event);
         force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
         force = force + this.increment > 1 ? 1 : force + this.increment;
@@ -268,7 +276,7 @@ var AdapterForceTouch = function (_Adapter) {
     key: "change",
     value: function change(event) {
       if (this.isPressed() && event.webkitForce > 0) {
-        this.runClosure('change', this.normalizeForce(event.webkitForce), event);
+        this._changePress(this.normalizeForce(event.webkitForce), event);
       }
     }
 
@@ -322,7 +330,7 @@ var Adapter3DTouch = function (_Adapter2) {
     value: function start(event) {
       if (event.touches.length > 0) {
         this._startPress(event);
-        this.runClosure('change', this.selectTouch(event).force, event);
+        this._changePress(this.selectTouch(event).force, event);
       }
     }
   }, {
@@ -369,7 +377,7 @@ var Adapter3DTouch = function (_Adapter2) {
       if (this.isPressed()) {
         this.touch = this.selectTouch(event);
         setTimeout(this.loopForce.bind(this, event), 10);
-        this.runClosure('change', this.touch.force, event);
+        this._changePress(this.touch.force, event);
       }
     }
 

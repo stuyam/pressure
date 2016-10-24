@@ -22,7 +22,7 @@ class Adapter3DTouch extends Adapter{
   start(event){
     if(event.touches.length > 0){
       this._startPress(event);
-      this.runClosure('change', this.selectTouch(event).force, event);
+      this._changePress(this.selectTouch(event).force, event);
     }
   }
 
@@ -61,7 +61,7 @@ class Adapter3DTouch extends Adapter{
     if(this.isPressed()) {
       this.touch = this.selectTouch(event);
       setTimeout(this.loopForce.bind(this, event), 10);
-      this.runClosure('change', this.touch.force, event);
+      this._changePress(this.touch.force, event);
     }
   }
 

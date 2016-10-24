@@ -10,6 +10,7 @@ class Adapter{
     this.options = options;
     this.pressed = false;
     this.deepPressed = false;
+    this.nativeSupport = false;
     this.runKey = Math.random();
   }
 
@@ -68,6 +69,11 @@ class Adapter{
     }
   }
 
+  _changePress(force, event){
+    this.nativeSupport = true;
+    this.runClosure('change', force, event);
+  }
+
   _endDeepPress(){
     if(this.isPressed() && this.isDeepPressed()){
       this.setDeepPressed(false);
@@ -82,6 +88,7 @@ class Adapter{
       this.runClosure('end');
     }
     this.runKey = Math.random();
+    this.nativeSupport = false;
   }
 
   runPolyfill(event){
@@ -92,7 +99,7 @@ class Adapter{
   }
 
   loopPolyfillForce(force, event){
-    if(this.isPressed()) {
+    if(this.isPressed() && this.nativeSupport === false) {
       this.runClosure('change', force, event);
       force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
       force = force + this.increment > 1 ? 1 : force + this.increment;

@@ -26,7 +26,7 @@ class AdapterForceTouch extends Adapter{
 
   change(event){
     if(this.isPressed() && event.webkitForce > 0){
-      this.runClosure('change', this.normalizeForce(event.webkitForce), event);
+      this._changePress(this.normalizeForce(event.webkitForce), event);
     }
   }
 
