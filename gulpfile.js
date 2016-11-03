@@ -2,7 +2,6 @@
 var gulp       = require('gulp');
 var concat     = require('gulp-concat');
 var umd        = require('gulp-umd');
-var iife       = require('gulp-iife');
 var inject     = require('gulp-inject-string')
 var rename     = require('gulp-rename');
 var uglify     = require('gulp-uglify');

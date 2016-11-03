@@ -9,10 +9,9 @@
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.0",
     "gulp-concat": "^2.6.0",
-    "gulp-iife": "^0.3.0",
     "gulp-inject-string": "^1.1.0",
     "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^1.4.2",
+    "gulp-uglify": "^2.0.0",
     "gulp-umd": "^0.2.0"
   },
   "scripts": {
