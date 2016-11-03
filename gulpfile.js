@@ -1,7 +1,8 @@
 // include plug-ins
 var gulp       = require('gulp');
 var concat     = require('gulp-concat');
-var iife       = require("gulp-iife");
+var umd        = require('gulp-umd');
+var iife       = require('gulp-iife');
 var inject     = require('gulp-inject-string')
 var rename     = require('gulp-rename');
 var uglify     = require('gulp-uglify');
@@ -14,7 +15,6 @@ var DESTINATION = '.';
 gulp.task('pressure', function() {
   gulp.src([
     './src/pressure.js',
-    './src/globalize.js',
     './src/element.js',
     './src/adapters/adapter.js',
     './src/adapters/adapter_force_touch.js',
@@ -26,13 +26,12 @@ gulp.task('pressure', function() {
   .pipe(babel({
       presets: ['es2015']
   }))
-  .pipe(iife({
-    useStrict: false,
-    params: ['window', 'document'],
-    args: ['typeof window !== "undefined" ? window : false', 'typeof window !== "undefined" ? window.document : false']
+  .pipe(umd({
+    exports: function() {
+      return 'Pressure';
+    }
   }))
   .pipe(inject.prepend(HEADER_COMMENT))
-  .pipe(inject.replace('//REPLACE-ME-IN-GULP-WITH-RETURN', 'return;'))
   // This will output the non-minified version
   .pipe(gulp.dest(DESTINATION))
 
@@ -46,7 +45,6 @@ gulp.task('pressure', function() {
 gulp.task('jquery-pressure', function() {
   gulp.src([
     './src/jquery_pressure.js',
-    './src/globalize.js',
     './src/element.js',
     './src/adapters/adapter.js',
     './src/adapters/adapter_force_touch.js',
@@ -58,13 +56,25 @@ gulp.task('jquery-pressure', function() {
   .pipe(babel({
       presets: ['es2015']
   }))
-  .pipe(iife({
-    useStrict: false,
-    params: ['window', 'document', '$'],
-    args: ['typeof window !== "undefined" ? window : false', 'typeof window !== "undefined" ? window.document : false', 'typeof jQuery !== "undefined" ? jQuery : false']
+  .pipe(umd({
+    dependencies: function() {
+      return [
+        {
+          name: 'jquery',
+          amd: 'jquery',
+          cjs: 'jquery',
+          global: 'jQuery',
+          param: '$'
+        }
+      ]
+    },
+    namespace: function() {
+      // throw away, since jquery_pressure.js mutates $
+      // instead of returning something from the factory
+      return 'jQuery__pressure';
+    }
   }))
   .pipe(inject.prepend(HEADER_COMMENT))
-  .pipe(inject.replace('//REPLACE-ME-IN-GULP-WITH-RETURN', 'return;'))
   // This will output the non-minified version
   .pipe(gulp.dest(DESTINATION))
 
@@ -78,3 +88,5 @@ gulp.task('jquery-pressure', function() {
 gulp.task('watch', function() {
   gulp.watch(['src/*', 'src/adapters/*'], ['pressure', 'jquery-pressure']);
 });
+
+gulp.task('dist', ['pressure', 'jquery-pressure']);

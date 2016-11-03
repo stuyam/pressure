@@ -33,11 +33,13 @@ var map = function(x, in_min, in_max, out_min, out_max){
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-// check if device is desktop device
-var isDesktop = 'ontouchstart' in document === false;
-
-// check if device is regular mobile device
-var isMobile = 'ontouchstart' in document === true;
-
-// check if device is an Apple iOS 10+ device
-var supportsTouchForceChange = 'ontouchforcechange' in document;
+var isDesktop = false;
+var isMobile = false;
+var supportsTouchForceChange = false;
+if (typeof window !== 'undefined') {
+  // only attempt to assign these in a browser environment.
+  // on the server, this is a no-op, like the rest of the library
+  isMobile = 'ontouchstart' in window.document;
+  isDesktop = !isMobile;
+  supportsTouchForceChange = 'ontouchforcechange' in window.document;
+}
