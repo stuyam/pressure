@@ -1,4 +1,4 @@
-// Pressure v2.0.1 | Created By Stuart Yamartino | MIT License | 2015 - 2016
+// Pressure v2.0.2 | Created By Stuart Yamartino | MIT License | 2015 - 2016
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);

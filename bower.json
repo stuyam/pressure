@@ -20,7 +20,7 @@
     "magic-trackpad",
     "apple-pencil"
   ],
-  "homepage": "https://github.com/yamartino/pressure",
+  "homepage": "https://github.com/stuyam/pressure",
   "moduleType": [],
   "ignore": [
     "**/.*",
@@ -29,5 +29,5 @@
     "test",
     "tests"
   ],
-  "version": "2.0.1"
+  "version": "2.0.2"
 }
