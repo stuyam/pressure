@@ -467,5 +467,5 @@ if (typeof window !== 'undefined') {
   isDesktop = !isMobile;
   supportsTouchForceChange = 'ontouchforcechange' in window.document;
 }
-return Jquery.pressure;
+return void 0;
 }));
