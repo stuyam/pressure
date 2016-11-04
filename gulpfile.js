@@ -6,7 +6,6 @@ var inject     = require('gulp-inject-string')
 var rename     = require('gulp-rename');
 var uglify     = require('gulp-uglify');
 var babel      = require('gulp-babel');
-
 var HEADER_COMMENT = '// Pressure v2.0.2 | Created By Stuart Yamartino | MIT License | 2015 - 2016\n';
 var DESTINATION = '.';
 
@@ -67,10 +66,19 @@ gulp.task('jquery-pressure', function() {
         }
       ]
     },
+    /**
+     * The UMD wrapper expects an exports() string for an expression the factory() should return,
+     * and a namespace() string for a global value that should be set when no loader is present.
+     * However, since jquery_pressure.js mutates $ several times instead of returning a value,
+     * it does not need to use these features, so we set them to harmless no-ops.
+     */
     namespace: function() {
-      // throw away, since jquery_pressure.js mutates $
-      // instead of returning something from the factory
+      // sets `window.jQuery__pressure` to undefined
       return 'jQuery__pressure';
+    },
+    exports: function() {
+      // safely returns undefined from factory
+      return 'void 0';
     }
   }))
   .pipe(inject.prepend(HEADER_COMMENT))
