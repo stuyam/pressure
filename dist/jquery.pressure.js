@@ -295,7 +295,7 @@ var Adapter3DTouch = function (_Adapter2) {
     key: 'bindEvents',
     value: function bindEvents() {
       if (supportsTouchForceChange) {
-        this.add('touchforcechange', this.forceChange.bind(this));
+        this.add('touchforcechange', this.start.bind(this));
         this.add('touchstart', this.supportTest.bind(this, 0));
         this.add('touchend', this._endPress.bind(this));
       } else {
@@ -304,13 +304,16 @@ var Adapter3DTouch = function (_Adapter2) {
       }
     }
   }, {
-    key: 'forceChange',
-    value: function forceChange(event) {
+    key: 'start',
+    value: function start(event) {
+      var touch;
+
       if (event.touches.length > 0) {
         this._startPress(event);
-        this.touch = this.selectTouch(event);
-        if (this.touch) {
-          this._changePress(this.touch.force, event);
+        touch = this.selectTouch(event);
+
+        if (touch) {
+          this._changePress(touch.force, event);
         }
       }
     }
@@ -377,7 +380,6 @@ var Adapter3DTouch = function (_Adapter2) {
           }
         }
       }
-      return false;
     }
 
     // return the touch and run a start or end for deep press

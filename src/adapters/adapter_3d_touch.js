@@ -10,7 +10,7 @@ class Adapter3DTouch extends Adapter{
 
   bindEvents(){
     if(supportsTouchForceChange){
-      this.add('touchforcechange', this.forceChange.bind(this));
+      this.add('touchforcechange', this.start.bind(this));
       this.add('touchstart', this.supportTest.bind(this, 0));
       this.add('touchend', this._endPress.bind(this));
     } else {
@@ -19,12 +19,15 @@ class Adapter3DTouch extends Adapter{
     }
   }
 
-  forceChange(event){
+  start(event){
+    var touch;
+
     if(event.touches.length > 0){
       this._startPress(event);
-      this.touch = this.selectTouch(event);
-      if(this.touch){
-        this._changePress(this.touch.force, event);
+      touch = this.selectTouch(event);
+      
+      if (touch) {
+        this._changePress(touch.force, event);
       }
     }
   }
@@ -80,7 +83,6 @@ class Adapter3DTouch extends Adapter{
         }
       }
     }
-    return false;
   }
 
   // return the touch and run a start or end for deep press
