@@ -20,14 +20,11 @@ class Adapter3DTouch extends Adapter{
   }
 
   start(event){
-    var touch;
-
     if(event.touches.length > 0){
       this._startPress(event);
-      touch = this.selectTouch(event);
-      
-      if (touch) {
-        this._changePress(touch.force, event);
+      this.touch = this.selectTouch(event);
+      if (this.touch) {
+        this._changePress(this.touch.force, event);
       }
     }
   }
