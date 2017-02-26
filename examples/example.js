@@ -41,12 +41,13 @@ var block = {
 }
 
 Pressure.set(document.querySelectorAll('#el1'), block);
-Pressure.set($('#el2'), block, {only: 'desktop', polyfill: true, polyfillSpeed: 5000});
-Pressure.set('#el3', block, {only: 'mobile'});
+Pressure.set($('#el2'), block, {only: 'mouse', polyfill: true, polyfillSpeedUp: 5000, polyfillSpeedDown: 2000});
+Pressure.set('#el3', block, {only: 'touch'});
 
 $('#el1-jquery').pressure(block);
-$('#el2-jquery').pressure(block, {only: 'desktop'});
-$('#el3-jquery').pressure(block, {only: 'mobile'});
+$('#el2-jquery').pressure(block, {only: 'mouse'});
+$('#el3-jquery').pressure(block, {only: 'touch'});
+$('#el4-jquery').pressure(block, {only: 'pointer'});
 
 $('img').pressure({
   change: function(force, event){

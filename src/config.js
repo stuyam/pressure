@@ -5,12 +5,15 @@ var Config = {
   polyfill: true,
 
   // milliseconds it takes to go from 0 to 1 for the polyfill
-  polyfillSpeed: 1000,
+  polyfillSpeedUp: 1000,
+
+  // milliseconds it takes to go from 1 to 0 for the polyfill
+  polyfillSpeedDown: 0,
 
   // 'true' prevents the selecting of text and images via css properties
   preventSelect: true,
 
-  // 'mobile' or 'desktop' will make it run only on that type of device
+  // 'touch', 'mouse', or 'pointer' will make it run only on that type of device
   only: null,
 
   // this will get the correct config / option settings for the current pressure check
