@@ -92,18 +92,32 @@ class Adapter{
   }
 
   runPolyfill(event){
-    this.increment = 10 / Config.get('polyfillSpeed', this.options);
+    this.increment = Config.get('polyfillSpeedUp', this.options) === 0 ? 1 : 10 / Config.get('polyfillSpeedUp', this.options);
+    this.decrement = Config.get('polyfillSpeedDown', this.options) === 0 ? 1 : 10 / Config.get('polyfillSpeedDown', this.options);
     this.setPressed(true);
     this.runClosure('start', event);
     this.loopPolyfillForce(0, event);
   }
 
   loopPolyfillForce(force, event){
-    if(this.isPressed() && this.nativeSupport === false) {
+    if(this.nativeSupport === false){
+      if(this.isPressed()) {
+        this.runClosure('change', force, event);
+        force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
+        force = force + this.increment > 1 ? 1 : force + this.increment;
+        setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
+      } else {
+        this.loopPolyfillForceDown(force, event);
+      }
+    }
+  }
+
+  loopPolyfillForceDown(force, event){
+    if(this.isPressed() === false && this.nativeSupport === false && force > 0){
+      force = force - this.decrement < 0 ? 0 : force - this.increment;
       this.runClosure('change', force, event);
       force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
-      force = force + this.increment > 1 ? 1 : force + this.increment;
-      setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
+      setTimeout(this.loopPolyfillForceDown.bind(this, force, event), 10);
     }
   }
 
