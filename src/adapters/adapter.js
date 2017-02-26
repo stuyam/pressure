@@ -91,6 +91,8 @@ class Adapter{
       }
       this.runKey = Math.random();
       this.nativeSupport = false;
+    } else {
+      this.setPressed(false);
     }
   }
 
@@ -103,7 +105,9 @@ class Adapter{
     this.decrement = Config.get('polyfillSpeedDown', this.options) === 0 ? 1 : 10 / Config.get('polyfillSpeedDown', this.options);
     this.setPressed(true);
     this.runClosure('start', event);
-    this.loopPolyfillForce(0, event);
+    if(this.runningPolyfill === false){
+      this.loopPolyfillForce(0, event);
+    }
   }
 
   loopPolyfillForce(force, event){
@@ -118,8 +122,13 @@ class Adapter{
         force = force - this.decrement < 0 ? 0 : force - this.decrement;
         this.runClosure('change', force, event);
         this.deepPress(force, event);
+        if(force < 0.5 && this.isDeepPressed()){
+          this.setDeepPressed(false);
+          this.runClosure('endDeepPress');
+        }
         if(force === 0){
           this.runningPolyfill = false;
+          this.setPressed(true);
           this._endPress();
         } else {
           setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);

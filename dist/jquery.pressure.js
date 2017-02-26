@@ -201,6 +201,8 @@ var Adapter = function () {
         }
         this.runKey = Math.random();
         this.nativeSupport = false;
+      } else {
+        this.setPressed(false);
       }
     }
   }, {
@@ -215,7 +217,9 @@ var Adapter = function () {
       this.decrement = Config.get('polyfillSpeedDown', this.options) === 0 ? 1 : 10 / Config.get('polyfillSpeedDown', this.options);
       this.setPressed(true);
       this.runClosure('start', event);
-      this.loopPolyfillForce(0, event);
+      if (this.runningPolyfill === false) {
+        this.loopPolyfillForce(0, event);
+      }
     }
   }, {
     key: 'loopPolyfillForce',
@@ -231,8 +235,13 @@ var Adapter = function () {
           force = force - this.decrement < 0 ? 0 : force - this.decrement;
           this.runClosure('change', force, event);
           this.deepPress(force, event);
+          if (force < 0.5 && this.isDeepPressed()) {
+            this.setDeepPressed(false);
+            this.runClosure('endDeepPress');
+          }
           if (force === 0) {
             this.runningPolyfill = false;
+            this.setPressed(true);
             this._endPress();
           } else {
             setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
@@ -483,7 +492,7 @@ var Config = {
   polyfillSpeedUp: 1000,
 
   // milliseconds it takes to go from 1 to 0 for the polyfill
-  polyfillSpeedDown: 1000,
+  polyfillSpeedDown: 0,
 
   // 'true' prevents the selecting of text and images via css properties
   preventSelect: true,

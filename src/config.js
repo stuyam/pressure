@@ -8,7 +8,7 @@ var Config = {
   polyfillSpeedUp: 1000,
 
   // milliseconds it takes to go from 1 to 0 for the polyfill
-  polyfillSpeedDown: 1000,
+  polyfillSpeedDown: 0,
 
   // 'true' prevents the selecting of text and images via css properties
   preventSelect: true,
