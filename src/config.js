@@ -10,7 +10,7 @@ var Config = {
   // 'true' prevents the selecting of text and images via css properties
   preventSelect: true,
 
-  // 'mobile' or 'desktop' will make it run only on that type of device
+  // 'touch', 'mouse', or 'pointer' will make it run only on that type of device
   only: null,
 
   // this will get the correct config / option settings for the current pressure check

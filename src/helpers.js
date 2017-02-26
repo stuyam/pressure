@@ -33,13 +33,16 @@ var map = function(x, in_min, in_max, out_min, out_max){
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-var isDesktop = false;
-var isMobile = false;
+var supportsMouse            = false;
+var supportsTouch            = false;
+var supportsPointer          = false;
 var supportsTouchForceChange = false;
+
 if (typeof window !== 'undefined') {
   // only attempt to assign these in a browser environment.
   // on the server, this is a no-op, like the rest of the library
-  isMobile = 'ontouchstart' in window.document;
-  isDesktop = !isMobile;
+  supportsTouch            = 'ontouchstart'       in window.document;
+  supportsMouse            = 'onmousemove'        in window.document && !supportsTouch;
+  supportsPointer          = 'onpointermove'      in window.document;
   supportsTouchForceChange = 'ontouchforcechange' in window.document;
 }

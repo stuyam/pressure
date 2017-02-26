@@ -52,7 +52,7 @@ class Adapter{
   }
 
   bindUnsupportedEvent(){
-    this.add(isMobile ? 'touchstart' : 'mousedown', (event) => this.runClosure('unsupported', event));
+    this.add(supportsTouch ? 'touchstart' : 'mousedown', (event) => this.runClosure('unsupported', event));
   }
 
   _startPress(event){

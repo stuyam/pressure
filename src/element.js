@@ -7,12 +7,16 @@ class Element{
 
   routeEvents(el, block, options){
     var type = Config.get('only', options);
-    // if on desktop and requesting Force Touch or not requesting 3D Touch
-    if(isDesktop && (type === 'desktop' || type !== 'mobile')){
+    // for devices that support pointer events
+    if(supportsPointer && (type === 'pointer' || type === null)){
+      this.adapter = new AdapterPointer(el, block, options).bindEvents();
+    }
+    // for devices that support Force Touch
+    else if(supportsMouse && (type === 'mouse' || type === null)){
       this.adapter = new AdapterForceTouch(el, block, options).bindEvents();
     }
-    // if on mobile and requesting 3D Touch or not requestion Force Touch
-    else if(isMobile && (type === 'mobile' || type !== 'desktop')){
+    // for devices that support 3D Touch
+    else if(supportsTouch && (type === 'touch' || type === null)){
       this.adapter = new Adapter3DTouch(el, block, options).bindEvents();
     }
     // unsupported if it is requesting a type and your browser is of other type
