@@ -103,6 +103,7 @@ var Adapter = function () {
     this.pressed = false;
     this.deepPressed = false;
     this.nativeSupport = false;
+    this.runningPolyfill = false;
     this.runKey = Math.random();
   }
 
@@ -192,13 +193,20 @@ var Adapter = function () {
   }, {
     key: '_endPress',
     value: function _endPress() {
-      if (this.isPressed()) {
-        this._endDeepPress();
-        this.setPressed(false);
-        this.runClosure('end');
+      if (this.runningPolyfill === false) {
+        if (this.isPressed()) {
+          this._endDeepPress();
+          this.setPressed(false);
+          this.runClosure('end');
+        }
+        this.runKey = Math.random();
+        this.nativeSupport = false;
       }
-      this.runKey = Math.random();
-      this.nativeSupport = false;
+    }
+  }, {
+    key: 'deepPress',
+    value: function deepPress(force, event) {
+      force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
     }
   }, {
     key: 'runPolyfill',
@@ -214,23 +222,22 @@ var Adapter = function () {
     value: function loopPolyfillForce(force, event) {
       if (this.nativeSupport === false) {
         if (this.isPressed()) {
-          this.runClosure('change', force, event);
-          force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
+          this.runningPolyfill = true;
           force = force + this.increment > 1 ? 1 : force + this.increment;
+          this.runClosure('change', force, event);
+          this.deepPress(force, event);
           setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
         } else {
-          this.loopPolyfillForceDown(force, event);
+          force = force - this.decrement < 0 ? 0 : force - this.decrement;
+          this.runClosure('change', force, event);
+          this.deepPress(force, event);
+          if (force === 0) {
+            this.runningPolyfill = false;
+            this._endPress();
+          } else {
+            setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
+          }
         }
-      }
-    }
-  }, {
-    key: 'loopPolyfillForceDown',
-    value: function loopPolyfillForceDown(force, event) {
-      if (this.isPressed() === false && this.nativeSupport === false && force > 0) {
-        force = force - this.decrement < 0 ? 0 : force - this.increment;
-        this.runClosure('change', force, event);
-        force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
-        setTimeout(this.loopPolyfillForceDown.bind(this, force, event), 10);
       }
     }
   }]);
@@ -403,7 +410,7 @@ var Adapter3DTouch = function (_Adapter2) {
   }, {
     key: 'returnTouch',
     value: function returnTouch(touch, event) {
-      touch.force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
+      this.deepPress(touch.force, event);
       return touch;
     }
   }]);
@@ -456,13 +463,8 @@ var AdapterPointer = function (_Adapter3) {
     value: function change(event) {
       if (this.isPressed() && event.pressure > 0 && event.pressure !== 0.5) {
         this._changePress(event.pressure, event);
-        this.deepPress(event);
+        this.deepPress(event.pressure, event);
       }
-    }
-  }, {
-    key: 'deepPress',
-    value: function deepPress(event) {
-      event.pressure >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
     }
   }]);
 
@@ -481,7 +483,7 @@ var Config = {
   polyfillSpeedUp: 1000,
 
   // milliseconds it takes to go from 1 to 0 for the polyfill
-  polyfillSpeedDown: 0,
+  polyfillSpeedDown: 1000,
 
   // 'true' prevents the selecting of text and images via css properties
   preventSelect: true,

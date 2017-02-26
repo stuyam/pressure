@@ -84,7 +84,7 @@ class Adapter3DTouch extends Adapter{
 
   // return the touch and run a start or end for deep press
   returnTouch(touch, event){
-    touch.force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
+    this.deepPress(touch.force, event);
     return touch;
   }
 

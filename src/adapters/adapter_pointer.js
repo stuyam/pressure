@@ -34,12 +34,8 @@ class AdapterPointer extends Adapter{
   change(event){
     if(this.isPressed() && event.pressure > 0 && event.pressure !== 0.5){
       this._changePress(event.pressure, event);
-      this.deepPress(event);
+      this.deepPress(event.pressure, event);
     }
-  }
-
-  deepPress(event){
-    event.pressure >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
   }
 
 }

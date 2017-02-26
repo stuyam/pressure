@@ -11,6 +11,7 @@ class Adapter{
     this.pressed = false;
     this.deepPressed = false;
     this.nativeSupport = false;
+    this.runningPolyfill = false;
     this.runKey = Math.random();
   }
 
@@ -82,13 +83,19 @@ class Adapter{
   }
 
   _endPress(){
-    if(this.isPressed()){
-      this._endDeepPress();
-      this.setPressed(false);
-      this.runClosure('end');
+    if(this.runningPolyfill === false){
+      if(this.isPressed()){
+        this._endDeepPress();
+        this.setPressed(false);
+        this.runClosure('end');
+      }
+      this.runKey = Math.random();
+      this.nativeSupport = false;
     }
-    this.runKey = Math.random();
-    this.nativeSupport = false;
+  }
+
+  deepPress(force, event){
+    force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
   }
 
   runPolyfill(event){
@@ -102,22 +109,22 @@ class Adapter{
   loopPolyfillForce(force, event){
     if(this.nativeSupport === false){
       if(this.isPressed()) {
-        this.runClosure('change', force, event);
-        force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
+        this.runningPolyfill = true;
         force = force + this.increment > 1 ? 1 : force + this.increment;
+        this.runClosure('change', force, event);
+        this.deepPress(force, event);
         setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
       } else {
-        this.loopPolyfillForceDown(force, event);
+        force = force - this.decrement < 0 ? 0 : force - this.decrement;
+        this.runClosure('change', force, event);
+        this.deepPress(force, event);
+        if(force === 0){
+          this.runningPolyfill = false;
+          this._endPress();
+        } else {
+          setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
+        }
       }
-    }
-  }
-
-  loopPolyfillForceDown(force, event){
-    if(this.isPressed() === false && this.nativeSupport === false && force > 0){
-      force = force - this.decrement < 0 ? 0 : force - this.increment;
-      this.runClosure('change', force, event);
-      force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
-      setTimeout(this.loopPolyfillForceDown.bind(this, force, event), 10);
     }
   }
 
