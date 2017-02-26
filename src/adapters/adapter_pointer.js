@@ -9,24 +9,19 @@ class AdapterPointer extends Adapter{
   }
 
   bindEvents(){
-    this.add('pointerdown', this.supportTest.bind(this, 0));
+    this.add('pointerdown', this.support.bind(this));
     this.add('pointermove', this.change.bind(this));
     this.add('pointerup', this._endPress.bind(this));
     this.add('pointerleave', this._endPress.bind(this));
   }
 
-  supportTest(iter, event, runKey = this.runKey){
+  support(event){
     if(this.isPressed() === false){
-      if(iter <= 6){
-        iter++;
-        if(event.pressure === 0 || event.pressure === 0.5){
-          setTimeout(this.supportTest.bind(this, iter, event, runKey), 10);
-        } else {
-          this._startPress(event);
-          this._changePress(event.pressure, event);
-        }
+      if(event.pressure === 0 || event.pressure === 0.5){
+        this.fail(event, this.runKey);
       } else {
-        this.fail(event, runKey);
+        this._startPress(event);
+        this._changePress(event.pressure, event);
       }
     }
   }

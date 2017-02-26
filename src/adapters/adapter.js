@@ -58,6 +58,7 @@ class Adapter{
 
   _startPress(event){
     if(this.isPressed() === false){
+      this.runningPolyfill = false;
       this.setPressed(true);
       this.runClosure('start', event);
     }

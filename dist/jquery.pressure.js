@@ -164,6 +164,7 @@ var Adapter = function () {
     key: '_startPress',
     value: function _startPress(event) {
       if (this.isPressed() === false) {
+        this.runningPolyfill = false;
         this.setPressed(true);
         this.runClosure('start', event);
       }
@@ -443,27 +444,20 @@ var AdapterPointer = function (_Adapter3) {
   _createClass(AdapterPointer, [{
     key: 'bindEvents',
     value: function bindEvents() {
-      this.add('pointerdown', this.supportTest.bind(this, 0));
+      this.add('pointerdown', this.support.bind(this));
       this.add('pointermove', this.change.bind(this));
       this.add('pointerup', this._endPress.bind(this));
       this.add('pointerleave', this._endPress.bind(this));
     }
   }, {
-    key: 'supportTest',
-    value: function supportTest(iter, event) {
-      var runKey = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.runKey;
-
+    key: 'support',
+    value: function support(event) {
       if (this.isPressed() === false) {
-        if (iter <= 6) {
-          iter++;
-          if (event.pressure === 0 || event.pressure === 0.5) {
-            setTimeout(this.supportTest.bind(this, iter, event, runKey), 10);
-          } else {
-            this._startPress(event);
-            this._changePress(event.pressure, event);
-          }
+        if (event.pressure === 0 || event.pressure === 0.5) {
+          this.fail(event, this.runKey);
         } else {
-          this.fail(event, runKey);
+          this._startPress(event);
+          this._changePress(event.pressure, event);
         }
       }
     }
@@ -492,7 +486,7 @@ var Config = {
   polyfillSpeedUp: 1000,
 
   // milliseconds it takes to go from 1 to 0 for the polyfill
-  polyfillSpeedDown: 0,
+  polyfillSpeedDown: 5000,
 
   // 'true' prevents the selecting of text and images via css properties
   preventSelect: true,
