@@ -75,7 +75,7 @@ class Adapter3DTouch extends Adapter{
     } else {
       for(var i = 0; i < event.touches.length; i++){
         // if the target press is on this element
-        if(event.touches[i].target === this.el){
+        if(event.touches[i].target === this.el || this.el.contains(event.touches[i].target)){
           return this.returnTouch(event.touches[i], event);
         }
       }
