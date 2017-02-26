@@ -7,7 +7,7 @@
 
 Pressure is a JavaScript library for handling both Force Touch and 3D Touch on the web, bundled under one library with a simple API that makes working with them painless.
 
-Head over to the [documentation](http://pressurejs.com/documentation.html) for installation instructions and more details on pressure.js.
+Head over to the [documentation](http://pressurejs.com/documentation.html) for installation instructions, supported devices, and more details on pressure.js.
 
 ## Install
 Download pressure.min.js or pressure.js files from GitHub or install with npm or bower
@@ -101,7 +101,7 @@ $('#element').pressure({
 With Pressure, the third paramater is an optional object of options that can be passed in.
 
 ###Polyfill Support
-Using the "polyfill" keyword, you can disable polyfill support for the element. The polyfill is enabled by defauly and is useful if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support force or 3D touch and see for yourself how it works.
+Using the "polyfill" keyword, you can disable polyfill support for the element. The polyfill is enabled by default and is useful if the device or browser does not support pressure, it will fall back to using time. For example instead of force from 0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support pressure and see for yourself how it works.
 ```javascript
 Pressure.set('#example', {
   change: function(force, event){
@@ -113,34 +113,54 @@ Pressure.set('#example', {
 }, {polyfill: false});
 ```
 
-###Polyfill Speed
-If you are using the polyfill (on by default), you can see the "polyfillSpeed" speed to determine how fast the polyfill takes to go from 0 to 1. The value is an integer in milliseconds and the default is 1000 (1 second).
+###Polyfill Speed Up
+If you are using the polyfill (on by default), you can see the "polyfillSpeedUp" speed to determine how fast the polyfill takes to go from 0 to 1. The value is an integer in milliseconds and the default is 1000 (1 second).
 ```javascript
 Pressure.set('#example', {
   change: function(force, event){
     this.innerHTML = force;
   }
-}, {polyfillSpeed: 5000});
+}, {polyfillSpeedUp: 5000});
 // takes 5 seconds to go from a force value of 0 to 1
-// only on devices that do not support force touch or 3d touch
+// only on devices that do not support pressure
 ```
 
-### Only run on Force Touch trackpads (Desktop)
-Set the option only to the type you want it to run on 'desktop' or 'mobile'
+###Polyfill Speed Down
+If you are using the polyfill (on by default), you can see the "polyfillSpeedDown" speed to determine how fast the polyfill takes to go from 1 to 0 when you let go. The value is an integer in milliseconds and the default is 0 (aka off).
 ```javascript
-Pressure.set('#example',{
+Pressure.set('#example', {
   change: function(force, event){
-    console.log(force);
-  },
-}, {only: 'desktop'});
+    this.innerHTML = force;
+  }
+}, {polyfillSpeedDown: 2000});
+// takes 2 seconds to go from a force value of 1 to 0
+// only on devices that do not support pressure
 ```
-### Only run on 3D Touch (Mobile)
+
+### Only run on Force Touch trackpads (mouse)
+Set the option only to the type you want it to run on 'mouse', 'touch', or 'pointer'. The names are the types of events that pressure will respond to.
 ```javascript
 Pressure.set('#example',{
   change: function(force, event){
     console.log(force);
   },
-}, {only: 'mobile'});
+}, {only: 'mouse'});
+```
+### Only run on 3D Touch (touch)
+```javascript
+Pressure.set('#example',{
+  change: function(force, event){
+    console.log(force);
+  },
+}, {only: 'touch'});
+```
+### Only run on Pointer Supported Devices (pointer)
+```javascript
+Pressure.set('#example',{
+  change: function(force, event){
+    console.log(force);
+  },
+}, {only: 'pointer'});
 ```
 
 ### Change the preventSelect option
@@ -165,7 +185,8 @@ You can use ```Pressure.config()``` to set default configurations for site wide 
 // These are the default configs set by Pressure
 Pressure.config({
   polyfill: true,
-  polyfillSpeed: 1000,
+  polyfillSpeedUp: 1000,
+  polyfillSpeedDown: 0,
   preventDefault: true,
   only: null
 });
