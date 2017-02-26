@@ -233,8 +233,6 @@ var Adapter = function () {
           setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
         } else {
           force = force - this.decrement < 0 ? 0 : force - this.decrement;
-          this.runClosure('change', force, event);
-          this.deepPress(force, event);
           if (force < 0.5 && this.isDeepPressed()) {
             this.setDeepPressed(false);
             this.runClosure('endDeepPress');
@@ -244,6 +242,8 @@ var Adapter = function () {
             this.setPressed(true);
             this._endPress();
           } else {
+            this.runClosure('change', force, event);
+            this.deepPress(force, event);
             setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
           }
         }
