@@ -19,7 +19,12 @@ class AdapterPointer extends Adapter{
     if(this.isPressed() === false){
       if(iter <= 6){
         iter++;
-        setTimeout(this.supportTest.bind(this, iter, event, runKey), 10);
+        if(event.pressure === 0 || event.pressure === 0.5){
+          setTimeout(this.supportTest.bind(this, iter, event, runKey), 10);
+        } else {
+          this._startPress(event);
+          this._changePress(event.pressure, event);
+        }
       } else {
         this.fail(event, runKey);
       }
@@ -27,7 +32,7 @@ class AdapterPointer extends Adapter{
   }
 
   change(event){
-    if(this.isPressed() && event.pressure > 0){
+    if(this.isPressed() && event.pressure > 0 && event.pressure !== 0.5){
       this._changePress(event.pressure, event);
       this.deepPress(event);
     }

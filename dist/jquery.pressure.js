@@ -425,7 +425,12 @@ var AdapterPointer = function (_Adapter3) {
       if (this.isPressed() === false) {
         if (iter <= 6) {
           iter++;
-          setTimeout(this.supportTest.bind(this, iter, event, runKey), 10);
+          if (event.pressure === 0 || event.pressure === 0.5) {
+            setTimeout(this.supportTest.bind(this, iter, event, runKey), 10);
+          } else {
+            this._startPress(event);
+            this._changePress(event.pressure, event);
+          }
         } else {
           this.fail(event, runKey);
         }
@@ -434,7 +439,7 @@ var AdapterPointer = function (_Adapter3) {
   }, {
     key: 'change',
     value: function change(event) {
-      if (this.isPressed() && event.pressure > 0) {
+      if (this.isPressed() && event.pressure > 0 && event.pressure !== 0.5) {
         this._changePress(event.pressure, event);
         this.deepPress(event);
       }
