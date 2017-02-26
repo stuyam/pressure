@@ -37,7 +37,6 @@ var supportsMouse            = false;
 var supportsTouch            = false;
 var supportsPointer          = false;
 var supportsTouchForceChange = false;
-
 if (typeof window !== 'undefined') {
   // only attempt to assign these in a browser environment.
   // on the server, this is a no-op, like the rest of the library

@@ -1,4 +1,4 @@
-// Pressure v2.0.3 | Created By Stuart Yamartino | MIT License | 2015 - 2017
+// Pressure v2.1.0 | Created By Stuart Yamartino | MIT License | 2015 - 2017
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([], factory);
@@ -337,10 +337,10 @@ var Adapter3DTouch = function (_Adapter2) {
     value: function bindEvents() {
       if (supportsTouchForceChange) {
         this.add('touchforcechange', this.start.bind(this));
-        this.add('touchstart', this.supportTest.bind(this, 0));
+        this.add('touchstart', this.support.bind(this, 0));
         this.add('touchend', this._endPress.bind(this));
       } else {
-        this.add('touchstart', this.startLegacyTest.bind(this));
+        this.add('touchstart', this.startLegacy.bind(this));
         this.add('touchend', this._endPress.bind(this));
       }
     }
@@ -356,22 +356,22 @@ var Adapter3DTouch = function (_Adapter2) {
       }
     }
   }, {
-    key: 'supportTest',
-    value: function supportTest(iter, event) {
+    key: 'support',
+    value: function support(iter, event) {
       var runKey = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.runKey;
 
       if (this.isPressed() === false) {
         if (iter <= 6) {
           iter++;
-          setTimeout(this.supportTest.bind(this, iter, event, runKey), 10);
+          setTimeout(this.support.bind(this, iter, event, runKey), 10);
         } else {
           this.fail(event, runKey);
         }
       }
     }
   }, {
-    key: 'startLegacyTest',
-    value: function startLegacyTest(event) {
+    key: 'startLegacy',
+    value: function startLegacy(event) {
       this.initialForce = event.touches[0].force;
       this.supportLegacyTest(0, event, this.runKey, this.initialForce);
     }
@@ -381,8 +381,8 @@ var Adapter3DTouch = function (_Adapter2) {
     // more info from this issue https://github.com/yamartino/pressure/issues/15
 
   }, {
-    key: 'supportLegacyTest',
-    value: function supportLegacyTest(iter, event, runKey, force) {
+    key: 'supportLegacy',
+    value: function supportLegacy(iter, event, runKey, force) {
       if (force !== this.initialForce) {
         this._startPress(event);
         this.loopForce(event);
@@ -554,7 +554,6 @@ var supportsMouse = false;
 var supportsTouch = false;
 var supportsPointer = false;
 var supportsTouchForceChange = false;
-
 if (typeof window !== 'undefined') {
   // only attempt to assign these in a browser environment.
   // on the server, this is a no-op, like the rest of the library

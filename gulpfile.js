@@ -6,7 +6,7 @@ var inject     = require('gulp-inject-string')
 var rename     = require('gulp-rename');
 var uglify     = require('gulp-uglify');
 var babel      = require('gulp-babel');
-var HEADER_COMMENT = '// Pressure v2.0.3 | Created By Stuart Yamartino | MIT License | 2015 - 2017\n';
+var HEADER_COMMENT = '// Pressure v2.1.0 | Created By Stuart Yamartino | MIT License | 2015 - 2017\n';
 var DESTINATION = '.';
 
 // JS concat, strip debugging and minify
