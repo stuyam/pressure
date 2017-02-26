@@ -1,4 +1,4 @@
-// Pressure v2.0.3 | Created By Stuart Yamartino | MIT License | 2015 - 2016
+// Pressure v2.1.0 | Created By Stuart Yamartino | MIT License | 2015 - 2017
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([], factory);
@@ -57,18 +57,22 @@ var Element = function () {
     key: 'routeEvents',
     value: function routeEvents(el, block, options) {
       var type = Config.get('only', options);
-      // if on desktop and requesting Force Touch or not requesting 3D Touch
-      if (isDesktop && (type === 'desktop' || type !== 'mobile')) {
-        this.adapter = new AdapterForceTouch(el, block, options).bindEvents();
+      // for devices that support pointer events
+      if (supportsPointer && (type === 'pointer' || type === null)) {
+        this.adapter = new AdapterPointer(el, block, options).bindEvents();
       }
-      // if on mobile and requesting 3D Touch or not requestion Force Touch
-      else if (isMobile && (type === 'mobile' || type !== 'desktop')) {
-          this.adapter = new Adapter3DTouch(el, block, options).bindEvents();
+      // for devices that support Force Touch
+      else if (supportsMouse && (type === 'mouse' || type === null)) {
+          this.adapter = new AdapterForceTouch(el, block, options).bindEvents();
         }
-        // unsupported if it is requesting a type and your browser is of other type
-        else {
-            this.adapter = new Adapter(el, block).bindUnsupportedEvent();
+        // for devices that support 3D Touch
+        else if (supportsTouch && (type === 'touch' || type === null)) {
+            this.adapter = new Adapter3DTouch(el, block, options).bindEvents();
           }
+          // unsupported if it is requesting a type and your browser is of other type
+          else {
+              this.adapter = new Adapter(el, block).bindUnsupportedEvent();
+            }
     }
 
     // prevent the default action of text selection, "peak & pop", and force touch special feature
@@ -104,6 +108,7 @@ var Adapter = function () {
     this.pressed = false;
     this.deepPressed = false;
     this.nativeSupport = false;
+    this.runningPolyfill = false;
     this.runKey = Math.random();
   }
 
@@ -156,7 +161,7 @@ var Adapter = function () {
     value: function bindUnsupportedEvent() {
       var _this = this;
 
-      this.add(isMobile ? 'touchstart' : 'mousedown', function (event) {
+      this.add(supportsTouch ? 'touchstart' : 'mousedown', function (event) {
         return _this.runClosure('unsupported', event);
       });
     }
@@ -164,6 +169,7 @@ var Adapter = function () {
     key: '_startPress',
     value: function _startPress(event) {
       if (this.isPressed() === false) {
+        this.runningPolyfill = false;
         this.setPressed(true);
         this.runClosure('start', event);
       }
@@ -193,30 +199,60 @@ var Adapter = function () {
   }, {
     key: '_endPress',
     value: function _endPress() {
-      if (this.isPressed()) {
-        this._endDeepPress();
+      if (this.runningPolyfill === false) {
+        if (this.isPressed()) {
+          this._endDeepPress();
+          this.setPressed(false);
+          this.runClosure('end');
+        }
+        this.runKey = Math.random();
+        this.nativeSupport = false;
+      } else {
         this.setPressed(false);
-        this.runClosure('end');
       }
-      this.runKey = Math.random();
-      this.nativeSupport = false;
+    }
+  }, {
+    key: 'deepPress',
+    value: function deepPress(force, event) {
+      force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
     }
   }, {
     key: 'runPolyfill',
     value: function runPolyfill(event) {
-      this.increment = 10 / Config.get('polyfillSpeed', this.options);
+      this.increment = Config.get('polyfillSpeedUp', this.options) === 0 ? 1 : 10 / Config.get('polyfillSpeedUp', this.options);
+      this.decrement = Config.get('polyfillSpeedDown', this.options) === 0 ? 1 : 10 / Config.get('polyfillSpeedDown', this.options);
       this.setPressed(true);
       this.runClosure('start', event);
-      this.loopPolyfillForce(0, event);
+      if (this.runningPolyfill === false) {
+        this.loopPolyfillForce(0, event);
+      }
     }
   }, {
     key: 'loopPolyfillForce',
     value: function loopPolyfillForce(force, event) {
-      if (this.isPressed() && this.nativeSupport === false) {
-        this.runClosure('change', force, event);
-        force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
-        force = force + this.increment > 1 ? 1 : force + this.increment;
-        setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
+      if (this.nativeSupport === false) {
+        if (this.isPressed()) {
+          this.runningPolyfill = true;
+          force = force + this.increment > 1 ? 1 : force + this.increment;
+          this.runClosure('change', force, event);
+          this.deepPress(force, event);
+          setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
+        } else {
+          force = force - this.decrement < 0 ? 0 : force - this.decrement;
+          if (force < 0.5 && this.isDeepPressed()) {
+            this.setDeepPressed(false);
+            this.runClosure('endDeepPress');
+          }
+          if (force === 0) {
+            this.runningPolyfill = false;
+            this.setPressed(true);
+            this._endPress();
+          } else {
+            this.runClosure('change', force, event);
+            this.deepPress(force, event);
+            setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
+          }
+        }
       }
     }
   }]);
@@ -301,10 +337,10 @@ var Adapter3DTouch = function (_Adapter2) {
     value: function bindEvents() {
       if (supportsTouchForceChange) {
         this.add('touchforcechange', this.start.bind(this));
-        this.add('touchstart', this.supportTest.bind(this, 0));
+        this.add('touchstart', this.support.bind(this, 0));
         this.add('touchend', this._endPress.bind(this));
       } else {
-        this.add('touchstart', this.startLegacyTest.bind(this));
+        this.add('touchstart', this.startLegacy.bind(this));
         this.add('touchend', this._endPress.bind(this));
       }
     }
@@ -313,26 +349,29 @@ var Adapter3DTouch = function (_Adapter2) {
     value: function start(event) {
       if (event.touches.length > 0) {
         this._startPress(event);
-        this._changePress(this.selectTouch(event).force, event);
+        this.touch = this.selectTouch(event);
+        if (this.touch) {
+          this._changePress(this.touch.force, event);
+        }
       }
     }
   }, {
-    key: 'supportTest',
-    value: function supportTest(iter, event) {
+    key: 'support',
+    value: function support(iter, event) {
       var runKey = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.runKey;
 
       if (this.isPressed() === false) {
         if (iter <= 6) {
           iter++;
-          setTimeout(this.supportTest.bind(this, iter, event, runKey), 10);
+          setTimeout(this.support.bind(this, iter, event, runKey), 10);
         } else {
           this.fail(event, runKey);
         }
       }
     }
   }, {
-    key: 'startLegacyTest',
-    value: function startLegacyTest(event) {
+    key: 'startLegacy',
+    value: function startLegacy(event) {
       this.initialForce = event.touches[0].force;
       this.supportLegacyTest(0, event, this.runKey, this.initialForce);
     }
@@ -342,8 +381,8 @@ var Adapter3DTouch = function (_Adapter2) {
     // more info from this issue https://github.com/yamartino/pressure/issues/15
 
   }, {
-    key: 'supportLegacyTest',
-    value: function supportLegacyTest(iter, event, runKey, force) {
+    key: 'supportLegacy',
+    value: function supportLegacy(iter, event, runKey, force) {
       if (force !== this.initialForce) {
         this._startPress(event);
         this.loopForce(event);
@@ -386,12 +425,58 @@ var Adapter3DTouch = function (_Adapter2) {
   }, {
     key: 'returnTouch',
     value: function returnTouch(touch, event) {
-      touch.force >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
+      this.deepPress(touch.force, event);
       return touch;
     }
   }]);
 
   return Adapter3DTouch;
+}(Adapter);
+
+/*
+This adapter is for devices that support pointer events.
+*/
+
+var AdapterPointer = function (_Adapter3) {
+  _inherits(AdapterPointer, _Adapter3);
+
+  function AdapterPointer(el, block, options) {
+    _classCallCheck(this, AdapterPointer);
+
+    return _possibleConstructorReturn(this, (AdapterPointer.__proto__ || Object.getPrototypeOf(AdapterPointer)).call(this, el, block, options));
+  }
+
+  _createClass(AdapterPointer, [{
+    key: 'bindEvents',
+    value: function bindEvents() {
+      this.add('pointerdown', this.support.bind(this));
+      this.add('pointermove', this.change.bind(this));
+      this.add('pointerup', this._endPress.bind(this));
+      this.add('pointerleave', this._endPress.bind(this));
+    }
+  }, {
+    key: 'support',
+    value: function support(event) {
+      if (this.isPressed() === false) {
+        if (event.pressure === 0 || event.pressure === 0.5) {
+          this.fail(event, this.runKey);
+        } else {
+          this._startPress(event);
+          this._changePress(event.pressure, event);
+        }
+      }
+    }
+  }, {
+    key: 'change',
+    value: function change(event) {
+      if (this.isPressed() && event.pressure > 0 && event.pressure !== 0.5) {
+        this._changePress(event.pressure, event);
+        this.deepPress(event.pressure, event);
+      }
+    }
+  }]);
+
+  return AdapterPointer;
 }(Adapter);
 
 // This class holds the states of the the Pressure config
@@ -403,12 +488,15 @@ var Config = {
   polyfill: true,
 
   // milliseconds it takes to go from 0 to 1 for the polyfill
-  polyfillSpeed: 1000,
+  polyfillSpeedUp: 1000,
+
+  // milliseconds it takes to go from 1 to 0 for the polyfill
+  polyfillSpeedDown: 0,
 
   // 'true' prevents the selecting of text and images via css properties
   preventSelect: true,
 
-  // 'mobile' or 'desktop' will make it run only on that type of device
+  // 'touch', 'mouse', or 'pointer' will make it run only on that type of device
   only: null,
 
   // this will get the correct config / option settings for the current pressure check
@@ -462,14 +550,16 @@ var _map = function _map(x, in_min, in_max, out_min, out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 };
 
-var isDesktop = false;
-var isMobile = false;
+var supportsMouse = false;
+var supportsTouch = false;
+var supportsPointer = false;
 var supportsTouchForceChange = false;
 if (typeof window !== 'undefined') {
   // only attempt to assign these in a browser environment.
   // on the server, this is a no-op, like the rest of the library
-  isMobile = 'ontouchstart' in window.document;
-  isDesktop = !isMobile;
+  supportsTouch = 'ontouchstart' in window.document;
+  supportsMouse = 'onmousemove' in window.document && !supportsTouch;
+  supportsPointer = 'onpointermove' in window.document;
   supportsTouchForceChange = 'ontouchforcechange' in window.document;
 }
 return Pressure;

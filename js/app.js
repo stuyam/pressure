@@ -22,7 +22,7 @@ Pressure.set('.device-circle', {
     this.style.marginTop = '-5em';
     this.style.marginLeft = '-5em';
   }
-});
+}, {polyfillSpeedDown: 250});
 
 Pressure.set('.device-circle', {
   change: function(){
@@ -34,8 +34,6 @@ Pressure.set('.device-circle', {
 }, {polyfill: false});
 
 var block = {
-  start: function(){
-  },
 
   change: function(force, event){
     this.style.width = ((200 * force) + 200) + 'px';
@@ -57,8 +55,9 @@ var block = {
 }
 
 Pressure.set('#el1', block);
-Pressure.set('#el2', block, {only: 'desktop'});
-Pressure.set('#el3', block, {only: 'mobile'});
+Pressure.set('#el2', block, {only: 'mouse'});
+Pressure.set('#el3', block, {only: 'touch'});
+Pressure.set('#el4', block, {only: 'pointer'});
 
 Pressure.set('#pressure-test', {
   start: function(){
@@ -123,21 +122,27 @@ Pressure.set('#output-element', {
   }
 }, {polyfill: false});
 
-Pressure.set('#element-3d', {
+Pressure.set('#element-touch', {
   change: function(force, event){
     this.innerHTML = force + 'on an iphone';
   }
-}, {only: 'mobile', polyfill: false});
+}, {only: 'touch', polyfill: false});
 
-Pressure.set('#element-force', {
+Pressure.set('#element-mouse', {
   change: function(force, event){
     this.innerHTML = force + 'on a Mac';
   }
-}, {only: 'force', polyfill: false});
+}, {only: 'mouse', polyfill: false});
 
-Pressure.set('#element-3d-prevent', {}, {only: 'mobile', preventDefault: false});
+Pressure.set('#element-pointer', {
+  change: function(force, event){
+    this.innerHTML = force + 'on a pointer device';
+  }
+}, {only: 'pointer', polyfill: false});
 
-Pressure.set('#element-force-prevent', {}, {only: 'desktop', preventDefault: false});
+Pressure.set('#element-touch-prevent', {}, {only: 'touch', preventDefault: false});
+
+Pressure.set('#element-mouse-prevent', {}, {only: 'mouse', preventDefault: false});
 
 Pressure.set('#polyfill-example', {
   change: function(force, event){
@@ -151,14 +156,23 @@ Pressure.set('#polyfill-example', {
   }
 });
 
-Pressure.set('#polyfill-speed-example', {
+Pressure.set('#polyfill-speed-up', {
   change: function(force, event){
     this.innerHTML = force;
   },
   end: function(){
     this.innerHTML = 0;
   }
-}, {polyfillSpeed: 5000});
+}, {polyfillSpeedUp: 5000});
+
+Pressure.set('#polyfill-speed-down', {
+  change: function(force, event){
+    this.innerHTML = force;
+  },
+  end: function(){
+    this.innerHTML = 0;
+  }
+}, {polyfillSpeedDown: 2000});
 
 // Twitter BTN
 window.twttr = (function(d, s, id) {

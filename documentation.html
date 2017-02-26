@@ -6,9 +6,9 @@
     <link rel="stylesheet" type="text/css" href="css/poet.css">
     <link rel="stylesheet" type="text/css" href="css/prism.css">
     <link rel="stylesheet" type="text/css" href="css/cssdevices.css">
-    <link rel="stylesheet" type="text/css" href="css/style.css?v2.0.3">
+    <link rel="stylesheet" type="text/css" href="css/style.css?v2.1.0">
     <script src="js/prism.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="js/cssdevices.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Pressure.js</title>
@@ -267,8 +267,9 @@ Pressure.set('#stuart', {
 
           <div class="h4 doc-title">5. Options</div>
           <p>With Pressure, the third paramater is an optional object of options that can be passed in.</p>
+          <p>To set any of the config globally use the <a class="nav-link" href="#helpers">Config Helper</a>.</p>
           <h4 class="text-light">Polyfill Support</h4>
-          <p>Using the "polyfill" keyword, you can disable polyfill support for the element. The polyfill is enabled by defauly and is useful if the device or browser does not support force or 3D touch, it will fall back to using time. For example instead of force from  0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support force or 3D touch and see for yourself how it works.</p>
+          <p>Using the "polyfill" keyword, you can disable polyfill support for the element. The polyfill is enabled by default and is useful if the device or browser does not support pressure, it will fall back to using time. For example instead of force from 0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support pressure and see for yourself how it works.</p>
           <div class="doc-section">
             <div class="doc-top">
               <div id="polyfill-example" style="width: 100%;padding: 10px;">Click on me on any device :)</div>
@@ -285,48 +286,78 @@ Pressure.set('#stuart', {
             </div>
           </div>
 
-          <h4 class="text-light">Polyfill Speed</h4>
-          <p>If you are using the polyfill, you can see the "polyfillSpeed" speed to determine how fast the polyfill takes to go from 0 to 1. The value is an integer in milliseconds and the default is 1000 (1 second).</p>
+          <h4 class="text-light">Polyfill Speed Up</h4>
+          <p>If you are using the polyfill, you can use the "polyfillSpeedUp" speed to determine how fast the polyfill takes to go from 0 to 1. The value is an integer in milliseconds and the default is 1000 (1 second).</p>
           <div class="doc-section">
             <div class="doc-top">
-              <div id="polyfill-speed-example" style="width: 100%;padding: 10px;">Click on me on any device :)</div>
+              <div id="polyfill-speed-up" style="width: 100%;padding: 10px;">Click on me on any device :)</div>
             </div>
             <div class="doc-bottom">
-              <pre class="language-javascript"><code>Pressure.set('#polyfill-speed-example', {
+              <pre class="language-javascript"><code>Pressure.set('#polyfill-speed-up', {
   change: function(force, event){
     this.innerHTML = force;
   }
-}, {polyfillSpeed: 5000});
+}, {polyfillSpeedUp: 5000});
 // takes 5 seconds to go from a force value of 0 to 1
-// only on devices that do not support force touch or 3d touch</code></pre>
+// only on devices that do not support pressure</code></pre>
+            </div>
+          </div>
+
+          <h4 class="text-light">Polyfill Speed Down</h4>
+          <p>If you are using the polyfill, you can use the "polyfillSpeedDown" speed to determine how fast the polyfill takes to go from 1 to 0 when the elemnt is released. The value is an integer in milliseconds and the default is 0 (aka off).</p>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div id="polyfill-speed-down" style="width: 100%;padding: 10px;">Click on me on any device :)</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#polyfill-speed-down', {
+  change: function(force, event){
+    this.innerHTML = force;
+  }
+}, {polyfillSpeedDown: 2000});
+// takes 2 seconds to go from a force value of 1 to 0
+// only on devices that do not support pressure</code></pre>
             </div>
           </div>
 
           <h4 class="text-light">Device Detection</h4>
-          <p>With Pressure, the third paramater is an optional object of options that can be passed in. The first option is device targeting. Using the "only" keyword, you can define if you want pressure to run on ONLY Mac or ONLY iPhone.</p>
+          <p>With Pressure, the third paramater is an optional object of options that can be passed in. The first option is device targeting. Using the "only" keyword, you can define if you want pressure to respond to ONLY touch, ONLY Mouse, or ONLY Pointer events.</p>
           <div class="doc-section">
             <div class="doc-top">
-              <div id="element-3d" style="width: 100%;padding: 10px;">Click Me On an iPhone 6s or iPhone 7</div>
+              <div id="element-touch" style="width: 100%;padding: 10px;">Click Me On an iPhone 6s or iPhone 7</div>
             </div>
             <div class="doc-bottom">
-              <pre class="language-javascript"><code>Pressure.set('#element-mobile', {
+              <pre class="language-javascript"><code>Pressure.set('#element-touch', {
   change: function(force, event){
     this.innerHTML = force + 'on an iphone';
   }
-}, {only: 'mobile'});</code></pre>
+}, {only: 'touch'});</code></pre>
             </div>
           </div>
 
           <div class="doc-section">
             <div class="doc-top">
-              <div id="element-force" style="width: 100%;padding: 10px;">Click Me On a Mac with Force Touch</div>
+              <div id="element-mouse" style="width: 100%;padding: 10px;">Click Me On a Mac with Force Touch</div>
             </div>
             <div class="doc-bottom">
-              <pre class="language-javascript"><code>Pressure.set('#element-force', {
+              <pre class="language-javascript"><code>Pressure.set('#element-mouse', {
   change: function(force, event){
     this.innerHTML = force + 'on a Mac';
   }
-}, {only: 'desktop'});</code></pre>
+}, {only: 'mouse'});</code></pre>
+            </div>
+          </div>
+
+          <div class="doc-section">
+            <div class="doc-top">
+              <div id="element-pointer" style="width: 100%;padding: 10px;">Click Me On a Wacom Table or device that supports Pointer Events</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#element-pointer', {
+  change: function(force, event){
+    this.innerHTML = force + 'on a Mac';
+  }
+}, {only: 'pointer'});</code></pre>
             </div>
           </div>
 
@@ -336,27 +367,27 @@ Pressure.set('#stuart', {
           <div class="doc-section">
             <div class="doc-top">
               <div style="width: 100%;padding: 10px;">Push the image hard on an iPhone6s or iPhone7 to "peek and pop" it</div>
-              <img src="img/pickle.jpg" style="widht: 100%; max-width: 200px" id="element-3d-prevent" />
+              <img src="img/pickle.jpg" style="width: 100%; max-width: 200px" id="element-touch-prevent" />
             </div>
             <div class="doc-bottom">
-              <pre class="language-javascript"><code>Pressure.set('#element-3d-prevent', {
+              <pre class="language-javascript"><code>Pressure.set('#element-touch-prevent', {
   start: function(event){
     console.log('cool it started');
   }
-}, {only: 'mobile', preventSelect: false});</code></pre>
+}, {only: 'touch', preventSelect: false});</code></pre>
             </div>
           </div>
 
           <div class="doc-section">
             <div class="doc-top">
-              <div id="element-force-prevent" style="width: 100%;padding: 10px;">Force touch one of these words on a Force Touch trackpad to define it.</div>
+              <div id="element-mouse-prevent" style="width: 100%;padding: 10px;">Force touch one of these words on a Force Touch trackpad to define it.</div>
             </div>
             <div class="doc-bottom">
-              <pre class="language-javascript"><code>Pressure.set('#element-force-prevent', {
+              <pre class="language-javascript"><code>Pressure.set('#element-mouse-prevent', {
   start: function(event){
     console.log('cool it started');
   }
-}, {only: 'desktop', preventSelect: false});</code></pre>
+}, {only: 'mouse', preventSelect: false});</code></pre>
             </div>
           </div>
 
@@ -375,7 +406,8 @@ Pressure.set('#stuart', {
               <pre class="language-javascript"><code>// These are the default configs set by Pressure
 Pressure.config({
   polyfill: true,
-  polyfillSpeed: 1000,
+  polyfillSpeedUp: 1000,
+  polyfillSpeedDown: 0,
   preventSelect: true,
   only: null
 });</code></pre>
