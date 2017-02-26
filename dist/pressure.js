@@ -1,4 +1,4 @@
-// Pressure v2.0.3 | Created By Stuart Yamartino | MIT License | 2015 - 2016
+// Pressure v2.0.3 | Created By Stuart Yamartino | MIT License | 2015 - 2017
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([], factory);
@@ -57,18 +57,22 @@ var Element = function () {
     key: 'routeEvents',
     value: function routeEvents(el, block, options) {
       var type = Config.get('only', options);
-      // if on desktop and requesting Force Touch or not requesting 3D Touch
-      if (isDesktop && (type === 'desktop' || type !== 'mobile')) {
-        this.adapter = new AdapterForceTouch(el, block, options).bindEvents();
+      // for devices that support pointer events
+      if (supportsPointer && (type === 'pointer' || type === null)) {
+        this.adapter = new AdapterPointer(el, block, options).bindEvents();
       }
-      // if on mobile and requesting 3D Touch or not requestion Force Touch
-      else if (isMobile && (type === 'mobile' || type !== 'desktop')) {
-          this.adapter = new Adapter3DTouch(el, block, options).bindEvents();
+      // for devices that support Force Touch
+      else if (supportsMouse && (type === 'mouse' || type === null)) {
+          this.adapter = new AdapterForceTouch(el, block, options).bindEvents();
         }
-        // unsupported if it is requesting a type and your browser is of other type
-        else {
-            this.adapter = new Adapter(el, block).bindUnsupportedEvent();
+        // for devices that support 3D Touch
+        else if (supportsTouch && (type === 'touch' || type === null)) {
+            this.adapter = new Adapter3DTouch(el, block, options).bindEvents();
           }
+          // unsupported if it is requesting a type and your browser is of other type
+          else {
+              this.adapter = new Adapter(el, block).bindUnsupportedEvent();
+            }
     }
 
     // prevent the default action of text selection, "peak & pop", and force touch special feature
@@ -156,7 +160,7 @@ var Adapter = function () {
     value: function bindUnsupportedEvent() {
       var _this = this;
 
-      this.add(isMobile ? 'touchstart' : 'mousedown', function (event) {
+      this.add(supportsTouch ? 'touchstart' : 'mousedown', function (event) {
         return _this.runClosure('unsupported', event);
       });
     }
@@ -397,6 +401,59 @@ var Adapter3DTouch = function (_Adapter2) {
   return Adapter3DTouch;
 }(Adapter);
 
+/*
+This adapter is for devices that support pointer events.
+*/
+
+var AdapterPointer = function (_Adapter3) {
+  _inherits(AdapterPointer, _Adapter3);
+
+  function AdapterPointer(el, block, options) {
+    _classCallCheck(this, AdapterPointer);
+
+    return _possibleConstructorReturn(this, (AdapterPointer.__proto__ || Object.getPrototypeOf(AdapterPointer)).call(this, el, block, options));
+  }
+
+  _createClass(AdapterPointer, [{
+    key: 'bindEvents',
+    value: function bindEvents() {
+      this.add('pointerdown', this.supportTest.bind(this, 0));
+      this.add('pointermove', this.change.bind(this));
+      this.add('pointerup', this._endPress.bind(this));
+      this.add('pointerleave', this._endPress.bind(this));
+    }
+  }, {
+    key: 'supportTest',
+    value: function supportTest(iter, event) {
+      var runKey = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.runKey;
+
+      if (this.isPressed() === false) {
+        if (iter <= 6) {
+          iter++;
+          setTimeout(this.supportTest.bind(this, iter, event, runKey), 10);
+        } else {
+          this.fail(event, runKey);
+        }
+      }
+    }
+  }, {
+    key: 'change',
+    value: function change(event) {
+      if (this.isPressed() && event.pressure > 0) {
+        this._changePress(event.pressure, event);
+        this.deepPress(event);
+      }
+    }
+  }, {
+    key: 'deepPress',
+    value: function deepPress(event) {
+      event.pressure >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
+    }
+  }]);
+
+  return AdapterPointer;
+}(Adapter);
+
 // This class holds the states of the the Pressure config
 
 
@@ -411,7 +468,7 @@ var Config = {
   // 'true' prevents the selecting of text and images via css properties
   preventSelect: true,
 
-  // 'mobile' or 'desktop' will make it run only on that type of device
+  // 'touch', 'mouse', or 'pointer' will make it run only on that type of device
   only: null,
 
   // this will get the correct config / option settings for the current pressure check
@@ -465,14 +522,17 @@ var _map = function _map(x, in_min, in_max, out_min, out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 };
 
-var isDesktop = false;
-var isMobile = false;
+var supportsMouse = false;
+var supportsTouch = false;
+var supportsPointer = false;
 var supportsTouchForceChange = false;
+
 if (typeof window !== 'undefined') {
   // only attempt to assign these in a browser environment.
   // on the server, this is a no-op, like the rest of the library
-  isMobile = 'ontouchstart' in window.document;
-  isDesktop = !isMobile;
+  supportsTouch = 'ontouchstart' in window.document;
+  supportsMouse = 'onmousemove' in window.document && !supportsTouch;
+  supportsPointer = 'onpointermove' in window.document;
   supportsTouchForceChange = 'ontouchforcechange' in window.document;
 }
 return Pressure;

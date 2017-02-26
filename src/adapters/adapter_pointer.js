@@ -11,8 +11,8 @@ class AdapterPointer extends Adapter{
   bindEvents(){
     this.add('pointerdown', this.supportTest.bind(this, 0));
     this.add('pointermove', this.change.bind(this));
-    this.add('pointerdown', this.supportTest.bind(this, 0));
     this.add('pointerup', this._endPress.bind(this));
+    this.add('pointerleave', this._endPress.bind(this));
   }
 
   supportTest(iter, event, runKey = this.runKey){
@@ -33,7 +33,7 @@ class AdapterPointer extends Adapter{
     }
   }
 
-  returnTouch(event){
+  deepPress(event){
     event.pressure >= 0.5 ? this._startDeepPress(event) : this._endDeepPress();
   }
 
