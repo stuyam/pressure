@@ -408,7 +408,7 @@ var Adapter3DTouch = function (_Adapter2) {
       } else {
         for (var i = 0; i < event.touches.length; i++) {
           // if the target press is on this element
-          if (event.touches[i].target === this.el) {
+          if (event.touches[i].target === this.el || this.el.contains(event.touches[i].target)) {
             return this.returnTouch(event.touches[i], event);
           }
         }
@@ -552,7 +552,7 @@ var supportsTouchForceChange = false;
 if (typeof window !== 'undefined') {
   // only attempt to assign these in a browser environment.
   // on the server, this is a no-op, like the rest of the library
-  supportsTouch = 'ontouchstart' in window.document;
+  supportsTouch = 'ontouchstart' in window.document && typeof Touch !== 'undefined' && Touch.prototype.hasOwnProperty('force');
   supportsMouse = 'onmousemove' in window.document && !supportsTouch;
   supportsPointer = 'onpointermove' in window.document;
   supportsTouchForceChange = 'ontouchforcechange' in window.document;
