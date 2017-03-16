@@ -373,7 +373,7 @@ var Adapter3DTouch = function (_Adapter2) {
     key: 'startLegacy',
     value: function startLegacy(event) {
       this.initialForce = event.touches[0].force;
-      this.supportLegacyTest(0, event, this.runKey, this.initialForce);
+      this.supportLegacy(0, event, this.runKey, this.initialForce);
     }
 
     // this checks up to 6 times on a touch to see if the touch can read a force value
@@ -388,7 +388,7 @@ var Adapter3DTouch = function (_Adapter2) {
         this.loopForce(event);
       } else if (iter <= 6) {
         iter++;
-        setTimeout(this.supportLegacyTest.bind(this, iter, event, runKey, force), 10);
+        setTimeout(this.supportLegacy.bind(this, iter, event, runKey, force), 10);
       } else {
         this.fail(event, runKey);
       }

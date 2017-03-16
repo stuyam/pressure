@@ -42,7 +42,7 @@ class Adapter3DTouch extends Adapter{
 
   startLegacy(event){
     this.initialForce = event.touches[0].force;
-    this.supportLegacyTest(0, event, this.runKey, this.initialForce);
+    this.supportLegacy(0, event, this.runKey, this.initialForce);
   }
 
   // this checks up to 6 times on a touch to see if the touch can read a force value
@@ -53,8 +53,8 @@ class Adapter3DTouch extends Adapter{
       this._startPress(event);
       this.loopForce(event);
     } else if(iter <= 6) {
-      iter++
-      setTimeout(this.supportLegacyTest.bind(this, iter, event, runKey, force), 10);
+      iter++;
+      setTimeout(this.supportLegacy.bind(this, iter, event, runKey, force), 10);
     } else{
       this.fail(event, runKey);
     }
