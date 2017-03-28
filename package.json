@@ -5,14 +5,14 @@
   "main": "dist/pressure.min.js",
   "dependencies": {},
   "devDependencies": {
-    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-es2015": "^6.24.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
-    "gulp-concat": "^2.6.0",
+    "gulp-concat": "^2.6.1",
     "gulp-inject-string": "^1.1.0",
     "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^2.0.0",
-    "gulp-umd": "^0.2.0"
+    "gulp-uglify": "^2.1.2",
+    "gulp-umd": "^0.2.1"
   },
   "scripts": {
     "dist": "gulp dist",
