@@ -37,10 +37,21 @@ var supportsMouse            = false;
 var supportsTouch            = false;
 var supportsPointer          = false;
 var supportsTouchForceChange = false;
+var supportsForce = false;
+
+if (typeof Touch !== 'undefined') {
+  // In Android, new Touch requires arguments.
+  try {
+    if (Touch.prototype.hasOwnProperty('force') || 'force' in new Touch()) {
+      supportsForce = true;
+    }
+  } catch (e) {}
+}
+
 if (typeof window !== 'undefined') {
   // only attempt to assign these in a browser environment.
   // on the server, this is a no-op, like the rest of the library
-  supportsTouch            = 'ontouchstart'       in window.document;
+  supportsTouch            = 'ontouchstart'       in window.document && supportsForce;
   supportsMouse            = 'onmousemove'        in window.document && !supportsTouch;
   supportsPointer          = 'onpointermove'      in window.document;
   supportsTouchForceChange = 'ontouchforcechange' in window.document;
