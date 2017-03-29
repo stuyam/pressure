@@ -1,6 +1,8 @@
 # Pressure.js
 
 [![Join the chat at https://gitter.im/yamartino/pressure](https://badges.gitter.im/yamartino/pressure.svg)](https://gitter.im/stuyam/pressure?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![npm https://www.npmjs.com/package/pressure](https://img.shields.io/npm/v/pressure.svg)](https://www.npmjs.com/package/pressure)
+[![npm https://www.npmjs.com/package/pressure](https://img.shields.io/npm/dt/pressure.svg)](https://www.npmjs.com/package/pressure)
 
 ![Pressure Example](http://pressurejs.com/img/pressure.gif)
 
