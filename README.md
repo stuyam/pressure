@@ -101,7 +101,7 @@ $('#element').pressure({
 ## Options
 With Pressure, the third paramater is an optional object of options that can be passed in.
 
-###Polyfill Support
+### Polyfill Support
 Using the "polyfill" keyword, you can disable polyfill support for the element. The polyfill is enabled by default and is useful if the device or browser does not support pressure, it will fall back to using time. For example instead of force from 0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support pressure and see for yourself how it works.
 ```javascript
 Pressure.set('#example', {
@@ -114,7 +114,7 @@ Pressure.set('#example', {
 }, {polyfill: false});
 ```
 
-###Polyfill Speed Up
+### Polyfill Speed Up
 If you are using the polyfill (on by default), you can see the "polyfillSpeedUp" speed to determine how fast the polyfill takes to go from 0 to 1. The value is an integer in milliseconds and the default is 1000 (1 second).
 ```javascript
 Pressure.set('#example', {
@@ -126,7 +126,7 @@ Pressure.set('#example', {
 // only on devices that do not support pressure
 ```
 
-###Polyfill Speed Down
+### Polyfill Speed Down
 If you are using the polyfill (on by default), you can see the "polyfillSpeedDown" speed to determine how fast the polyfill takes to go from 1 to 0 when you let go. The value is an integer in milliseconds and the default is 0 (aka off).
 ```javascript
 Pressure.set('#example', {
