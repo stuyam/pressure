@@ -1,0 +1,237 @@
+<!doctype>
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/poet.css">
+    <link rel="stylesheet" type="text/css" href="css/prism.css">
+    <link rel="stylesheet" type="text/css" href="css/cssdevices.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css?v2.1.0">
+    <script src="js/prism.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="js/cssdevices.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Pressure.js</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.png?v1">
+  </head>
+  <body>
+    <nav class="navbar navbar-full navbar-dark bg-primary">
+      <div class="container">
+        <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar2" aria-controls="exCollapsingNavbar2" aria-expanded="false" aria-label="Toggle navigation">
+          &#9776;
+        </button>
+        <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
+          <a class="navbar-brand" style="line-height: 1.3;" href="index.html">Pressure.js</a>
+          <ul class="nav navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#features">Features</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#examples">Examples</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="documentation.html">Documentation</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="press.html">Press</a>
+            </li>
+          </ul>
+          <a href="https://github.com/stuyam/pressure" class="pull-sm-right btn btn-secondary">View on <strong>GitHub</strong></a>
+        </div>
+      </div>
+    </nav>
+    <header class="bg-primary">
+      <div class="container">
+        <h1 class="mighty-2 text-center-block">Pressure.js</h1>
+        <h5 class="text-center-block" style="font-weight: 400;">current v2.1.1 | 2.5kB gzip</h5>
+        <div class="social-buttons">
+          <iframe src="https://ghbtns.com/github-btn.html?user=stuyam&repo=pressure&type=star&count=true&size=large" frameborder="0" scrolling="0" width="155px" height="30px"></iframe>
+          <a class="twitter-share-button" data-size="large" href="https://twitter.com/intent/tweet?text=Pressure.js makes working with #ForceTouch and #3DTouch painless to use on the web via @StuYam">Tweet</a>
+        </div>
+        <p class="text-fluid text-indent m-b-1" style="margin-bottom: 0;">Pressure is a JavaScript library for handling Force Touch, 3D Touch, and Pointer Pressure on the web, bundled under one library with a simple API that makes working with them painless.</p>
+
+
+        <div class="row">
+          <div class="col-sm-3 m-b-1">
+            <!-- http://cssdevices.io -->
+            <div class="cd-iphone-6 cd-fill-parent">
+              <div class="cd-body">
+                <div class="cd-sound"></div>
+                <div class="cd-sleep"></div>
+                <div class="cd-camera"></div>
+                <div class="cd-ear"></div>
+                <div class="cd-home"></div>
+                <div class="cd-screen">
+                  <div class="device-container">
+                    <div class="device-circle iphone-circle" data-size="50"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-9">
+            <!-- http://cssdevices.io -->
+            <div class="cd-mac cd-pro cd-fill-parent">
+              <div class="cd-top"></div>
+              <div class="cd-bottom"></div>
+              <div class="cd-camera"></div>
+              <div class="cd-notch"></div>
+              <div class="cd-screen">
+                <div class="device-container">
+                    <div class="device-circle mac-circle" data-size="70"></div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-xs-center">Click the Circles Above to Test Pressure</div>
+        <div class="pressure-failed text-xs-center alert alert-danger">Your device does not support force touch or 3d touch so Pressure.js has fallen back to the polyfill.</div>
+      </div>
+    </header>
+    <div class="container">
+
+      <a name="features"></a>
+      <h3 class="m-b-2">Features</h3>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="why-pressure-item">
+            <img src="img/icons/devices.svg">
+            <h3>All Devices</h3>
+            <p class="text-left">Devices implement force differently from one another. Pressure has a simple to use API that works across all devices.</p>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="why-pressure-item">
+            <img src="img/icons/flask.svg">
+            <h3>Support Testing</h3>
+            <p class="text-left">It can be hard to know if a user is using a force sensitive device. With Pressure, you can determine supported and upsupported devices.</p>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="why-pressure-item">
+            <img src="img/icons/drag.svg">
+            <h3>Multitouch Support</h3>
+            <p class="text-left">Pressure will handle multiple fingers on the screen pushing with different amounts of force on different elements simultaneously.</p>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="why-pressure-item">
+            <img src="img/icons/stopwatch.svg">
+            <h3>Polyfill</h3>
+            <p class="text-left">Don't have a force sensitive device? Not a problem, use the polyfill to use time as a replacement for force.</p>
+          </div>
+        </div>
+      </div>
+
+      <hr class="m-t-2 m-b-3"/>
+
+      <h3>Device Support</h3>
+      <div class="text-success text-bold">Future devices and browsers that support pressure will be added when they are released.</div>
+      <div class="supported-device">
+        <div class="device-name">Microsoft Surface, Wacom Tablets <small>(Device that supports pointer events)</small></div>
+        <div class="device-browser">Chrome, Opera, IE, Edge (<a href="http://caniuse.com/#feat=pointer">Can I use Pointer Events</a>)</div>
+      </div>
+
+      <div class="supported-device">
+        <div class="device-name">iPhone 6s, iPhone 6s Plus, iPhone 7, iPhone 7 Plus</div>
+        <div class="device-browser">Safari, Chrome, anything using <a href="https://github.com/stuyam/pressure/issues/29">WKWebView</a></div>
+      </div>
+
+      <div class="supported-device">
+        <div class="device-name">MacBook 2015 & MacBook Pro 2015</div>
+        <div class="device-browser"><a href="https://github.com/stuyam/pressure/issues/5">Safari</a></div>
+      </div>
+
+      <div class="supported-device">
+        <div class="device-name">Magic Trackpad 2</div>
+        <div class="device-browser"><a href="https://github.com/stuyam/pressure/issues/5">Safari</a></div>
+      </div>
+
+      <div class="supported-device">
+        <div class="device-name">iPad Pro with Apple Pencil</div>
+        <div class="device-browser">Safari, Chrome, anything using <a href="https://github.com/stuyam/pressure/issues/29">WKWebView</a></div>
+      </div>
+
+      <hr class="m-y-2"/>
+      <a name="examples"></a>
+      <h3>Examples</h3>
+      <div class="alert alert-success">
+        <strong>Note:</strong> This page is using the "polyfill" option on most of the Pressure elements to give support for browsers that do not support Force or 3D touch. The "polyfill" option is enabled by default but can be useful in lots of situations where time is an ok replacement for force. <strong>For Example:</strong> The Instagram app uses 3D touch to allow users to quick look images, however if you do not have 3D touch support, you can simply hold down on the image for a second and it will have the same effect.
+      </div>
+      <div class="h4 doc-title">1. Pressure Change</div>
+      <p>The best part about Pressure is that is uses a single API that works on both Force Touch and 3D Touch. (note: Apple currently only has support for desktop and mobile safari, but luckily with pressure you can test for that)</p>
+      <div class="doc-section">
+        <div class="doc-top">
+          <h4>Targets All</h4>
+          <div class="element" id="el1">0</div>
+          <h4>Targets ONLY Force Touch (mouse)</h4>
+          <div class="element" id="el2">0</div>
+          <h4>Targets ONLY 3D Touch (touch)</h4>
+          <div class="element" id="el3">0</div>
+          <h4>Targets ONLY Pointer Events (pointer)</h4>
+          <div class="element" id="el4">0</div>
+        </div>
+      </div>
+
+      <div class="h4 doc-title">2. Unblur Photo</div>
+      <p>The harder you press on the image the less blurry it will become.</p>
+      <div class="doc-section">
+        <div class="doc-top">
+          <div class="wrap-peanuts">
+            <img src="img/sierra.jpg" id="peanuts"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="h4 doc-title">3. Text Size</div>
+      <p>The harder you press on the text, the bigger it gets. Then when you let go it sticks at that size till the next time you press. This could be useful for accessibility on online articles or blogs</p>
+      <div class="doc-section">
+        <div class="doc-top">
+          <div id="text-sizer">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </div>
+        </div>
+      </div>
+
+      <div class="h4 doc-title">4. Rotating Square</div>
+      <p>The harder you press on the button, the farther the image will spin. Try pressing with variable amounts of pressure.
+      <div class="doc-section">
+        <div class="doc-top">
+          <button id="cube-btn" class="btn btn-success btn-lg m-b-3" style="display: block;">Press Me!</button>
+          <img id="spinning-cube" src="img/pickle.jpg"/>
+        </div>
+      </div>
+
+      <div class="h4 doc-title">5. "Deep" or Force Press</div>
+      <p>Press hard on the button, a "Deep" or Force press will occur and launch a bootstrap popover.
+      <div class="doc-section">
+        <div class="doc-top">
+          <button id="popover" type="button" class="btn btn-lg btn-danger" data-placement="top" data-toggle="popover" title="Deep Press Popover!" data-content='This popover was triggered because you pressed over 50% pressure on iOS or macOS. On macOS this is called a "force touch"'>Press hard to toggle popover</button>
+        </div>
+      </div>
+      <hr>
+      <div class="alert alert-danger" style="margin-bottom: 0;">If you are not using one of the devices / browsers listed above, here is a gif to show it in action.</div>
+      <img src="img/pressure.gif" style="width: 100%;border: 1px solid #eee;margin: 20px 0;" />
+      </div>
+
+
+      <footer class="text-center-block">Pressure is created and maintained by Stuart Yamartino | <a class="text-smart-underline" href="https://twitter.com/StuYam">Twitter</a> | <a class="text-smart-underline" href="https://github.com/stuyam">GitHub</a></footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js" integrity="sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha384-VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="js/pressure.js?v2.1.0"></script>
+    <script type="text/javascript" src="js/app.js?v2.1.0"></script>
+    <!-- GitHub. -->
+    <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+    <!-- Gitter Sidecar. -->
+    <script>
+      ((window.gitter = {}).chat = {}).options = {
+        room: 'stuyam/pressure'
+      };
+    </script>
+    <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
+  </body>
+</html>

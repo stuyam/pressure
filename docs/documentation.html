@@ -1,0 +1,462 @@
+<!doctype>
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/poet.css">
+    <link rel="stylesheet" type="text/css" href="css/prism.css">
+    <link rel="stylesheet" type="text/css" href="css/cssdevices.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css?v2.1.0">
+    <script src="js/prism.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="js/cssdevices.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Pressure.js</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.png?v1">
+  </head>
+  <body>
+    <nav class="navbar navbar-full navbar-dark bg-primary m-b-2">
+      <div class="container">
+        <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar2" aria-controls="exCollapsingNavbar2" aria-expanded="false" aria-label="Toggle navigation">
+          &#9776;
+        </button>
+        <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
+          <a class="navbar-brand" style="line-height: 1.3;" href="index.html">Pressure.js</a>
+          <ul class="nav navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#features">Features</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#examples">Examples</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="documentation.html">Documentation</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="press.html">Press</a>
+            </li>
+          </ul>
+          <a href="https://github.com/stuyam/pressure" class="pull-sm-right btn btn-secondary">View on <strong>GitHub</strong></a>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+
+      <ul class="nav nav-pills m-b-2">
+        <li class="nav-item">
+          <a class="nav-link" href="#installation">Installation</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#setup">Setup</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#usage">Usage</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#jquery-usage">jQuery Usage</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#options">Options</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#helpers">Helpers</a>
+        </li>
+      </ul>
+
+      <div class="fixed-docs-nav">
+        <div class="container">
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <a class="nav-link" href="#installation">Installation</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#setup">Setup</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#usage">Usage</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#jquery-usage">jQuery Usage</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#options">Options</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#helpers">Helpers</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <a name="installation"></a>
+      <hr class="m-y-2">
+
+          <div class="h4 doc-title">1. Installation</div>
+          <p>Pressure is really simple to install, you can use npm or bower, or head over to the github and download the repo itself. All you need is the <code>pressure.min.js</code> or the <code>pressure.js</code> file.</p>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div class="center">bower</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>bower install pressure --save</code></pre>
+            </div>
+          </div>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div class="center">npm</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>npm install pressure --save</code></pre>
+            </div>
+          </div>
+
+          <a name="setup"></a>
+          <hr class="m-y-3">
+
+          <div class="h4 doc-title">2. Setup</div>
+          <p>You can use pressure with browserify, debowerify, or anything that uses CommonJS to include packages. Pressure can be used normally if no module object exists.</p>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// Regular
+Pressure.set('#test', {
+  change: function(force, event){
+    console.log(force);
+  }
+});</code></pre>
+            </div>
+          </div>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// Browserify, Debowerify, CommonJS
+var Pressure = require('pressure');
+
+Pressure.set('#test', {
+  change: function(force, event){
+    console.log(force);
+  }
+});</code></pre>
+            </div>
+          </div>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// RequireJS
+requirejs(['pressure'], function( Pressure ) {
+
+  Pressure.set('#test', {
+    change: function(force, event){
+      console.log(force);
+    }
+  });
+
+});
+</code></pre>
+            </div>
+          </div>
+
+          <a name="usage"></a>
+          <hr class="m-y-3">
+
+          <div class="h4 doc-title">3. Usage</div>
+          <p>Pressure has a really simple method signature. The first argument is the element(s) you are targeting and the second argument is an object with optional callback functions. This lists all the element types that can be passed into Pressure, anything from a string selector, to a DOM node object.</p>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// target all links
+Pressure.set('a', {});
+</code></pre>
+            </div>
+          </div>
+
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// pass in jQuery elements
+var elements = $('.dogs');
+Pressure.set(elements, {});
+</code></pre>
+            </div>
+          </div>
+
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// pass in element list or single element
+var elements2 = document.querySelectorAll('.cats');
+Pressure.set(elements2, {});
+var elements3 = document.getElementById('cat');
+Pressure.set(elements3, {});
+</code></pre>
+            </div>
+          </div>
+
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// element with the 'stuart' ID being selected and calling the 'change' callback
+Pressure.set('#stuart', {
+  change: function(force, event){
+    // the force value is passed back as well as the full event
+    this.innerHTML = force;
+  }
+});
+</code></pre>
+            </div>
+          </div>
+
+          <div class="alert alert-success" role="alert"><b>Pro Tip:</b> "force" is a value passed back by the "change" function and is a value from 0 to 1. On Mac it is converted from a 1 to 3 scale to a 0 to 1 scale so it can be used in a consistent manner.</div>
+
+          <p>This example uses all of the optional methods available to you in the callback object.</p>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#element', {
+  start: function(event){
+    // this is called on force start
+  },
+  end: function(){
+    // this is called on force end
+  },
+  startDeepPress: function(event){
+    // this is called on "force click" / "deep press", aka once the force is greater than 0.5
+  },
+  endDeepPress: function(){
+    // this is called when the "force click" / "deep press" end
+  },
+  change: function(force, event){
+    // this is called every time there is a change in pressure
+    // 'force' is a value ranging from 0 to 1
+  },
+  unsupported: function(){
+    // NOTE: this is only called if the polyfill option is disabled!
+    // this is called once there is a touch on the element and the device or browser does not support Force or 3D touch
+  }
+});</code></pre>
+            </div>
+          </div>
+
+          <a name="jquery-usage"></a>
+          <hr class="m-y-3">
+
+          <div class="h4 doc-title">4. jQuery Usage</div>
+          <p>Use the <code>jquery.pressure.min.js</code> file if you are using jQuery in your project. Using the Pressure jQuery library makes it simple to attach pressure events to jQuery elements.</p>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>$('a').pressure({
+  start: function(event){
+    // this is called on force start
+  },
+  end: function(){
+    // this is called on force end
+  },
+  startDeepPress: function(event){
+    // this is called on "force click" / "deep press", aka once the force is greater than 0.5
+  },
+  endDeepPress: function(){
+    // this is called when the "force click" / "deep press" end
+  },
+  change: function(force, event){
+    // this is called every time there is a change in pressure
+    // 'force' is a value ranging from 0 to 1
+  },
+  unsupported: function(){
+    // NOTE: this is only called if the polyfill option is disabled!
+    // this is called once there is a touch on the element and the device or browser does not support Force or 3D touch
+  }
+});
+</code></pre>
+            </div>
+          </div>
+
+          <a name="options"></a>
+          <hr class="m-y-3">
+
+          <div class="h4 doc-title">5. Options</div>
+          <p>With Pressure, the third paramater is an optional object of options that can be passed in.</p>
+          <p>To set any of the config globally use the <a class="nav-link" href="#helpers">Config Helper</a>.</p>
+          <h4 class="text-light">Polyfill Support</h4>
+          <p>Using the "polyfill" keyword, you can disable polyfill support for the element. The polyfill is enabled by default and is useful if the device or browser does not support pressure, it will fall back to using time. For example instead of force from 0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support pressure and see for yourself how it works.</p>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div id="polyfill-example" style="width: 100%;padding: 10px;">Click on me on any device :)</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#polyfill-example', {
+  change: function(force, event){
+    this.innerHTML = force;
+  },
+  unsupported: function(){
+    alert("Oh no, this device does not support pressure.")
+  }
+}, {polyfill: false});</code></pre>
+            </div>
+          </div>
+
+          <h4 class="text-light">Polyfill Speed Up</h4>
+          <p>If you are using the polyfill, you can use the "polyfillSpeedUp" speed to determine how fast the polyfill takes to go from 0 to 1. The value is an integer in milliseconds and the default is 1000 (1 second).</p>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div id="polyfill-speed-up" style="width: 100%;padding: 10px;">Click on me on any device :)</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#polyfill-speed-up', {
+  change: function(force, event){
+    this.innerHTML = force;
+  }
+}, {polyfillSpeedUp: 5000});
+// takes 5 seconds to go from a force value of 0 to 1
+// only on devices that do not support pressure</code></pre>
+            </div>
+          </div>
+
+          <h4 class="text-light">Polyfill Speed Down</h4>
+          <p>If you are using the polyfill, you can use the "polyfillSpeedDown" speed to determine how fast the polyfill takes to go from 1 to 0 when the elemnt is released. The value is an integer in milliseconds and the default is 0 (aka off).</p>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div id="polyfill-speed-down" style="width: 100%;padding: 10px;">Click on me on any device :)</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#polyfill-speed-down', {
+  change: function(force, event){
+    this.innerHTML = force;
+  }
+}, {polyfillSpeedDown: 2000});
+// takes 2 seconds to go from a force value of 1 to 0
+// only on devices that do not support pressure</code></pre>
+            </div>
+          </div>
+
+          <h4 class="text-light">Device Detection</h4>
+          <p>With Pressure, the third paramater is an optional object of options that can be passed in. The first option is device targeting. Using the "only" keyword, you can define if you want pressure to respond to ONLY touch, ONLY Mouse, or ONLY Pointer events.</p>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div id="element-touch" style="width: 100%;padding: 10px;">Click Me On an iPhone 6s or iPhone 7</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#element-touch', {
+  change: function(force, event){
+    this.innerHTML = force + 'on an iphone';
+  }
+}, {only: 'touch'});</code></pre>
+            </div>
+          </div>
+
+          <div class="doc-section">
+            <div class="doc-top">
+              <div id="element-mouse" style="width: 100%;padding: 10px;">Click Me On a Mac with Force Touch</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#element-mouse', {
+  change: function(force, event){
+    this.innerHTML = force + 'on a Mac';
+  }
+}, {only: 'mouse'});</code></pre>
+            </div>
+          </div>
+
+          <div class="doc-section">
+            <div class="doc-top">
+              <div id="element-pointer" style="width: 100%;padding: 10px;">Click Me On a Wacom Table or device that supports Pointer Events</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#element-pointer', {
+  change: function(force, event){
+    this.innerHTML = force + 'on a Mac';
+  }
+}, {only: 'pointer'});</code></pre>
+            </div>
+          </div>
+
+          <h4 class="text-light">Prevent Select</h4>
+          <p>Both Mac and iPhones have system wide features that they default to when force clicking on something (ex. defining a word on Mac or "peeking and popping" an image on iOS). Pressure prevents those actions from happening, however if you still want those actions to be possible on "Pressure" elements, you can pass in "preventSelect" as an option.</p>
+          <div class="alert alert-success">Pressure sets <code>user-select: none;</code> css property on all of the elements it is attached to. It does this to keep text from being selected while force touching. However, sometimes you may want this turned off. The "preventSelect" option also handles removing that."</div>
+          <div class="doc-section">
+            <div class="doc-top">
+              <div style="width: 100%;padding: 10px;">Push the image hard on an iPhone6s or iPhone7 to "peek and pop" it</div>
+              <img src="img/pickle.jpg" style="width: 100%; max-width: 200px" id="element-touch-prevent" />
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#element-touch-prevent', {
+  start: function(event){
+    console.log('cool it started');
+  }
+}, {only: 'touch', preventSelect: false});</code></pre>
+            </div>
+          </div>
+
+          <div class="doc-section">
+            <div class="doc-top">
+              <div id="element-mouse-prevent" style="width: 100%;padding: 10px;">Force touch one of these words on a Force Touch trackpad to define it.</div>
+            </div>
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#element-mouse-prevent', {
+  start: function(event){
+    console.log('cool it started');
+  }
+}, {only: 'mouse', preventSelect: false});</code></pre>
+            </div>
+          </div>
+
+          <a name="helpers"></a>
+          <hr class="m-y-3">
+
+          <div class="h4 doc-title">6. Helpers</div>
+          <h5 class="text-light">Config:</h5>
+          <p>You can use <code>Pressure.config()</code> to set default configurations for site wide setup. All of the configurations are the same as the options listed above.</p>
+          <div class="alert alert-warning">
+            <strong>Heads Up:</strong> If you have a config set, you can always overide the config on individual Pressure elements by passing in any of the options listed above to a specific Pressure block.
+          </div>
+          <div class="alert alert-success">When using the jQuery Pressure library, use <code>$.pressureConfig()</code> rather than <code>Pressure.config()</code></div>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>// These are the default configs set by Pressure
+Pressure.config({
+  polyfill: true,
+  polyfillSpeedUp: 1000,
+  polyfillSpeedDown: 0,
+  preventSelect: true,
+  only: null
+});</code></pre>
+            </div>
+          </div>
+
+          <h5 class="text-light">Map:</h5>
+          <p>You can use <code>Pressure.map()</code> to map a value from one range of values to another. It takes 5 params: <code>Pressure.map(inputValue, inputValueMin, inputValueMax, mapToMin, mapToMax);</code> Here is a good write up on how this works in the Processing framework: <a href="https://processing.org/reference/map_.html">Map Function</a>.</p>
+          <div class="alert alert-success">When using the jQuery Pressure library, use <code>$.pressureMap()</code> rather than <code>Pressure.map()</code></div>
+          <div class="doc-section">
+            <div class="doc-bottom">
+              <pre class="language-javascript"><code>Pressure.set('#element', {
+  change: function(force, event){
+    // this takes the force, given that the force can range from 0 to 1, and maps that force value on a 100 to 200 range
+    this.style.width = Pressure.map(force, 0, 1, 100, 200);
+  }
+});</code></pre>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+      <footer class="text-center-block">Pressure is created and maintained by Stuart Yamartino | <a class="text-smart-underline" href="https://twitter.com/StuYam">Twitter</a> | <a class="text-smart-underline" href="https://github.com/stuyam">GitHub</a></footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js" integrity="sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha384-VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="js/pressure.js?v2.1.0"></script>
+    <script type="text/javascript" src="js/app.js?v2.1.0"></script>
+    <script type="text/javascript">
+      $(document).scroll(function() {
+        if($(this).scrollTop() > 73){
+          $('.fixed-docs-nav').show();
+        } else {
+          $('.fixed-docs-nav').hide();
+        }
+      });
+    </script>
+    <!-- GitHub. -->
+    <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+    <!-- Gitter Sidecar. -->
+    <script>
+      ((window.gitter = {}).chat = {}).options = {
+        room: 'stuyam/pressure'
+      };
+    </script>
+    <script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
+  </body>
+</html>
