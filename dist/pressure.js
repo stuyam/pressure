@@ -1,4 +1,4 @@
-// Pressure v2.1.1 | Created By Stuart Yamartino | MIT License | 2015 - 2017
+// Pressure v2.1.2 | Created By Stuart Yamartino | MIT License | 2015 - 2017
 ;(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([], factory);
@@ -458,7 +458,7 @@ var AdapterPointer = function (_Adapter3) {
     key: 'support',
     value: function support(event) {
       if (this.isPressed() === false) {
-        if (event.pressure === 0 || event.pressure === 0.5) {
+        if (event.pressure === 0 || event.pressure === 0.5 || event.pressure > 1) {
           this.fail(event, this.runKey);
         } else {
           this._startPress(event);
