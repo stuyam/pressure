@@ -1,6 +1,6 @@
 {
   "name": "pressure",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Pressure is a lightweight JavaScript library for both Force Touch and 3D Touch through a single API.",
   "main": "dist/pressure.min.js",
   "dependencies": {},
