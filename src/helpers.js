@@ -1,16 +1,16 @@
 //------------------- Helpers -------------------//
 
 // accepts jQuery object, node list, string selector, then called a setup for each element
-var loopPressureElements = function(selector, closure, options = {}){
+var loopPressureElements = function(selector, closure, options = {}) {
   // if a string is passed in as an element
-  if(typeof selector === 'string' || selector instanceof String) {
+  if (typeof selector === 'string' || selector instanceof String) {
     var elements = document.querySelectorAll(selector);
     for (var i = 0; i < elements.length; i++) {
       new Element(elements[i], closure, options);
     }
   // if a single element object is passed in
     new Element(selector, closure, options);
-  } else if(isElement(selector)) {
+  } else if (isElement(selector)) {
   // if a node list is passed in ex. jQuery $() object
   } else {
     for (var i = 0; i < selector.length; i++) {
