@@ -3,7 +3,6 @@ This adapter is for Macs with Force Touch trackpads.
 */
 
 class AdapterForceTouch extends Adapter{
-
   constructor(el, block, options){
     super(el, block, options);
   }
@@ -39,5 +38,4 @@ class AdapterForceTouch extends Adapter{
   reachOne(force){
     return force > 0.995 ? 1 : force;
   }
-
 }

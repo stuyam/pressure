@@ -1,6 +1,5 @@
 // This class holds the states of the the Pressure config
 var Config = {
-
   // 'false' will make polyfill not run when pressure is not supported and the 'unsupported' method will be called
   polyfill: true,
 
@@ -29,5 +28,4 @@ var Config = {
       }
     }
   }
-
 }

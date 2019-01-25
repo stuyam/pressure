@@ -3,7 +3,6 @@ This is the base adapter from which all the other adapters extend.
 */
 
 class Adapter{
-
   constructor(el, block, options){
     this.el = el;
     this.block = block;
@@ -137,5 +136,4 @@ class Adapter{
       }
     }
   }
-
 }

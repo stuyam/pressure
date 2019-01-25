@@ -3,7 +3,6 @@ This adapter is for devices that support pointer events.
 */
 
 class AdapterPointer extends Adapter{
-
   constructor(el, block, options){
     super(el, block, options);
   }
@@ -32,5 +31,4 @@ class AdapterPointer extends Adapter{
       this.deepPress(event.pressure, event);
     }
   }
-
 }

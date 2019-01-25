@@ -1,11 +1,14 @@
-class Element{
-
-  constructor(el, block, options){
-    this.routeEvents(el, block, options);
-    this.preventSelect(el, options);
+class Element {
+  constructor(el, block, options, removeEvent) {
+    if (removeEvent) {
+      this.removeEnets
+    } else {
+      this.routeEvents(el, block, options);
+      this.preventSelect(el, options);
+    }
   }
 
-  routeEvents(el, block, options){
+  routeEvents(el, block, options) {
     var type = Config.get('only', options);
     // for devices that support pointer events
     if(supportsPointer && (type === 'pointer' || type === null)){
@@ -26,7 +29,7 @@ class Element{
   }
 
   // prevent the default action of text selection, "peak & pop", and force touch special feature
-  preventSelect(el, options){
+  preventSelect(el, options) {
     if(Config.get('preventSelect', options)){
       el.style.webkitTouchCallout = "none";
       el.style.webkitUserSelect = "none";
@@ -36,5 +39,4 @@ class Element{
       el.style.userSelect = "none";
     }
   }
-
 }

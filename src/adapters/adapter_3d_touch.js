@@ -3,7 +3,6 @@ This adapter is more mobile devices that support 3D Touch.
 */
 
 class Adapter3DTouch extends Adapter{
-
   constructor(el, block, options){
     super(el, block, options);
   }
@@ -87,5 +86,4 @@ class Adapter3DTouch extends Adapter{
     this.deepPress(touch.force, event);
     return touch;
   }
-
 }
