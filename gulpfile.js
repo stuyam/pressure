@@ -6,11 +6,11 @@ var inject     = require('gulp-inject-string')
 var rename     = require('gulp-rename');
 var uglify     = require('gulp-uglify');
 var babel      = require('gulp-babel');
-var HEADER_COMMENT = '// Pressure v2.1.2 | Created By Stuart Yamartino | MIT License | 2015 - 2017\n';
+var HEADER_COMMENT = '// Pressure v2.2.0 | Created By Stuart Yamartino | MIT License | 2015 - 2020\n';
 var DESTINATION = '.';
 
 // JS concat, strip debugging and minify
-gulp.task('pressure', function() {
+async function build() {
   gulp.src([
     './src/pressure.js',
     './src/element.js',
@@ -22,9 +22,7 @@ gulp.task('pressure', function() {
     './src/helpers.js',
   ])
   .pipe(concat('dist/pressure.js'))
-  .pipe(babel({
-      presets: ['es2015']
-  }))
+  .pipe(babel())
   .pipe(umd({
     exports: function() {
       return 'Pressure';
@@ -39,9 +37,9 @@ gulp.task('pressure', function() {
   .pipe(inject.prepend(HEADER_COMMENT))
   .pipe(rename({ extname: '.min.js' }))
   .pipe(gulp.dest(DESTINATION));
-});
+}
 
-gulp.task('jquery-pressure', function() {
+async function buildJquery() {
   gulp.src([
     './src/jquery_pressure.js',
     './src/element.js',
@@ -53,9 +51,7 @@ gulp.task('jquery-pressure', function() {
     './src/helpers.js',
   ])
   .pipe(concat('dist/jquery.pressure.js'))
-  .pipe(babel({
-      presets: ['es2015']
-  }))
+  .pipe(babel())
   .pipe(umd({
     dependencies: function() {
       return [
@@ -92,10 +88,16 @@ gulp.task('jquery-pressure', function() {
   .pipe(inject.prepend(HEADER_COMMENT))
   .pipe(rename({ extname: '.min.js' }))
   .pipe(gulp.dest(DESTINATION));
-});
+}
 
-gulp.task('watch', function() {
-  gulp.watch(['src/*', 'src/adapters/*'], ['pressure', 'jquery-pressure']);
-});
+function watch() {
+  gulp.watch(['src/*', 'src/adapters/*'], build);
+  gulp.watch(['src/*', 'src/adapters/*'], buildJquery);
+}
 
-gulp.task('dist', ['pressure', 'jquery-pressure']);
+var dist = gulp.series(build, buildJquery)
+
+exports.build = build;
+exports.buildJquery = buildJquery;
+exports.watch = watch;
+exports.dist = dist;
