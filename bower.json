@@ -1,6 +1,7 @@
 {
   "name": "pressure",
-  "description": "Pressure is a lightweight JavaScript library for both Force Touch and 3D Touch through a single API.",
+  "version": "2.2.0",
+  "description": "Pressure is a lightweight JavaScript library for Force Touch, 3D Touch, and Pointer Pressure through a single API.",
   "main": "dist/pressure.min.js",
   "homepage": "https://github.com/stuyam/pressure",
   "license": "MIT",
@@ -32,6 +33,5 @@
     "bower_components",
     "test",
     "tests"
-  ],
-  "version": "2.2.0"
+  ]
 }
