@@ -1,7 +1,6 @@
 /*
 This adapter is for Macs with Force Touch trackpads.
 */
-
 class AdapterForceTouch extends Adapter {
   constructor(el, block, options) {
     super(el, block, options);
@@ -18,13 +17,13 @@ class AdapterForceTouch extends Adapter {
   }
 
   support(event) {
-    if(this.isPressed() === false){
+    if(this.isPressed() === false) {
       this.fail(event, this.runKey);
     }
   }
 
   change(event) {
-    if(this.isPressed() && event.webkitForce > 0){
+    if(this.isPressed() && event.webkitForce > 0) {
       this._changePress(this.normalizeForce(event.webkitForce), event);
     }
   }
@@ -38,5 +37,4 @@ class AdapterForceTouch extends Adapter {
   reachOne(force) {
     return force > 0.995 ? 1 : force;
   }
-
 }

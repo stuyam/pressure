@@ -34,15 +34,15 @@ class Adapter {
   }
 
   runClosure(method) {
-    if(method in this.block){
+    if(method in this.block) {
       // call the closure method and apply nth arguments if they exist
       this.block[method].apply(this.el, Array.prototype.slice.call(arguments, 1));
     }
   }
 
   fail(event, runKey) {
-    if(Config.get('polyfill', this.options)){
-      if(this.runKey === runKey){
+    if(Config.get('polyfill', this.options)) {
+      if(this.runKey === runKey) {
         this.runPolyfill(event);
       }
     } else {
@@ -55,7 +55,7 @@ class Adapter {
   }
 
   _startPress(event) {
-    if(this.isPressed() === false){
+    if(this.isPressed() === false) {
       this.runningPolyfill = false;
       this.setPressed(true);
       this.runClosure('start', event);
@@ -63,7 +63,7 @@ class Adapter {
   }
 
   _startDeepPress(event) {
-    if(this.isPressed() && this.isDeepPressed() === false){
+    if(this.isPressed() && this.isDeepPressed() === false) {
       this.setDeepPressed(true);
       this.runClosure('startDeepPress', event);
     }
@@ -75,7 +75,7 @@ class Adapter {
   }
 
   _endDeepPress() {
-    if(this.isPressed() && this.isDeepPressed()){
+    if(this.isPressed() && this.isDeepPressed()) {
       this.setDeepPressed(false);
       this.runClosure('endDeepPress');
     }
@@ -104,7 +104,7 @@ class Adapter {
     this.decrement = Config.get('polyfillSpeedDown', this.options) === 0 ? 1 : 10 / Config.get('polyfillSpeedDown', this.options);
     this.setPressed(true);
     this.runClosure('start', event);
-    if(this.runningPolyfill === false){
+    if(this.runningPolyfill === false) {
       this.loopPolyfillForce(0, event);
     }
   }
@@ -119,11 +119,11 @@ class Adapter {
         setTimeout(this.loopPolyfillForce.bind(this, force, event), 10);
       } else {
         force = force - this.decrement < 0 ? 0 : force - this.decrement;
-        if(force < 0.5 && this.isDeepPressed()){
+        if(force < 0.5 && this.isDeepPressed()) {
           this.setDeepPressed(false);
           this.runClosure('endDeepPress');
         }
-        if(force === 0){
+        if(force === 0) {
           this.runningPolyfill = false;
           this.setPressed(true);
           this._endPress();

@@ -62,16 +62,16 @@ var Element = /*#__PURE__*/function () {
   _createClass(Element, [{
     key: "routeEvents",
     value: function routeEvents(el, block, options) {
-      var type = Config.get('only', options); // for devices that support pointer events
+      var type = Config.get('only', options); // for devices that support Force Touch
 
-      if (supportsPointer && (type === 'pointer' || type === null)) {
-        this.adapter = new AdapterPointer(el, block, options).bindEvents();
-      } // for devices that support 3D Touch
-      else if (supportsTouch && (type === 'touch' || type === null)) {
-          this.adapter = new Adapter3DTouch(el, block, options).bindEvents();
-        } // for devices that support Force Touch
-        else if (supportsMouse && (type === 'mouse' || type === null)) {
-            this.adapter = new AdapterForceTouch(el, block, options).bindEvents();
+      if (supportsMouse && (type === 'mouse' || type === null)) {
+        this.adapter = new AdapterForceTouch(el, block, options).bindEvents();
+      } // for devices that support pointer events
+      else if (supportsPointer && (type === 'pointer' || type === null)) {
+          this.adapter = new AdapterPointer(el, block, options).bindEvents();
+        } // for devices that support 3D Touch
+        else if (supportsTouch && (type === 'touch' || type === null)) {
+            this.adapter = new Adapter3DTouch(el, block, options).bindEvents();
           } // unsupported if it is requesting a type and your browser is of other type
           else {
               this.adapter = new Adapter(el, block).bindUnsupportedEvent();
@@ -466,6 +466,7 @@ var AdapterPointer = /*#__PURE__*/function (_Adapter3) {
     value: function support(event) {
       if (this.isPressed() === false) {
         if (event.pressure === 0 || event.pressure === 0.5 || event.pressure > 1) {
+          console.log('Failed because', event.pressure);
           this.fail(event, this.runKey);
         } else {
           this._startPress(event);

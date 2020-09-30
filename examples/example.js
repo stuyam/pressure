@@ -42,9 +42,8 @@ var block = {
 
 Pressure.set(document.querySelectorAll('#el1'), block);
 Pressure.set(document.querySelectorAll('#el2'), block, {only: 'mouse'});
-Pressure.set(document.querySelectorAll('#el3'), block, {only: 'touch'});
-Pressure.set(document.querySelectorAll('#el4'), block, {only: 'pointer'});
-Pressure.set($('#el5'), block, {only: 'mouse', polyfill: true, polyfillSpeedUp: 5000, polyfillSpeedDown: 2000});
+Pressure.set($('#el3'), block, {only: 'touch'});
+Pressure.set('#el4', block, {only: 'pointer'});
 
 $('#el1-jquery').pressure(block);
 $('#el2-jquery').pressure(block, {only: 'mouse'});
