@@ -565,7 +565,7 @@ if (typeof window !== 'undefined') {
   }
 
   supportsTouch = 'ontouchstart' in window.document && supportsTouchForce;
-  supportsMouse = 'onmousemove' in window.document && !supportsTouch;
+  supportsMouse = 'onmousemove' in window.document && 'onwebkitmouseforcechanged' in window.document && !supportsTouch;
   supportsPointer = 'onpointermove' in window.document;
   supportsTouchForceChange = 'ontouchforcechange' in window.document;
 }

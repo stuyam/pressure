@@ -50,8 +50,8 @@ if (typeof window !== 'undefined') {
       }
     } catch (e) {}
   }
-  supportsTouch            = 'ontouchstart'       in window.document && supportsTouchForce;
-  supportsMouse            = 'onmousemove'        in window.document && !supportsTouch;
-  supportsPointer          = 'onpointermove'      in window.document;
-  supportsTouchForceChange = 'ontouchforcechange' in window.document;
+  supportsTouch                   = 'ontouchstart'       in window.document && supportsTouchForce;
+  supportsMouse                   = 'onmousemove'        in window.document && 'onwebkitmouseforcechanged' in window.document && !supportsTouch;
+  supportsPointer                 = 'onpointermove'      in window.document;
+  supportsTouchForceChange        = 'ontouchforcechange' in window.document;
 }
