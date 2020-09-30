@@ -1,13 +1,11 @@
 //--------------------- Public jQuery API Section ---------------------//
-
-if($){
-
+if($) {
   $.fn.pressure = function(closure, options) {
     loopPressureElements(this, closure, options);
     return this;
   };
 
-  $.pressureConfig = function(options){
+  $.pressureConfig = function(options) {
     Config.set(options);
   };
 

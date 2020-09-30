@@ -7,42 +7,43 @@ $.pressureConfig({
 });
 
 var block = {
-  start: function(event){
+  start: function(event) {
     console.log('start', event);
   },
 
-  change: function(force, event){
+  change: function(force, event) {
     // event.preventDefault();
     this.style.width = Pressure.map(force, 0, 1, 200, 300) + 'px';
     this.innerHTML = force;
     console.log('change', force);
   },
 
-  startDeepPress: function(event){
+  startDeepPress: function(event) {
     console.log('start deep press', event);
     this.style.backgroundColor = '#FF0040';
   },
 
-  endDeepPress: function(){
+  endDeepPress: function() {
     console.log('end deep press');
     this.style.backgroundColor = '#0080FF';
   },
 
-  end: function(){
+  end: function() {
     console.log('end');
     this.style.width = '200px';
     this.innerHTML = 0;
   },
 
-  unsupported: function(){
+  unsupported: function() {
     console.log(this);
     this.innerHTML = 'Your device / browser does not support this :(';
   }
 }
 
 Pressure.set(document.querySelectorAll('#el1'), block);
-Pressure.set($('#el2'), block, {only: 'mouse', polyfill: true, polyfillSpeedUp: 5000, polyfillSpeedDown: 2000});
-Pressure.set('#el3', block, {only: 'touch'});
+Pressure.set(document.querySelectorAll('#el2'), block, {only: 'mouse'});
+Pressure.set($('#el3'), block, {only: 'touch'});
+Pressure.set('#el4', block, {only: 'pointer'});
 
 $('#el1-jquery').pressure(block);
 $('#el2-jquery').pressure(block, {only: 'mouse'});
