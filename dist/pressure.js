@@ -466,7 +466,6 @@ var AdapterPointer = /*#__PURE__*/function (_Adapter3) {
     value: function support(event) {
       if (this.isPressed() === false) {
         if (event.pressure === 0 || event.pressure === 0.5 || event.pressure > 1) {
-          console.log('Failed because', event.pressure);
           this.fail(event, this.runKey);
         } else {
           this._startPress(event);
