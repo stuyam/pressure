@@ -99,10 +99,10 @@ $('#element').pressure({
 ```
 
 ## Options
-With Pressure, the third paramater is an optional object of options that can be passed in.
+With Pressure, the third parameter is an optional object of options that can be passed in.
 
 ### Polyfill Support
-Using the "polyfill" keyword, you can disable polyfill support for the element. The polyfill is enabled by default and is useful if the device or browser does not support pressure, it will fall back to using time. For example instead of force from 0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a devices that does not support pressure and see for yourself how it works.
+Using the "polyfill" keyword, you can disable polyfill support for the element. The polyfill is enabled by default and is useful if the device or browser does not support pressure, it will fall back to using time. For example instead of force from 0 to 1, it counts up from 0 to 1 over the course of one second, as long as you are holding the element. Try some of the examples on the main page on a device that does not support pressure and see for yourself how it works.
 ```javascript
 Pressure.set('#example', {
   change: function(force, event){
@@ -165,7 +165,7 @@ Pressure.set('#example',{
 ```
 
 ### Change the preventSelect option
-The preventDefault option in "true" by default and it prevents the default actions that happen on 3D "peel and pop" actions and the Force "define word" actions as well as other defaults. To allow the defaults to run set preventDefault to "false"
+The preventDefault option is "true" by default and it prevents the default actions that happen on 3D "peel and pop" actions and the Force "define word" actions as well as other defaults. To allow the defaults to run set preventDefault to "false"
 ```javascript
 Pressure.set('#example',{
   change: function(force, event){
@@ -179,7 +179,7 @@ Pressure.set('#example',{
 ### Config
 You can use ```Pressure.config()``` to set default configurations for site wide setup. All of the configurations are the same as the options listed above.
 
-*Heads Up: If you have a config set, you can always overide the config on individual Pressure elements by passing in any of the options listed above to a specific Pressure block.*
+*Heads Up: If you have a config set, you can always override the config on individual Pressure elements by passing in any of the options listed above to a specific Pressure block.*
 
 **When using the jQuery Pressure library, use ```$.pressureConfig()``` rather than ```Pressure.map()```**
 ```javascript
